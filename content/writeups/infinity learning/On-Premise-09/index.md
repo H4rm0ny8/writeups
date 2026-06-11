@@ -168,7 +168,7 @@ curl -s "https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t
   -d "nx_id=1&type=clicks"
 ```
 
-![API Confirmation](image2.png)
+![API Confirmation](image%202.png)
 
 ### Time-Based SQL Injection
 
@@ -181,7 +181,7 @@ time curl "https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd3
 
 The server responded with a significant delay (approximately 20 seconds), confirming the vulnerability.
 
-![SQL Injection Delay](image3.png)
+![SQL Injection Delay](image%203.png)
 
 ### Automated Data Extraction
 
