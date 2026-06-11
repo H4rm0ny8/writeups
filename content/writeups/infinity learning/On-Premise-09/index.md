@@ -150,7 +150,7 @@ The aggressive scan successfully identified a specific plugin and its version. R
 
 ![Aggressive Scan Results](image1.png)
 
-## Exploitation
+## Exploitation  
 
 ### Testing the API Endpoint
 
