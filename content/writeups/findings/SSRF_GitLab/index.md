@@ -12,13 +12,13 @@ tags:
   - Port Scanning
   - Reconnaissance
 summary: Exploiting a Server-Side Request Forgery (SSRF) in GitLab's "Import From URL" feature to probe internal networks and perform port scanning via timing differences.
-initialAccess: SSRF via the "Import Project from URL" feature by providing internal or arbitrary URLs.
-privesc: Internal network reconnaissance and service discovery through observable timing differences.
+initialAccess:
+privesc:
 ---
 
-# SSRF in GitLab Self-Hosted — Import From URL
+# SSRF in GitLab — Import From URL
 
-#### Summary
+### Summary
 
 I discovered a Server-Side Request Forgery (SSRF) vulnerability in the “Import Project from URL” feature of a GitLab self-hosted instance. The vulnerability allows an authenticated user to force the GitLab server to issue HTTP requests to arbitrary URLs. Crucially, the server’s response timings differ based on whether the target port is open or closed, enabling an attacker to use this vulnerability not just for a single request but to actively probe and map the internal network.
 
@@ -34,14 +34,14 @@ This write-up provides a safe, lab-tested Proof of Concept (PoC) and recommended
 
 ---
 
-#### Technical Details
+### Technical Details
 
 - Environment: GitLab Self-Hosted Instance (Lab Deployment)
 - Tools Used: Burp Suite Professional (Interceptor, Intruder, Collaborator), curl.
 
 ---
 
-#### Reproduction Steps (Lab Environment Only)
+### Reproduction Steps (Lab Environment Only)
 
 **Step 1: Confirming the Outbound Request (Basic SSRF)**
 
@@ -76,7 +76,7 @@ This step demonstrates the true risk of the vulnerability: using it to scan the 
 
 ---
 
-#### Practical Proof of Concept (Lab Reproduction)
+### Practical Proof of Concept (Lab Reproduction)
 
 I have successfully reproduced the SSRF vulnerability on a self-hosted GitLab instance.
 
@@ -92,7 +92,7 @@ I have successfully reproduced the SSRF vulnerability on a self-hosted GitLab in
 
 ### Proof of Concept Video
 
-<video controls width="100%" height="80%">
+<video controls width="auto" height="auto">
   <source src="https://github.com/H4rm0ny8/writeups/raw/refs/heads/main/content/writeups/findings/SSRF_GitLab/poc_video.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
