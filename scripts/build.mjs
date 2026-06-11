@@ -117,6 +117,12 @@ function markdownToHtml(markdown) {
   };
 
   for (const line of lines) {
+    if (line.trim().startsWith("<") && !line.trim().startsWith("<!--")) {
+      closeList();
+      html += line + "\n";
+      continue;
+    }
+
     if (line.startsWith("```")) {
       closeList();
       if (!inCode) {
@@ -243,7 +249,6 @@ function copyPostAssets(sourceFile, outputDir) {
 function pageShell({ title, body, depth, navDots = "" }) {
   const css = `${"../".repeat(depth)}css/style.css`;
   const js = `${"../".repeat(depth)}js/main.js`;
-  const home = `${"../".repeat(depth)}index.html`;
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -334,15 +339,9 @@ function renderWriteupCard(post) {
     .join("");
 
   const details = [];
-  if (post.initialAccess) {
-    details.push(`<p><strong>Initial Access:</strong> ${escapeHtml(post.initialAccess)}</p>`);
-  }
-  if (post.privesc) {
-    details.push(`<p><strong>PrivEsc:</strong> ${escapeHtml(post.privesc)}</p>`);
-  }
-  if (!details.length && post.summary) {
-    details.push(`<p>${escapeHtml(post.summary)}</p>`);
-  }
+  if (post.initialAccess) details.push(`<p><strong>Initial Access:</strong> ${escapeHtml(post.initialAccess)}</p>`);
+  if (post.privesc) details.push(`<p><strong>PrivEsc:</strong> ${escapeHtml(post.privesc)}</p>`);
+  if (!details.length && post.summary) details.push(`<p>${escapeHtml(post.summary)}</p>`);
 
   return `
     <article class="writeup-card terminal-theme">
@@ -474,12 +473,7 @@ function renderHub(writeups, blogs) {
       </p>
     </header>
     ${writeupSections}
-    ${blogSection}
-    <!-- <footer>
-      <span class="hex-dot" aria-hidden="true"></span>
-      H4rm0ny Content Hub &copy; ${new Date().getFullYear()}
-      <span class="hex-dot" aria-hidden="true"></span>
-    </footer> -->`;
+    ${blogSection}`;
 
   return pageShell({ title: "H4rm0ny Content Hub", body, depth: 0, navDots });
 }
