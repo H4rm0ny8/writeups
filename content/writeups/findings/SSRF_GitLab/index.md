@@ -16,9 +16,9 @@ initialAccess: SSRF via the "Import Project from URL" feature by providing inter
 privesc: Internal network reconnaissance and service discovery through observable timing differences.
 ---
 
-# SSRF in GitLab Self-Hosted — Import From URL
+#SSRF in GitLab Self-Hosted — Import From URL
 
-#### Summary
+####Summary
 
 I discovered a Server-Side Request Forgery (SSRF) vulnerability in the “Import Project from URL” feature of a GitLab self-hosted instance. The vulnerability allows an authenticated user to force the GitLab server to issue HTTP requests to arbitrary URLs. Crucially, the server’s response timings differ based on whether the target port is open or closed, enabling an attacker to use this vulnerability not just for a single request but to actively probe and map the internal network.
 
@@ -31,12 +31,12 @@ This write-up provides a safe, lab-tested Proof of Concept (PoC) and recommended
 
 **Important:** All testing described here was performed in a controlled lab environment. Do not attempt to reproduce these steps against production systems or networks you do not have explicit permission to test.
 
-#### Technical Details
+####Technical Details
 
 - Environment: GitLab Self-Hosted Instance (Lab Deployment)
 - Tools Used: Burp Suite Professional (Interceptor, Intruder, Collaborator), `curl`.
 
-#### Reproduction Steps (Lab Environment Only)
+####Reproduction Steps (Lab Environment Only)
 
 **Step 1: Confirming the Outbound Request (Basic SSRF)**
 
@@ -69,7 +69,7 @@ This step demonstrates the true risk of the vulnerability: using it to scan the 
 
 *Burp Intruder results showing distinct timing differences between open and closed internal ports.*
 
-#### Practical Proof of Concept (Lab Reproduction)
+####Practical Proof of Concept (Lab Reproduction)
 
 I have successfully reproduced the SSRF vulnerability on a self-hosted GitLab instance.
 
@@ -83,9 +83,11 @@ I have successfully reproduced the SSRF vulnerability on a self-hosted GitLab in
 3. I pointed the `url` parameter to my listener.
 4. The GitLab server immediately connected back to my machine.
 
-![Proof of Concept Video](poc_video.mp4)
+<video controls width="100%" height="auto">
+  <source src="poc_video.mp4" type="video/mp4">
+</video>
 
-#### Impact and Remediation
+####Impact and Remediation
 
 **Impact:**
 An attacker can bypass network firewalls to:
