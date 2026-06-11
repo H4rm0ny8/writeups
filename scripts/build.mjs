@@ -79,8 +79,7 @@ function parseFrontmatter(raw) {
 
 function inlineMarkdown(text) {
   const parts = [];
-  const pattern =
-    /!\[([^\]]*)\]\(([^)]+)\)|\[([^\]]+)\]\(([^)]+)\)|`([^`]+)`|\*\*([^*]+)\*\*/g;
+  const pattern = /!\[([^\]]*)\]\(([^)]+)\)|\[([^\]]+)\]\(([^)]+)\)|`([^`]+)`|\*\*([^*]+)\*\*/g;
   let last = 0;
   let match;
 
@@ -111,18 +110,22 @@ function markdownToHtml(markdown) {
 
   const closeList = () => {
     if (inList) {
-      html += "</ul>";
+      html += "</ul>\n";
       inList = false;
     }
   };
 
   for (const line of lines) {
-    if (line.trim().startsWith("<") && !line.trim().startsWith("<!--")) {
+    const trimmed = line.trim();
+
+    // Raw HTML
+    if (trimmed.startsWith("<") && !trimmed.startsWith("<!--")) {
       closeList();
       html += line + "\n";
       continue;
     }
 
+    // Code blocks
     if (line.startsWith("```")) {
       closeList();
       if (!inCode) {
@@ -130,7 +133,7 @@ function markdownToHtml(markdown) {
         codeBuffer = [];
       } else {
         inCode = false;
-        html += `<pre><code>${escapeHtml(codeBuffer.join("\n"))}</code></pre>`;
+        html += `<pre><code>${escapeHtml(codeBuffer.join("\n"))}</code></pre>\n`;
       }
       continue;
     }
@@ -140,41 +143,47 @@ function markdownToHtml(markdown) {
       continue;
     }
 
-    if (line.startsWith("### ")) {
-      closeList();
-      html += `<h3>${inlineMarkdown(line.slice(4))}</h3>`;
-      continue;
-    }
-
-    if (line.startsWith("## ")) {
-      closeList();
-      html += `<h2>${inlineMarkdown(line.slice(3))}</h2>`;
-      continue;
-    }
-
+    // Headings
     if (line.startsWith("# ")) {
       closeList();
-      html += `<h1>${inlineMarkdown(line.slice(2))}</h1>`;
+      html += `<h1>${inlineMarkdown(line.slice(2))}</h1>\n`;
+      continue;
+    }
+    if (line.startsWith("## ")) {
+      closeList();
+      html += `<h2>${inlineMarkdown(line.slice(3))}</h2>\n`;
+      continue;
+    }
+    if (line.startsWith("### ")) {
+      closeList();
+      html += `<h3>${inlineMarkdown(line.slice(4))}</h3>\n`;
       continue;
     }
 
-    if (line.startsWith("- ")) {
+    // Lists
+    if (line.startsWith("- ") || line.startsWith("* ")) {
       if (!inList) {
-        html += "<ul>";
+        html += "<ul>\n";
         inList = true;
       }
-      html += `<li>${inlineMarkdown(line.slice(2))}</li>`;
+      html += `<li>${inlineMarkdown(line.slice(2))}</li>\n`;
       continue;
     }
 
+    // Empty line
+    if (!trimmed) {
+      closeList();
+      continue;
+    }
+
+    // Normal paragraph
     closeList();
-    if (!line.trim()) continue;
-    html += `<p>${inlineMarkdown(line)}</p>`;
+    html += `<p>${inlineMarkdown(line)}</p>\n`;
   }
 
   closeList();
   if (inCode) {
-    html += `<pre><code>${escapeHtml(codeBuffer.join("\n"))}</code></pre>`;
+    html += `<pre><code>${escapeHtml(codeBuffer.join("\n"))}</code></pre>\n`;
   }
 
   return html;
@@ -219,10 +228,7 @@ function inferMeta(filePath, data) {
   const parentDir = parts.length > 1 ? parts[parts.length - 2] : "misc";
 
   const type = data.type || (parts[0] === "blogs" ? "blog" : "writeup");
-  const category =
-    data.category ||
-    (type === "blog" ? parts[1] || "general" : parts[1] || parentDir || "misc");
-
+  const category = data.category || (type === "blog" ? parts[1] || "general" : parts[1] || parentDir || "misc");
   const slug = data.slug || slugify(fileName === "index" ? parentDir : fileName);
 
   return { type, category, slug, rel, fileName, parentDir };
@@ -264,9 +270,7 @@ function pageShell({ title, body, depth, navDots = "" }) {
 <body class="scanlines">
   <canvas id="hex-canvas" aria-hidden="true"></canvas>
   <div class="cursor-glow" aria-hidden="true"></div>
-
   ${navDots}
-
   <main class="page">
     ${body}
     <footer>
@@ -275,16 +279,13 @@ function pageShell({ title, body, depth, navDots = "" }) {
       <span class="hex-dot" aria-hidden="true"></span>
     </footer>
   </main>
-
   <script type="module" src="${js}"></script>
 </body>
 </html>`;
 }
 
 function renderWriteupPage(post, htmlBody) {
-  const metaLine = [post.difficulty, post.os, post.platform, post.date]
-    .filter(Boolean)
-    .join(" • ");
+  const metaLine = [post.difficulty, post.os, post.platform, post.date].filter(Boolean).join(" • ");
 
   const body = `
     <header class="hero visible" id="hero" data-section>
@@ -334,9 +335,7 @@ function renderBlogPage(post, htmlBody) {
 function renderWriteupCard(post) {
   const diff = slugify(post.difficulty || "medium");
   const platform = slugify(post.platform || "lab");
-  const tags = (post.tags || [])
-    .map((tag) => `<span>${escapeHtml(tag)}</span>`)
-    .join("");
+  const tags = (post.tags || []).map(tag => `<span>${escapeHtml(tag)}</span>`).join("");
 
   const details = [];
   if (post.initialAccess) details.push(`<p><strong>Initial Access:</strong> ${escapeHtml(post.initialAccess)}</p>`);
@@ -358,9 +357,7 @@ function renderWriteupCard(post) {
 }
 
 function renderBlogCard(post) {
-  const tags = (post.tags || [])
-    .map((tag) => `<span>${escapeHtml(tag)}</span>`)
-    .join("");
+  const tags = (post.tags || []).map(tag => `<span>${escapeHtml(tag)}</span>`).join("");
 
   return `
     <article class="writeup-card terminal-theme blog-card">
@@ -399,12 +396,9 @@ function renderHub(writeups, blogs) {
 
   const navDots = `
   <nav class="nav-dots" aria-label="Section navigation">
-    ${navItems
-      .map(
-        (item, idx) =>
-          `<button class="nav-dot${idx === 0 ? " active" : ""}" data-target="${item.id}" aria-label="${escapeHtml(item.label)}"></button>`
-      )
-      .join("\n    ")}
+    ${navItems.map((item, idx) => 
+      `<button class="nav-dot${idx === 0 ? " active" : ""}" data-target="${item.id}" aria-label="${escapeHtml(item.label)}"></button>`
+    ).join("\n    ")}
   </nav>`;
 
   const writeupSections = Object.entries(writeupGroups)
@@ -424,22 +418,18 @@ function renderHub(writeups, blogs) {
   const blogCards = Object.entries(blogGroups)
     .map(([key, posts]) => {
       const cards = posts.map(renderBlogCard).join("\n");
-      return `
-      <h3 class="card-subtitle">${escapeHtml(BLOG_CATEGORIES[key] || key)}</h3>
-      <div class="writeups-grid">${cards}</div>`;
+      return `<h3 class="card-subtitle">${escapeHtml(BLOG_CATEGORIES[key] || key)}</h3><div class="writeups-grid">${cards}</div>`;
     })
     .join("\n");
 
-  const blogSection = blogs.length
-    ? `
+  const blogSection = blogs.length ? `
     <section class="section" id="blogs" data-section>
       <div class="section-header">
         <div class="section-hex" aria-hidden="true"></div>
         <h2 class="section-title"><span>//</span> Cyber Blogs</h2>
       </div>
       ${blogCards}
-    </section>`
-    : "";
+    </section>` : "";
 
   const body = `
     <header class="hero visible" id="hero" data-section>
@@ -484,9 +474,7 @@ function build() {
   copyDir(path.join(ROOT, "js"), path.join(OUT, "js"));
   fs.copyFileSync(path.join(ROOT, ".nojekyll"), path.join(OUT, ".nojekyll"));
 
-  const files = walkMarkdownFiles(CONTENT).filter(
-    (file) => !file.includes(`${path.sep}_templates${path.sep}`)
-  );
+  const files = walkMarkdownFiles(CONTENT).filter(file => !file.includes(`${path.sep}_templates${path.sep}`));
 
   const writeups = [];
   const blogs = [];

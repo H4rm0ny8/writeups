@@ -1,7 +1,7 @@
 ---
 title: SSRF in GitLab — Import From URL
 type: writeup
-category: findings
+category: Findings
 platform: Gitlab
 difficulty: ---
 os: ---
@@ -92,7 +92,7 @@ I have successfully reproduced the SSRF vulnerability on a self-hosted GitLab in
 
 ### Proof of Concept Video
 
-<video controls width="100%" height="auto">
+<video controls width="100%" height="80%">
   <source src="https://github.com/H4rm0ny8/writeups/raw/refs/heads/main/content/writeups/findings/SSRF_GitLab/poc_video.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
