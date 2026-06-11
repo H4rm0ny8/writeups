@@ -25,7 +25,9 @@ This report details the exploitation of a WordPress-based lab environment, **On-
 
 ## Reconnaissance
 
-The initial phase involved examining the target webpage. Using **Wappalyzer**, I identified that the site is running on **WordPress**. This discovery prompted further enumeration using **WPScan**.
+The initial phase involved examining the target webpage. Using **Wappalyzer**
+![Wappalyzer and Initial Recon](image.png)
+ I identified that the site is running on **WordPress**. This discovery prompted further enumeration using **WPScan**.
 
 ### Initial Plugin Enumeration
 
@@ -140,7 +142,7 @@ However, the passive plugin enumeration did not yield significant results. To ga
 ❯ wpscan --url https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/ --enumerate p --plugins-detection aggressive
 ```
 
-![Wappalyzer and Initial Recon](image.png)
+
 
 ### Vulnerability Identification
 
@@ -148,7 +150,7 @@ The aggressive scan successfully identified a specific plugin and its version. R
 
 > The **NotificationX** plugin for WordPress is vulnerable to SQL Injection via the `type` parameter in all versions up to and including **2.8.2**. This is due to insufficient escaping of user-supplied parameters and a lack of preparation in the existing SQL query.
 
-![Aggressive Scan Results](image1.png)
+![Aggressive Scan Results](image%201.png)
 
 ## Exploitation  
 
@@ -234,8 +236,8 @@ for idx_password in range(1, 41):
 
 Running the script successfully extracted the administrator's username and password hash.
 
-![Extraction Process 1](image4.png)
-![Extraction Process 2](image5.png)
+![Extraction Process 1](image%204.png)
+![Extraction Process 2](image%205.png)
 
 ### Password Cracking
 
@@ -245,7 +247,7 @@ The extracted hash was identified as a **WordPress MD5** hash. I used **Hashcat*
 hashcat -m 400 hash.txt /usr/share/wordlists/rockyou.txt --force
 ```
 
-![Hashcat Results](image6.png)
+![Hashcat Results](image%206.png)
 
 ## Post-Exploitation
 
@@ -257,14 +259,14 @@ With the admin credentials, I logged into the WordPress dashboard. Although dire
 system($_GET['cmd']);
 ```
 
-![Admin Panel Login](image7.png)
+![Admin Panel Login](image%207.png)
 
 ### Retrieving the Flag
 
 I then used the `cmd` parameter to execute system commands. By listing the directory contents and reading the flag file, I successfully completed the challenge.
 
-![RCE Confirmation](image8.png)
-![System Commands](image9.png)
-![Flag Retrieval](image10.png)
+![RCE Confirmation](image%208.png)
+![System Commands](image%209.png)
+![Flag Retrieval](image%2010.png)
 
 The flag was successfully retrieved, marking the completion of the lab. :)
