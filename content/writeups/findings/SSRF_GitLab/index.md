@@ -12,8 +12,8 @@ tags:
   - Port Scanning
   - Reconnaissance
 summary: Exploiting a Server-Side Request Forgery (SSRF) in GitLab's "Import From URL" feature to probe internal networks and perform port scanning via timing differences.
-initialAccess:
-privesc:
+initialAccess: SSRF via the "Import Project from URL" feature by supplying an arbitrary URL to the `import_url` parameter
+privesc: Internal network reconnaissance and port scanning via observable timing differences on connection attempts.
 ---
 
 # SSRF in GitLab — Import From URL
@@ -101,7 +101,7 @@ I have successfully reproduced the SSRF vulnerability on a self-hosted GitLab in
 
 ---
 
-#### Impact and Remediation
+### Impact and Remediation
 
 **Impact:**
 
