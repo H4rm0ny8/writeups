@@ -1,5 +1,5 @@
 ---
-title: SSRF in GitLab — Import From URL
+title: SSRF in GitLab
 type: writeup
 category: Findings
 platform: Gitlab
