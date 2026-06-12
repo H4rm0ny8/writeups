@@ -1,5 +1,5 @@
 ---
-title: any
+title: On-Premise-03
 type: writeup
 category: Infinity Learning
 platform: Infinity Learning
@@ -16,7 +16,7 @@ initialAccess: RCE via Laravel debug mode deserialization vulnerability (CVE-202
 privesc: Direct flag retrieval through Remote Code Execution.
 ---
 
-# any
+# Abusing Laravel Ignition Package Vulnerability
 
 First, we have a URL for the target:
 `https://red.infinity.cyberwarfare.live/n7330234b66a452dbd91854cc722851p`
