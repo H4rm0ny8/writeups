@@ -52,7 +52,7 @@ Panel version **v1.11.10** is visible. Added it to `/etc/hosts` and opened it up
 
 ![image.png](image%202.png)
 
-Searched for exploits for this version and found one on Exploit-DB: https://www.exploit-db.com/exploits/52341
+Searched for exploits for this version and found one on Exploit-DB: [](https://www.exploit-db.com/exploits/52341)
 
 Let's use it.
 
@@ -65,7 +65,7 @@ http://panel.pterodactyl.htb/ => pterodactyl:PteraPanel@127.0.0.1:3306/panel
 
 Database credentials — Username: `pterodactyl`, Password: `PteraPanel`.
 
-Also found a GitHub exploit for RCE: https://github.com/rippsec/CVE-2025-49132-PHP-PEAR
+Also found a GitHub exploit for RCE: [](https://github.com/rippsec/CVE-2025-49132-PHP-PEAR)
 
 ![image.png](image%204.png)
 
@@ -161,7 +161,7 @@ Administrators should review udisks and system logs and apply pending updates.
 — HeadMonitor, System Administrator
 ```
 
-The admin is hinting at something with `udisks`. A quick search led to this: https://success.qualys.com/discussions/s/article/000008043
+The admin is hinting at something with `udisks`. A quick search led to this: [](https://success.qualys.com/discussions/s/article/000008043)
 
 It chains two vulnerabilities together — **CVE-2025-6018 + CVE-2025-6019**.
 
@@ -180,9 +180,9 @@ Exploitable by "allow_active" users.
 Allows mounting malicious images with improper security flags (nosuid, nodev) to gain full root privileges.
 ```
 
-We can chain both CVEs to get a root shell ;)
+We can chain both CVEs to get a root shell ;) 
 
-Cloning the exploit:
+Cloning the exploit:[](https://github.com/DesertDemons/CVE-2025-6018-6019.git)
 
 ```bash
 git clone https://github.com/DesertDemons/CVE-2025-6018-6019.git
@@ -235,6 +235,6 @@ root@pterodactyl:/# cat /root/root.txt
 
 ![image.png](image%2011.png)
 
-And we are root ;)
+And we are **root** ;)
 
 > What I learned from this lab: don't give up. It was more mental than technical — always keep going on something you love.
