@@ -10,26 +10,32 @@
   <link rel="stylesheet" href="../../../../css/style.css" />
 </head>
 <body class="scanlines">
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
   <canvas id="hex-canvas" aria-hidden="true"></canvas>
   <div class="cursor-glow" aria-hidden="true"></div>
+  
   <main class="page">
     
-    <p class="back-link"><a href="../../../../index.html">← Back to Hub</a></p>
-    <header class="hero visible" id="hero">
+    <p class="back-link"><a href="../../../../index.html">← cd ../hub</a></p>
+    <header class="hero visible" id="hero" data-section>
       <canvas id="hero-canvas" aria-hidden="true"></canvas>
-      <div class="scan-line"></div>
-      <div class="hero-hex-wrap">
-        <div class="hero-hex" aria-hidden="true">
-          <span class="hero-hex-inner">HTB</span>
+      <div class="scan-line" aria-hidden="true"></div>
+      <div class="hero-inner">
+        <div class="hero-hex-wrap">
+          <div class="hero-hex" aria-hidden="true">
+            <span class="hero-hex-inner">HTB</span>
+          </div>
         </div>
+        <h1 class="hero-name">Pterodactyl</h1>
+        <p class="hero-title">Medium • Linux • HTB • 2026-04-19</p>
       </div>
-      <h1 class="hero-name">Pterodactyl</h1>
-      <p class="hero-title typewriter">Medium • Linux • HTB • 2026-04-19</p>
     </header>
-    <section class="hub-section active visible" id="content">
-      <div class="sec-header">
-        <div class="sec-hex" aria-hidden="true"></div>
-        <h2 class="sec-title"><span>//</span> WRITEUP</h2>
+
+    <section class="section visible" id="content" data-section>
+      <div class="section-header">
+        <div class="section-hex" aria-hidden="true"></div>
+        <h2 class="section-title"><span>//</span> WRITEUP</h2>
       </div>
       <article class="panel md-content"><h1>Pterodactyl</h1>
 <p>Ok, first as we do every time, let's start with the Nmap scan.</p>

@@ -1,11 +1,21 @@
-/* ── Full-page honeycomb background ── */
+const motionOk = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* ── Animated honeycomb background ── */
 const canvas = document.getElementById("hex-canvas");
 const ctx = canvas?.getContext?.("2d");
 
 let hexes = [];
 let mouse = { x: -9999, y: -9999 };
+
 const HEX_R = 28;
 const HEX_H = HEX_R * Math.sqrt(3);
+
+function resizeCanvas() {
+  if (!canvas || !ctx) return;
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  buildGrid();
+}
 
 function buildGrid() {
   if (!canvas || !ctx) return;
@@ -19,7 +29,7 @@ function buildGrid() {
       hexes.push({
         x: col * HEX_R * 1.5 + offsetX,
         y: row * HEX_H * 0.5,
-        baseAlpha: 0.04 + Math.random() * 0.06,
+        baseAlpha: 0.03 + Math.random() * 0.05,
         phase: Math.random() * Math.PI * 2,
       });
     }
@@ -44,22 +54,18 @@ function drawHex(x, y, r, alpha) {
 function animateBg(time) {
   if (!canvas || !ctx) return;
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+
   for (const hex of hexes) {
     const dx = mouse.x - hex.x;
     const dy = mouse.y - hex.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    const proximity = Math.max(0, 1 - dist / 180);
+    const proximity = Math.max(0, 1 - dist / 220);
     const pulse = 0.5 + 0.5 * Math.sin(time * 0.001 + hex.phase);
-    drawHex(hex.x, hex.y, HEX_R - 2, hex.baseAlpha + proximity * 0.25 + pulse * 0.03);
+    const alpha = hex.baseAlpha + proximity * 0.28 + pulse * 0.04;
+    drawHex(hex.x, hex.y, HEX_R - 2, alpha);
   }
-  requestAnimationFrame(animateBg);
-}
 
-function resizeCanvas() {
-  if (!canvas || !ctx) return;
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  buildGrid();
+  requestAnimationFrame(animateBg);
 }
 
 if (canvas && ctx) {
@@ -69,7 +75,7 @@ if (canvas && ctx) {
     mouse.y = e.clientY;
   });
   resizeCanvas();
-  animateBg(0);
+  if (motionOk) animateBg(0);
 }
 
 /* ── Hero particle canvas ── */
@@ -80,25 +86,25 @@ let particles = [];
 function initHeroParticles() {
   if (!heroCanvas || !heroCtx) return;
   heroCanvas.width = heroCanvas.offsetWidth || 680;
-  heroCanvas.height = heroCanvas.offsetHeight || 320;
+  heroCanvas.height = heroCanvas.offsetHeight || 340;
   particles = [];
-  for (let i = 0; i < 60; i++) {
+  for (let i = 0; i < 70; i++) {
     particles.push({
       x: Math.random() * heroCanvas.width,
       y: Math.random() * heroCanvas.height,
-      vx: (Math.random() - 0.5) * 0.4,
-      vy: (Math.random() - 0.5) * 0.4,
+      vx: (Math.random() - 0.5) * 0.45,
+      vy: (Math.random() - 0.5) * 0.45,
       r: Math.random() * 1.5 + 0.5,
-      alpha: Math.random() * 0.5 + 0.1,
+      alpha: Math.random() * 0.45 + 0.1,
     });
   }
 }
 
 function drawHeroParticles() {
-  if (!heroCanvas || !heroCtx) return;
+  if (!heroCanvas || !heroCtx || !motionOk) return;
   const w = heroCanvas.width;
   const h = heroCanvas.height;
-  heroCtx.fillStyle = "#060c06";
+  heroCtx.fillStyle = "rgba(5, 8, 5, 0.22)";
   heroCtx.fillRect(0, 0, w, h);
 
   for (let i = 0; i < particles.length; i++) {
@@ -115,9 +121,9 @@ function drawHeroParticles() {
       const dx = p.x - q.x;
       const dy = p.y - q.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 80) {
+      if (dist < 90) {
         heroCtx.beginPath();
-        heroCtx.strokeStyle = `rgba(0,255,65,${0.12 * (1 - dist / 80)})`;
+        heroCtx.strokeStyle = `rgba(0,255,65,${0.14 * (1 - dist / 90)})`;
         heroCtx.lineWidth = 0.5;
         heroCtx.moveTo(p.x, p.y);
         heroCtx.lineTo(q.x, q.y);
@@ -136,7 +142,7 @@ function drawHeroParticles() {
 
 if (heroCanvas && heroCtx) {
   initHeroParticles();
-  drawHeroParticles();
+  if (motionOk) drawHeroParticles();
   window.addEventListener("resize", initHeroParticles);
 }
 
@@ -149,138 +155,173 @@ if (glow) {
   });
 }
 
+/* ── Scroll progress ── */
+const scrollProgress = document.querySelector(".scroll-progress");
+if (scrollProgress) {
+  window.addEventListener(
+    "scroll",
+    () => {
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = max > 0 ? (window.scrollY / max) * 100 : 0;
+      scrollProgress.style.width = `${pct}%`;
+    },
+    { passive: true }
+  );
+}
+
 /* ── Typing effect ── */
+const titles = [
+  "Red Team Operator",
+  "Active Directory Exploitation",
+  "Initial Access Specialist",
+  "Privilege Escalation Hunter",
+  "Offensive Security Researcher",
+];
+
 const typeEl = document.getElementById("typewriter");
-if (typeEl) {
-  const titles = [
-    "Obsidian vault synced. Rendering payloads...",
-    "Active Directory Operator",
-    "Linux PrivEsc Hunter",
-    "Bug Bounty Hunter",
-    "0xH4rm0ny",
-  ];
-  let titleIdx = 0;
-  let charIdx = 0;
-  let deleting = false;
+let titleIdx = 0;
+let charIdx = 0;
+let deleting = false;
 
-  function typeLoop() {
-    const current = titles[titleIdx];
-    const display = current.substring(0, charIdx);
-    typeEl.innerHTML = `${display}<span class="cursor-blink">|</span>`;
+function typeLoop() {
+  if (!typeEl) return;
+  const current = titles[titleIdx];
+  const display = current.substring(0, charIdx);
+  typeEl.innerHTML = `> ${display}<span class="cursor-blink">|</span>`;
 
-    if (!deleting && charIdx < current.length) {
-      charIdx++;
-      setTimeout(typeLoop, 45);
-    } else if (!deleting && charIdx === current.length) {
-      setTimeout(() => {
-        deleting = true;
-        typeLoop();
-      }, 1800);
-    } else if (deleting && charIdx > 0) {
-      charIdx--;
-      setTimeout(typeLoop, 25);
-    } else {
-      deleting = false;
-      titleIdx = (titleIdx + 1) % titles.length;
-      setTimeout(typeLoop, 350);
-    }
+  if (!deleting && charIdx < current.length) {
+    charIdx++;
+    setTimeout(typeLoop, 55);
+  } else if (!deleting && charIdx === current.length) {
+    setTimeout(() => {
+      deleting = true;
+      typeLoop();
+    }, 1600);
+  } else if (deleting && charIdx > 0) {
+    charIdx--;
+    setTimeout(typeLoop, 30);
+  } else {
+    deleting = false;
+    titleIdx = (titleIdx + 1) % titles.length;
+    setTimeout(typeLoop, 400);
   }
+}
 
-  typeLoop();
+if (motionOk) typeLoop();
+
+/* ── Status bar ticker ── */
+const statusEl = document.getElementById("status-text");
+if (statusEl && motionOk) {
+  const statusLines = [
+    "SESSION: operator@kali ~ #",
+    "LOADING exploit modules...",
+    "C2 BEACON: CHECK-IN OK",
+    "OPSEC: ENABLED",
+    "VAULT SYNC: COMPLETE",
+    "TARGET ENUM: RUNNING",
+  ];
+  let statusIdx = 0;
+  setInterval(() => {
+    statusIdx = (statusIdx + 1) % statusLines.length;
+    statusEl.textContent = statusLines[statusIdx];
+    statusEl.classList.remove("status-flash");
+    void statusEl.offsetWidth;
+    statusEl.classList.add("status-flash");
+  }, 3200);
 }
 
 /* ── Stats count-up ── */
 function countUp(el, target, delay = 0) {
   setTimeout(() => {
     let value = 0;
-    const step = Math.max(1, Math.ceil(target / 20));
+    const step = Math.max(1, Math.ceil(target / 28));
     const timer = setInterval(() => {
       value = Math.min(value + step, target);
       el.textContent = value;
-      if (value >= target) clearInterval(timer);
-    }, 60);
+      if (value >= target) {
+        clearInterval(timer);
+        el.classList.add("stat-pop");
+      }
+    }, 45);
   }, delay);
 }
 
 document.querySelectorAll("[data-count]").forEach((el, index) => {
-  countUp(el, parseInt(el.dataset.count, 10) || 0, 900 + index * 200);
-});
-
-/* ── Tab switching ── */
-document.querySelectorAll(".tab").forEach((tab) => {
-  tab.addEventListener("click", () => {
-    const target = tab.dataset.target;
-    document.querySelectorAll(".tab").forEach((t) => t.classList.toggle("active", t === tab));
-    document.querySelectorAll(".hub-section").forEach((section) => {
-      section.classList.toggle("active", section.id === `tab-${target}`);
-    });
-  });
-});
-
-/* ── Mini canvas on cards ── */
-function drawMiniCanvas(canvas) {
-  const seed = parseInt(canvas.dataset.seed, 10) || 1;
-  canvas.width = canvas.offsetWidth || 220;
-  canvas.height = 90;
-  const miniCtx = canvas.getContext("2d");
-  const w = canvas.width;
-  const h = canvas.height;
-  const rng = (n) => {
-    const x = Math.sin(seed * 9301 + n * 49297) * 233280;
-    return x - Math.floor(x);
-  };
-
-  miniCtx.fillStyle = "#050a05";
-  miniCtx.fillRect(0, 0, w, h);
-
-  for (let i = 0; i < 12; i++) {
-    const x = rng(i) * w;
-    const y = rng(i + 12) * h;
-    const size = rng(i + 24) * 18 + 6;
-    miniCtx.save();
-    miniCtx.translate(x, y);
-    miniCtx.beginPath();
-    for (let k = 0; k < 6; k++) {
-      const angle = (Math.PI / 3) * k;
-      const px = Math.cos(angle) * size;
-      const py = Math.sin(angle) * size;
-      k === 0 ? miniCtx.moveTo(px, py) : miniCtx.lineTo(px, py);
-    }
-    miniCtx.closePath();
-    miniCtx.strokeStyle = `rgba(0,255,65,${rng(i + 36) * 0.3 + 0.05})`;
-    miniCtx.lineWidth = 0.8;
-    miniCtx.stroke();
-    miniCtx.restore();
-  }
-
-  const lines = [
-    "> nmap -sCV target",
-    "PORT  STATE SERVICE",
-    "22    open  ssh",
-    "80    open  http",
-    "> python3 exploit.py",
-    "[+] Vulnerable!",
-    "[+] Shell spawned.",
-  ];
-  miniCtx.font = "7px monospace";
-  miniCtx.fillStyle = "rgba(0,200,50,0.22)";
-  lines.forEach((line, i) => miniCtx.fillText(line, 8, 12 + i * 11));
-}
-
-document.querySelectorAll(".mini-canvas").forEach((canvas, index) => {
-  setTimeout(() => drawMiniCanvas(canvas), 200 + index * 80);
+  countUp(el, parseInt(el.dataset.count, 10) || 0, 600 + index * 200);
 });
 
 /* ── Scroll reveal ── */
-const revealEls = document.querySelectorAll(".hero, .section, .hub-section, .card, .writeup-card");
-if (revealEls.length) {
-  const revealObserver = new IntersectionObserver(
+const revealEls = document.querySelectorAll(".hero, .section, .writeup-card, .panel");
+
+const revealObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) entry.target.classList.add("visible");
+    });
+  },
+  { threshold: 0.12, rootMargin: "0px 0px -50px 0px" }
+);
+
+revealEls.forEach((el) => revealObserver.observe(el));
+
+document.querySelectorAll(".writeup-card").forEach((card, index) => {
+  card.style.transitionDelay = `${(index % 6) * 0.09}s`;
+});
+
+/* ── Section nav dots ── */
+const navDots = document.querySelectorAll(".nav-dot");
+const sections = document.querySelectorAll("[data-section]");
+
+navDots.forEach((dot) => {
+  dot.addEventListener("click", () => {
+    const target = document.getElementById(dot.dataset.target);
+    if (target) target.scrollIntoView({ behavior: "smooth" });
+  });
+});
+
+if (sections.length && navDots.length) {
+  const sectionObserver = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
-        if (entry.isIntersecting) entry.target.classList.add("visible");
+        if (entry.isIntersecting) {
+          navDots.forEach((d) => d.classList.toggle("active", d.dataset.target === entry.target.id));
+        }
       });
     },
-    { threshold: 0.12, rootMargin: "0px 0px -40px 0px" }
+    { threshold: 0.4 }
   );
-  revealEls.forEach((el) => revealObserver.observe(el));
+  sections.forEach((s) => sectionObserver.observe(s));
+}
+
+/* ── Writeup card 3D tilt ── */
+if (motionOk) {
+  document.querySelectorAll(".writeup-card").forEach((card) => {
+    card.addEventListener("mousemove", (e) => {
+      if (e.target.closest("a")) return;
+      const rect = card.getBoundingClientRect();
+      const x = (e.clientX - rect.left) / rect.width - 0.5;
+      const y = (e.clientY - rect.top) / rect.height - 0.5;
+      card.style.transform = `translateY(-6px) perspective(600px) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+    });
+    card.addEventListener("mouseleave", () => {
+      card.style.transform = "";
+    });
+  });
+}
+
+/* ── Code block scan on view ── */
+const codeBlocks = document.querySelectorAll(".md-content pre");
+if (codeBlocks.length && motionOk) {
+  const codeObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("code-active");
+          codeObserver.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.3 }
+  );
+  codeBlocks.forEach((block) => codeObserver.observe(block));
 }
