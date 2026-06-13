@@ -9,7 +9,7 @@ let hexes = [];
 let particles = [];
 let mouse = { x: -9999, y: -9999 };
 
-const HEX_R = 28;
+const HEX_R = 40;
 const HEX_H = HEX_R * Math.sqrt(3);
 
 function resizeCanvas() {
@@ -32,7 +32,7 @@ function buildGrid() {
       hexes.push({
         x: col * HEX_R * 1.5 + offsetX,
         y: row * HEX_H * 0.5,
-        baseAlpha: 0.04 + Math.random() * 0.06,
+        baseAlpha: 0.12 + Math.random() * 0.1,
         phase: Math.random() * Math.PI * 2,
       });
     }
@@ -42,15 +42,15 @@ function buildGrid() {
 function initParticles() {
   if (!canvas) return;
   particles = [];
-  const count = Math.min(90, Math.floor((canvas.width * canvas.height) / 12000));
+  const count = Math.min(110, Math.floor((canvas.width * canvas.height) / 9000));
   for (let i = 0; i < count; i++) {
     particles.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      vx: (Math.random() - 0.5) * 0.35,
-      vy: (Math.random() - 0.5) * 0.35,
-      r: Math.random() * 1.4 + 0.4,
-      alpha: Math.random() * 0.4 + 0.08,
+      vx: (Math.random() - 0.5) * 0.4,
+      vy: (Math.random() - 0.5) * 0.4,
+      r: Math.random() * 2 + 0.8,
+      alpha: Math.random() * 0.55 + 0.2,
     });
   }
 }
@@ -65,8 +65,8 @@ function drawHex(x, y, r, alpha) {
     i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
   }
   ctx.closePath();
-  ctx.strokeStyle = `rgba(0, 255, 65, ${alpha})`;
-  ctx.lineWidth = 0.8;
+  ctx.strokeStyle = `rgba(0, 255, 65, ${Math.min(alpha, 0.95)})`;
+  ctx.lineWidth = 1.3;
   ctx.stroke();
 }
 
@@ -80,10 +80,10 @@ function animateBg(time) {
     const dx = mouse.x - hex.x;
     const dy = mouse.y - hex.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    const proximity = Math.max(0, 1 - dist / 240);
+    const proximity = Math.max(0, 1 - dist / 280);
     const pulse = 0.5 + 0.5 * Math.sin(time * 0.001 + hex.phase);
-    const alpha = hex.baseAlpha + proximity * 0.32 + pulse * 0.05;
-    drawHex(hex.x, hex.y, HEX_R - 2, alpha);
+    const alpha = hex.baseAlpha + proximity * 0.45 + pulse * 0.1;
+    drawHex(hex.x, hex.y, HEX_R - 3, alpha);
   }
 
   for (let i = 0; i < particles.length; i++) {
@@ -100,10 +100,10 @@ function animateBg(time) {
       const dx = p.x - q.x;
       const dy = p.y - q.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 100) {
+      if (dist < 120) {
         ctx.beginPath();
-        ctx.strokeStyle = `rgba(0,255,65,${0.1 * (1 - dist / 100)})`;
-        ctx.lineWidth = 0.5;
+        ctx.strokeStyle = `rgba(0,255,65,${0.22 * (1 - dist / 120)})`;
+        ctx.lineWidth = 0.8;
         ctx.moveTo(p.x, p.y);
         ctx.lineTo(q.x, q.y);
         ctx.stroke();
