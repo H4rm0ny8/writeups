@@ -324,9 +324,10 @@ function copyPostAssets(sourceFile, outputDir) {
   }
 }
 
-function pageShell({ title, body, depth, navDots = "" }) {
+function pageShell({ title, body, depth, navDots = "", pageClass = "" }) {
   const css = `${"../".repeat(depth)}css/style.css`;
   const js = `${"../".repeat(depth)}js/main.js`;
+  const mainClass = pageClass ? `page ${pageClass}` : "page";
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -346,7 +347,7 @@ function pageShell({ title, body, depth, navDots = "" }) {
   <canvas id="hex-canvas" aria-hidden="true"></canvas>
   <div class="cursor-glow" aria-hidden="true"></div>
   ${navDots}
-  <main class="page">
+  <main class="${mainClass}">
     ${body}
     <footer>
       <span class="hex-dot" aria-hidden="true"></span>
@@ -384,7 +385,7 @@ function renderWriteupPage(post, htmlBody) {
       <article class="panel md-content">${htmlBody}</article>
     </section>`;
 
-  return pageShell({ title: post.title, body, depth: 4 });
+  return pageShell({ title: post.title, body, depth: 4, pageClass: "writeup-page" });
 }
 
 function renderBlogPage(post, htmlBody) {
@@ -409,7 +410,7 @@ function renderBlogPage(post, htmlBody) {
       <article class="panel md-content">${htmlBody}</article>
     </section>`;
 
-  return pageShell({ title: post.title, body, depth: 3 });
+  return pageShell({ title: post.title, body, depth: 3, pageClass: "writeup-page" });
 }
 
 function renderWriteupCard(post) {
