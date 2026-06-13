@@ -12,24 +12,26 @@
 <body class="scanlines">
   <canvas id="hex-canvas" aria-hidden="true"></canvas>
   <div class="cursor-glow" aria-hidden="true"></div>
-  <div class="site">
+  <main class="page">
     
     <p class="back-link"><a href="../../../../index.html">← Back to Hub</a></p>
     <header class="hero visible" id="hero">
       <canvas id="hero-canvas" aria-hidden="true"></canvas>
       <div class="scan-line"></div>
-      <div class="hero-content">
-        <div class="hex-badge"><span class="hex-label">HTB</span></div>
-        <h1 class="site-title">Pterodactyl</h1>
-        <p class="typewriter">Medium • Linux • HTB • 2026-04-19</p>
+      <div class="hero-hex-wrap">
+        <div class="hero-hex" aria-hidden="true">
+          <span class="hero-hex-inner">HTB</span>
+        </div>
       </div>
+      <h1 class="hero-name">Pterodactyl</h1>
+      <p class="hero-title typewriter">Medium • Linux • HTB • 2026-04-19</p>
     </header>
     <section class="hub-section active visible" id="content">
       <div class="sec-header">
         <div class="sec-hex" aria-hidden="true"></div>
-        <div class="sec-title"><span>//</span> WRITEUP</div>
+        <h2 class="sec-title"><span>//</span> WRITEUP</h2>
       </div>
-      <article class="panel-article md-content"><h1>Pterodactyl</h1>
+      <article class="panel md-content"><h1>Pterodactyl</h1>
 <p>Ok, first as we do every time, let's start with the Nmap scan.</p>
 <pre><code>❯ sudo nmap -Pn 10.129.26.208 -sCV -o scan.txt
 Starting Nmap 7.98 ( https://nmap.org ) at 2026-04-05 09:52 +0200
@@ -171,7 +173,7 @@ root@pterodactyl:/# cat /root/root.txt</code></pre>
       H4rm0ny Content Hub &copy; 2026
       <span class="hex-dot" aria-hidden="true"></span>
     </footer>
-  </div>
+  </main>
   <script type="module" src="../../../../js/main.js"></script>
 </body>
 </html>

@@ -352,14 +352,14 @@ function pageShell({ title, body, depth }) {
 <body class="scanlines">
   <canvas id="hex-canvas" aria-hidden="true"></canvas>
   <div class="cursor-glow" aria-hidden="true"></div>
-  <div class="site">
+  <main class="page">
     ${body}
     <footer>
       <span class="hex-dot" aria-hidden="true"></span>
       H4rm0ny Content Hub &copy; ${new Date().getFullYear()}
       <span class="hex-dot" aria-hidden="true"></span>
     </footer>
-  </div>
+  </main>
   <script type="module" src="${js}"></script>
 </body>
 </html>`;
@@ -374,18 +374,20 @@ function renderWriteupPage(post, htmlBody) {
     <header class="hero visible" id="hero">
       <canvas id="hero-canvas" aria-hidden="true"></canvas>
       <div class="scan-line"></div>
-      <div class="hero-content">
-        <div class="hex-badge"><span class="hex-label">${escapeHtml((post.platform || "PWN").slice(0, 3).toUpperCase())}</span></div>
-        <h1 class="site-title">${escapeHtml(post.title)}</h1>
-        <p class="typewriter">${escapeHtml(metaLine || "Offensive security writeup")}</p>
+      <div class="hero-hex-wrap">
+        <div class="hero-hex" aria-hidden="true">
+          <span class="hero-hex-inner">${escapeHtml((post.platform || "PWN").slice(0, 3).toUpperCase())}</span>
+        </div>
       </div>
+      <h1 class="hero-name">${escapeHtml(post.title)}</h1>
+      <p class="hero-title typewriter">${escapeHtml(metaLine || "Offensive security writeup")}</p>
     </header>
     <section class="hub-section active visible" id="content">
       <div class="sec-header">
         <div class="sec-hex" aria-hidden="true"></div>
-        <div class="sec-title"><span>//</span> WRITEUP</div>
+        <h2 class="sec-title"><span>//</span> WRITEUP</h2>
       </div>
-      <article class="panel-article md-content">${htmlBody}</article>
+      <article class="panel md-content">${htmlBody}</article>
     </section>`;
 
   return pageShell({ title: post.title, body, depth: 4 });
@@ -487,7 +489,7 @@ function renderHub(writeups, blogs) {
     <div class="hub-section${index === 0 ? " active" : ""}" id="tab-${categoryTabId(category)}">
       <div class="sec-header">
         <div class="sec-hex" aria-hidden="true"></div>
-        <div class="sec-title"><span>//</span> ${escapeHtml(categoryLabel(category).toUpperCase())}</div>
+        <h2 class="sec-title"><span>//</span> ${escapeHtml(categoryLabel(category).toUpperCase())}</h2>
       </div>
       <div class="cards">${cards}</div>
     </div>`;
@@ -500,7 +502,7 @@ function renderHub(writeups, blogs) {
     <div class="hub-section" id="tab-blogs">
       <div class="sec-header">
         <div class="sec-hex" aria-hidden="true"></div>
-        <div class="sec-title"><span>//</span> CYBER BLOGS</div>
+        <h2 class="sec-title"><span>//</span> CYBER BLOGS</h2>
       </div>
       <div class="cards">${blogs.map((post) => renderBlogCard(post)).join("\n")}</div>
     </div>`
@@ -514,28 +516,30 @@ function renderHub(writeups, blogs) {
     <header class="hero visible" id="hero">
       <canvas id="hero-canvas" aria-hidden="true"></canvas>
       <div class="scan-line"></div>
-      <div class="hero-content">
-        <div class="hex-badge"><span class="hex-label">PWN</span></div>
-        <h1 class="site-title">H4rm0ny Content Hub</h1>
-        <p class="typewriter" id="typewriter">&gt; Obsidian vault synced. Rendering payloads...</p>
-        <div class="stats">
-          <div class="stat">
-            <div class="stat-val stat-value" data-count="${writeups.length}">0</div>
-            <div class="stat-lbl stat-label">WRITEUPS</div>
-          </div>
-          <div class="stat">
-            <div class="stat-val stat-value" data-count="${blogs.length}">0</div>
-            <div class="stat-lbl stat-label">BLOG POSTS</div>
-          </div>
-          <div class="stat">
-            <div class="stat-val stat-value" data-count="${categories.length + (blogs.length ? 1 : 0)}">0</div>
-            <div class="stat-lbl stat-label">SECTIONS</div>
-          </div>
+      <div class="hero-hex-wrap">
+        <div class="hero-hex" aria-hidden="true">
+          <span class="hero-hex-inner">H4</span>
         </div>
-        <p class="hub-note">
-          <a href="https://h4rm0ny8.github.io/profile/" target="_blank" rel="noopener noreferrer">&gt; Back to Profile</a>
-        </p>
       </div>
+      <h1 class="hero-name">H4rm0ny Content Hub</h1>
+      <p class="hero-title typewriter" id="typewriter">&gt; Obsidian vault synced. Rendering payloads...</p>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-val stat-value" data-count="${writeups.length}">0</div>
+          <div class="stat-lbl stat-label">WRITEUPS</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val stat-value" data-count="${blogs.length}">0</div>
+          <div class="stat-lbl stat-label">BLOG POSTS</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val stat-value" data-count="${categories.length + (blogs.length ? 1 : 0)}">0</div>
+          <div class="stat-lbl stat-label">SECTIONS</div>
+        </div>
+      </div>
+      <p class="hub-note">
+        <a href="https://h4rm0ny8.github.io/profile/" target="_blank" rel="noopener noreferrer">&gt; Back to Profile</a>
+      </p>
     </header>
 
     <div class="nav-tabs">

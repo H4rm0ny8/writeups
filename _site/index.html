@@ -12,33 +12,35 @@
 <body class="scanlines">
   <canvas id="hex-canvas" aria-hidden="true"></canvas>
   <div class="cursor-glow" aria-hidden="true"></div>
-  <div class="site">
+  <main class="page">
     
     <header class="hero visible" id="hero">
       <canvas id="hero-canvas" aria-hidden="true"></canvas>
       <div class="scan-line"></div>
-      <div class="hero-content">
-        <div class="hex-badge"><span class="hex-label">PWN</span></div>
-        <h1 class="site-title">H4rm0ny Content Hub</h1>
-        <p class="typewriter" id="typewriter">&gt; Obsidian vault synced. Rendering payloads...</p>
-        <div class="stats">
-          <div class="stat">
-            <div class="stat-val stat-value" data-count="5">0</div>
-            <div class="stat-lbl stat-label">WRITEUPS</div>
-          </div>
-          <div class="stat">
-            <div class="stat-val stat-value" data-count="0">0</div>
-            <div class="stat-lbl stat-label">BLOG POSTS</div>
-          </div>
-          <div class="stat">
-            <div class="stat-val stat-value" data-count="3">0</div>
-            <div class="stat-lbl stat-label">SECTIONS</div>
-          </div>
+      <div class="hero-hex-wrap">
+        <div class="hero-hex" aria-hidden="true">
+          <span class="hero-hex-inner">H4</span>
         </div>
-        <p class="hub-note">
-          <a href="https://h4rm0ny8.github.io/profile/" target="_blank" rel="noopener noreferrer">&gt; Back to Profile</a>
-        </p>
       </div>
+      <h1 class="hero-name">H4rm0ny Content Hub</h1>
+      <p class="hero-title typewriter" id="typewriter">&gt; Obsidian vault synced. Rendering payloads...</p>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-val stat-value" data-count="5">0</div>
+          <div class="stat-lbl stat-label">WRITEUPS</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val stat-value" data-count="0">0</div>
+          <div class="stat-lbl stat-label">BLOG POSTS</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val stat-value" data-count="3">0</div>
+          <div class="stat-lbl stat-label">SECTIONS</div>
+        </div>
+      </div>
+      <p class="hub-note">
+        <a href="https://h4rm0ny8.github.io/profile/" target="_blank" rel="noopener noreferrer">&gt; Back to Profile</a>
+      </p>
     </header>
 
     <div class="nav-tabs">
@@ -52,7 +54,7 @@
     <div class="hub-section active" id="tab-infinity-learning">
       <div class="sec-header">
         <div class="sec-hex" aria-hidden="true"></div>
-        <div class="sec-title"><span>//</span> INFINITY LEARNING</div>
+        <h2 class="sec-title"><span>//</span> INFINITY LEARNING</h2>
       </div>
       <div class="cards">
     <article class="card writeup-card">
@@ -89,7 +91,7 @@
     <div class="hub-section" id="tab-linux">
       <div class="sec-header">
         <div class="sec-hex" aria-hidden="true"></div>
-        <div class="sec-title"><span>//</span> LINUX TARGETS</div>
+        <h2 class="sec-title"><span>//</span> LINUX TARGETS</h2>
       </div>
       <div class="cards">
     <article class="card writeup-card">
@@ -126,7 +128,7 @@
     <div class="hub-section" id="tab-findings">
       <div class="sec-header">
         <div class="sec-hex" aria-hidden="true"></div>
-        <div class="sec-title"><span>//</span> FINDINGS</div>
+        <h2 class="sec-title"><span>//</span> FINDINGS</h2>
       </div>
       <div class="cards">
     <article class="card writeup-card">
@@ -150,7 +152,7 @@
       H4rm0ny Content Hub &copy; 2026
       <span class="hex-dot" aria-hidden="true"></span>
     </footer>
-  </div>
+  </main>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
