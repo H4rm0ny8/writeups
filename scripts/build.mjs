@@ -118,14 +118,12 @@ function markdownToHtml(markdown) {
   for (const line of lines) {
     const trimmed = line.trim();
 
-    // Raw HTML
     if (trimmed.startsWith("<") && !trimmed.startsWith("<!--")) {
       closeList();
       html += line + "\n";
       continue;
     }
 
-    // Code blocks
     if (line.startsWith("```")) {
       closeList();
       if (!inCode) {
@@ -143,7 +141,6 @@ function markdownToHtml(markdown) {
       continue;
     }
 
-    // Headings
     if (line.startsWith("# ")) {
       closeList();
       html += `<h1>${inlineMarkdown(line.slice(2))}</h1>\n`;
@@ -160,7 +157,6 @@ function markdownToHtml(markdown) {
       continue;
     }
 
-    // Lists
     if (line.startsWith("- ") || line.startsWith("* ")) {
       if (!inList) {
         html += "<ul>\n";
@@ -170,13 +166,11 @@ function markdownToHtml(markdown) {
       continue;
     }
 
-    // Empty line
     if (!trimmed) {
       closeList();
       continue;
     }
 
-    // Normal paragraph
     closeList();
     html += `<p>${inlineMarkdown(line)}</p>\n`;
   }
@@ -239,8 +233,7 @@ function copyPostAssets(sourceFile, outputDir) {
   ensureDir(outputDir);
 
   for (const entry of fs.readdirSync(sourceDir, { withFileTypes: true })) {
-    if (!entry.isFile()) continue;
-    if (entry.name.endsWith(".md")) continue;
+    if (!entry.isFile() || entry.name.endsWith(".md")) continue;
     fs.copyFileSync(path.join(sourceDir, entry.name), path.join(outputDir, entry.name));
   }
 
@@ -382,66 +375,17 @@ function renderHub(writeups, blogs) {
     writeupGroups[post.category].push(post);
   }
 
-  const blogGroups = {};
-  for (const post of blogs) {
-    if (!blogGroups[post.category]) blogGroups[post.category] = [];
-    blogGroups[post.category].push(post);
-  }
-
-  const navItems = [{ id: "hero", label: "Dashboard" }];
-  for (const key of Object.keys(writeupGroups)) {
-    navItems.push({ id: `writeups-${key}`, label: WRITEUP_CATEGORIES[key] || key });
-  }
-  if (blogs.length) navItems.push({ id: "blogs", label: "Cyber Blogs" });
-
-  const navDots = `
-  <nav class="nav-dots" aria-label="Section navigation">
-    ${navItems.map((item, idx) => 
-      `<button class="nav-dot${idx === 0 ? " active" : ""}" data-target="${item.id}" aria-label="${escapeHtml(item.label)}"></button>`
-    ).join("\n    ")}
-  </nav>`;
-
-  const writeupSections = Object.entries(writeupGroups)
-    .map(([key, posts]) => {
-      const cards = posts.map(renderWriteupCard).join("\n");
-      return `
-    <section class="section" id="writeups-${escapeHtml(key)}" data-section>
-      <div class="section-header">
-        <div class="section-hex" aria-hidden="true"></div>
-        <h2 class="section-title"><span>//</span> ${escapeHtml(WRITEUP_CATEGORIES[key] || key)}</h2>
-      </div>
-      <div class="writeups-grid">${cards}</div>
-    </section>`;
-    })
-    .join("\n");
-
-  const blogCards = Object.entries(blogGroups)
-    .map(([key, posts]) => {
-      const cards = posts.map(renderBlogCard).join("\n");
-      return `<h3 class="card-subtitle">${escapeHtml(BLOG_CATEGORIES[key] || key)}</h3><div class="writeups-grid">${cards}</div>`;
-    })
-    .join("\n");
-
-  const blogSection = blogs.length ? `
-    <section class="section" id="blogs" data-section>
-      <div class="section-header">
-        <div class="section-hex" aria-hidden="true"></div>
-        <h2 class="section-title"><span>//</span> Cyber Blogs</h2>
-      </div>
-      ${blogCards}
-    </section>` : "";
-
   const body = `
-    <header class="hero visible" id="hero" data-section>
+    <header class="hero" id="hero" data-section>
       <div class="hero-hex-wrap">
         <div class="hero-hex" aria-hidden="true">
           <span class="hero-hex-inner">PWN</span>
         </div>
       </div>
       <h1 class="hero-name">H4rm0ny Content Hub</h1>
-      <p class="hero-title" id="typewriter" aria-live="polite">> Obsidian vault synced. Rendering markdown payloads...</p>
+      <p class="hero-title" id="typewriter">&gt; Obsidian vault synced. Rendering payloads...</p>
 
-      <div class="panel stats-container">
+      <div class="stats-container">
         <div class="stat-box">
           <div class="stat-value">${writeups.length}</div>
           <div class="stat-label">WRITEUPS</div>
@@ -451,21 +395,33 @@ function renderHub(writeups, blogs) {
           <div class="stat-label">BLOG POSTS</div>
         </div>
         <div class="stat-box">
-          <div class="stat-value">${Object.keys(writeupGroups).length + Object.keys(blogGroups).length}</div>
+          <div class="stat-value">${Object.keys(writeupGroups).length}</div>
           <div class="stat-label">SECTIONS</div>
         </div>
       </div>
-
-      <p class="hub-note">
-        <a href="https://h4rm0ny8.github.io/profile/" target="_blank" rel="noopener noreferrer" style="color: var(--green);">> Profile</a>
-        <span style="opacity:0.5"> | </span>
-        Hacking is an art.
-      </p>
     </header>
-    ${writeupSections}
-    ${blogSection}`;
 
-  return pageShell({ title: "H4rm0ny Content Hub", body, depth: 0, navDots });
+    <div class="nav-tabs">
+      <button class="tab active" data-target="linux">/// Linux Targets</button>
+      <button class="tab" data-target="findings">/// Findings</button>
+      <button class="tab" data-target="writeup">/// Latest Writeups</button>
+    </div>
+
+    <div class="section active" id="tab-linux">
+      <div class="writeups-grid">
+        ${writeups.map(post => renderWriteupCard(post)).join("\n")}
+      </div>
+    </div>
+
+    ${blogs.length ? `
+    <div class="section" id="tab-findings">
+      <div class="writeups-grid">
+        ${blogs.map(post => renderBlogCard(post)).join("\n")}
+      </div>
+    </div>` : ""}
+  `;
+
+  return pageShell({ title: "H4rm0ny Content Hub", body, depth: 0 });
 }
 
 function build() {
