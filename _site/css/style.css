@@ -767,9 +767,28 @@ html.js .section.visible .writeup-card {
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 0.9rem 0.85rem;
-  overflow: auto;
   margin: 0.75rem 0;
   position: relative;
+  max-width: 100%;
+  max-height: none;
+  height: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
+  white-space: pre;
+  tab-size: 2;
+}
+
+.md-content pre code {
+  display: block;
+  white-space: pre;
+  overflow: visible;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  width: max-content;
+  min-width: 100%;
+  background: transparent;
+  border: none;
+  padding: 0;
 }
 
 .md-content pre.code-active::after {
