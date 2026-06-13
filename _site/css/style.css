@@ -36,13 +36,16 @@ body {
   min-height: 100vh;
 }
 
-/* ── Honeycomb background canvas ── */
+/* ── Honeycomb background canvas (full page) ── */
 #hex-canvas {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   z-index: 0;
   pointer-events: none;
-  opacity: 0.45;
+  opacity: 0.62;
 }
 
 /* ── Cursor glow ── */
@@ -80,7 +83,7 @@ body:hover .cursor-glow {
   inset: 0;
   z-index: 1;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, transparent 40%, rgba(0, 0, 0, 0.55) 100%);
+  background: radial-gradient(ellipse at center, transparent 55%, rgba(0, 0, 0, 0.35) 100%);
 }
 
 /* ── Layout ── */
@@ -113,29 +116,25 @@ body:hover .cursor-glow {
   position: relative;
   text-align: center;
   padding: 3rem 0 2.5rem;
-  overflow: hidden;
+  overflow: visible;
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 0.8s ease, transform 0.8s ease;
 }
 
 #hero-canvas {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
+  display: none;
 }
 
 .scan-line {
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   right: 0;
   height: 2px;
-  background: rgba(0, 255, 65, 0.12);
-  animation: scan 4s linear infinite;
-  z-index: 1;
+  background: rgba(0, 255, 65, 0.1);
+  animation: scan 5s linear infinite;
+  z-index: 4;
   pointer-events: none;
 }
 
@@ -229,9 +228,14 @@ body:hover .cursor-glow {
 /* ── Sections ── */
 .section {
   margin-top: 2.5rem;
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.7s ease, transform 0.7s ease;
+}
+
+html.js .section:not(.visible) {
   opacity: 0;
   transform: translateY(30px);
-  transition: opacity 0.7s ease, transform 0.7s ease;
 }
 
 .section.visible {
@@ -268,15 +272,21 @@ body:hover .cursor-glow {
 }
 
 .panel {
-  background: var(--surface);
+  background: rgba(15, 26, 15, 0.82);
   border: 1px solid var(--border);
   border-radius: 4px;
   padding: 1.25rem 1.5rem;
   position: relative;
   overflow: hidden;
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.6s ease, transform 0.6s ease;
+  backdrop-filter: blur(2px);
+}
+
+html.js .panel:not(.visible) {
   opacity: 0;
   transform: translateY(16px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
 .panel.visible {
@@ -419,18 +429,29 @@ footer .hex-dot {
 }
 
 .writeup-card {
-  background: rgba(8, 12, 16, 0.9);
+  background: rgba(8, 12, 16, 0.78);
   border: 1px solid rgba(0, 255, 102, 0.15);
   padding: 1.5rem;
   position: relative;
   overflow: hidden;
   border-radius: 4px;
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s, box-shadow 0.3s;
+  backdrop-filter: blur(3px);
+}
+
+html.js .writeup-card:not(.visible) {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease, border-color 0.3s, box-shadow 0.3s;
 }
 
 .writeup-card.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+html.js .section.visible .writeup-card {
   opacity: 1;
   transform: translateY(0);
 }

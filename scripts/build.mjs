@@ -342,6 +342,7 @@ function pageShell({ title, body, depth, navDots = "" }) {
 <body class="scanlines">
   <div class="scroll-progress" aria-hidden="true"></div>
   <div class="vignette" aria-hidden="true"></div>
+  <div class="scan-line" aria-hidden="true"></div>
   <canvas id="hex-canvas" aria-hidden="true"></canvas>
   <div class="cursor-glow" aria-hidden="true"></div>
   ${navDots}
@@ -364,8 +365,6 @@ function renderWriteupPage(post, htmlBody) {
   const body = `
     <p class="back-link"><a href="../../../../index.html">← cd ../hub</a></p>
     <header class="hero visible" id="hero" data-section>
-      <canvas id="hero-canvas" aria-hidden="true"></canvas>
-      <div class="scan-line" aria-hidden="true"></div>
       <div class="hero-inner">
         <div class="hero-hex-wrap">
           <div class="hero-hex" aria-hidden="true">
@@ -391,8 +390,6 @@ function renderWriteupPage(post, htmlBody) {
 function renderBlogPage(post, htmlBody) {
   const body = `
     <header class="hero visible" id="hero" data-section>
-      <canvas id="hero-canvas" aria-hidden="true"></canvas>
-      <div class="scan-line" aria-hidden="true"></div>
       <div class="hero-inner">
         <div class="hero-hex-wrap">
           <div class="hero-hex" aria-hidden="true">
@@ -499,7 +496,7 @@ function renderHub(writeups, blogs) {
     .map(([key, posts]) => {
       const cards = posts.map(renderWriteupCard).join("\n");
       return `
-    <section class="section" id="writeups-${escapeHtml(key)}" data-section>
+    <section class="section visible" id="writeups-${escapeHtml(key)}" data-section>
       <div class="section-header">
         <div class="section-hex" aria-hidden="true"></div>
         <h2 class="section-title"><span>//</span> ${escapeHtml(WRITEUP_CATEGORIES[key] || key)}</h2>
@@ -529,8 +526,6 @@ function renderHub(writeups, blogs) {
 
   const body = `
     <header class="hero visible" id="hero" data-section>
-      <canvas id="hero-canvas" aria-hidden="true"></canvas>
-      <div class="scan-line" aria-hidden="true"></div>
       <div class="hero-inner">
         <div class="hero-hex-wrap">
           <div class="hero-hex" aria-hidden="true">

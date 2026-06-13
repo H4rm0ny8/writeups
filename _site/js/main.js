@@ -1,10 +1,12 @@
 const motionOk = !window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+document.documentElement.classList.add("js");
 
 /* ── Animated honeycomb background ── */
 const canvas = document.getElementById("hex-canvas");
 const ctx = canvas?.getContext?.("2d");
 
 let hexes = [];
+let particles = [];
 let mouse = { x: -9999, y: -9999 };
 
 const HEX_R = 28;
@@ -15,6 +17,7 @@ function resizeCanvas() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   buildGrid();
+  initParticles();
 }
 
 function buildGrid() {
@@ -29,10 +32,26 @@ function buildGrid() {
       hexes.push({
         x: col * HEX_R * 1.5 + offsetX,
         y: row * HEX_H * 0.5,
-        baseAlpha: 0.03 + Math.random() * 0.05,
+        baseAlpha: 0.04 + Math.random() * 0.06,
         phase: Math.random() * Math.PI * 2,
       });
     }
+  }
+}
+
+function initParticles() {
+  if (!canvas) return;
+  particles = [];
+  const count = Math.min(90, Math.floor((canvas.width * canvas.height) / 12000));
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * canvas.width,
+      y: Math.random() * canvas.height,
+      vx: (Math.random() - 0.5) * 0.35,
+      vy: (Math.random() - 0.5) * 0.35,
+      r: Math.random() * 1.4 + 0.4,
+      alpha: Math.random() * 0.4 + 0.08,
+    });
   }
 }
 
@@ -53,59 +72,19 @@ function drawHex(x, y, r, alpha) {
 
 function animateBg(time) {
   if (!canvas || !ctx) return;
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  const w = canvas.width;
+  const h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
 
   for (const hex of hexes) {
     const dx = mouse.x - hex.x;
     const dy = mouse.y - hex.y;
     const dist = Math.sqrt(dx * dx + dy * dy);
-    const proximity = Math.max(0, 1 - dist / 220);
+    const proximity = Math.max(0, 1 - dist / 240);
     const pulse = 0.5 + 0.5 * Math.sin(time * 0.001 + hex.phase);
-    const alpha = hex.baseAlpha + proximity * 0.28 + pulse * 0.04;
+    const alpha = hex.baseAlpha + proximity * 0.32 + pulse * 0.05;
     drawHex(hex.x, hex.y, HEX_R - 2, alpha);
   }
-
-  requestAnimationFrame(animateBg);
-}
-
-if (canvas && ctx) {
-  window.addEventListener("resize", resizeCanvas);
-  document.addEventListener("mousemove", (e) => {
-    mouse.x = e.clientX;
-    mouse.y = e.clientY;
-  });
-  resizeCanvas();
-  if (motionOk) animateBg(0);
-}
-
-/* ── Hero particle canvas ── */
-const heroCanvas = document.getElementById("hero-canvas");
-const heroCtx = heroCanvas?.getContext?.("2d");
-let particles = [];
-
-function initHeroParticles() {
-  if (!heroCanvas || !heroCtx) return;
-  heroCanvas.width = heroCanvas.offsetWidth || 680;
-  heroCanvas.height = heroCanvas.offsetHeight || 340;
-  particles = [];
-  for (let i = 0; i < 70; i++) {
-    particles.push({
-      x: Math.random() * heroCanvas.width,
-      y: Math.random() * heroCanvas.height,
-      vx: (Math.random() - 0.5) * 0.45,
-      vy: (Math.random() - 0.5) * 0.45,
-      r: Math.random() * 1.5 + 0.5,
-      alpha: Math.random() * 0.45 + 0.1,
-    });
-  }
-}
-
-function drawHeroParticles() {
-  if (!heroCanvas || !heroCtx || !motionOk) return;
-  const w = heroCanvas.width;
-  const h = heroCanvas.height;
-  heroCtx.fillStyle = "rgba(5, 8, 5, 0.22)";
-  heroCtx.fillRect(0, 0, w, h);
 
   for (let i = 0; i < particles.length; i++) {
     const p = particles[i];
@@ -121,29 +100,33 @@ function drawHeroParticles() {
       const dx = p.x - q.x;
       const dy = p.y - q.y;
       const dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 90) {
-        heroCtx.beginPath();
-        heroCtx.strokeStyle = `rgba(0,255,65,${0.14 * (1 - dist / 90)})`;
-        heroCtx.lineWidth = 0.5;
-        heroCtx.moveTo(p.x, p.y);
-        heroCtx.lineTo(q.x, q.y);
-        heroCtx.stroke();
+      if (dist < 100) {
+        ctx.beginPath();
+        ctx.strokeStyle = `rgba(0,255,65,${0.1 * (1 - dist / 100)})`;
+        ctx.lineWidth = 0.5;
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(q.x, q.y);
+        ctx.stroke();
       }
     }
 
-    heroCtx.beginPath();
-    heroCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-    heroCtx.fillStyle = `rgba(0,255,65,${p.alpha})`;
-    heroCtx.fill();
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,255,65,${p.alpha})`;
+    ctx.fill();
   }
 
-  requestAnimationFrame(drawHeroParticles);
+  requestAnimationFrame(animateBg);
 }
 
-if (heroCanvas && heroCtx) {
-  initHeroParticles();
-  if (motionOk) drawHeroParticles();
-  window.addEventListener("resize", initHeroParticles);
+if (canvas && ctx) {
+  window.addEventListener("resize", resizeCanvas);
+  document.addEventListener("mousemove", (e) => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+  resizeCanvas();
+  if (motionOk) animateBg(0);
 }
 
 /* ── Cursor glow ── */
@@ -253,16 +236,28 @@ document.querySelectorAll("[data-count]").forEach((el, index) => {
 /* ── Scroll reveal ── */
 const revealEls = document.querySelectorAll(".hero, .section, .writeup-card, .panel");
 
+function revealInView() {
+  revealEls.forEach((el) => {
+    const rect = el.getBoundingClientRect();
+    if (rect.top < window.innerHeight * 0.92 && rect.bottom > 0) {
+      el.classList.add("visible");
+    }
+  });
+}
+
 const revealObserver = new IntersectionObserver(
   (entries) => {
     entries.forEach((entry) => {
       if (entry.isIntersecting) entry.target.classList.add("visible");
     });
   },
-  { threshold: 0.12, rootMargin: "0px 0px -50px 0px" }
+  { threshold: 0.08, rootMargin: "0px 0px -30px 0px" }
 );
 
 revealEls.forEach((el) => revealObserver.observe(el));
+revealInView();
+window.addEventListener("load", revealInView);
+window.addEventListener("resize", revealInView);
 
 document.querySelectorAll(".writeup-card").forEach((card, index) => {
   card.style.transitionDelay = `${(index % 6) * 0.09}s`;
