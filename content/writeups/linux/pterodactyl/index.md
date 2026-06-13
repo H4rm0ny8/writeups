@@ -167,6 +167,8 @@ It chains two vulnerabilities together — **CVE-2025-6018 + CVE-2025-6019**.
 
 To clarify quickly: `polkit` is the system responsible for controlling permissions for disk and mount operations on Linux. When a user triggers certain actions, polkit classifies the session into one of three levels:
 
+| Level | Meaning | Example |
+| --- | --- | --- |
 | **allow_active** | User is physically at the machine (console or GUI) | Highest privilege |
 | **allow_inactive** | Local user but not active | Mid-level |
 | **allow_any** | Any session — including remote (SSH, VNC) | Lowest privilege |
@@ -235,4 +237,4 @@ root@pterodactyl:/# cat /root/root.txt
 
 And we are **root** ;)
 
-> What I learned from this lab: don't give up. It was more mental than technical — always keep going on something you love.
+What I learned from this lab: don't give up. It was more mental than technical — always keep going on something you love.

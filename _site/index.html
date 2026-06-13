@@ -12,74 +12,145 @@
 <body class="scanlines">
   <canvas id="hex-canvas" aria-hidden="true"></canvas>
   <div class="cursor-glow" aria-hidden="true"></div>
-
-  
-  <nav class="nav-dots" aria-label="Section navigation">
-    <button class="nav-dot active" data-target="hero" aria-label="Dashboard"></button>
-    <button class="nav-dot" data-target="writeups-linux" aria-label="Linux Targets"></button>
-  </nav>
-
-  <main class="page">
-    <p class="back-link"><a href="index.html">← Back to Hub</a></p>
+  <div class="site">
     
-    <header class="hero visible" id="hero" data-section>
-      <div class="hero-hex-wrap">
-        <div class="hero-hex" aria-hidden="true">
-          <span class="hero-hex-inner">PWN</span>
+    <header class="hero visible" id="hero">
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <div class="scan-line"></div>
+      <div class="hero-content">
+        <div class="hex-badge"><span class="hex-label">PWN</span></div>
+        <h1 class="site-title">H4rm0ny Content Hub</h1>
+        <p class="typewriter" id="typewriter">&gt; Obsidian vault synced. Rendering payloads...</p>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-val stat-value" data-count="5">0</div>
+            <div class="stat-lbl stat-label">WRITEUPS</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val stat-value" data-count="0">0</div>
+            <div class="stat-lbl stat-label">BLOG POSTS</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val stat-value" data-count="3">0</div>
+            <div class="stat-lbl stat-label">SECTIONS</div>
+          </div>
         </div>
+        <p class="hub-note">
+          <a href="https://h4rm0ny8.github.io/profile/" target="_blank" rel="noopener noreferrer">&gt; Back to Profile</a>
+        </p>
       </div>
-      <h1 class="hero-name">H4rm0ny Content Hub</h1>
-      <p class="hero-title" id="typewriter" aria-live="polite">> Obsidian vault synced. Rendering markdown payloads...</p>
-
-      <div class="panel stats-container">
-        <div class="stat-box">
-          <div class="stat-value">1</div>
-          <div class="stat-label">WRITEUPS</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-value">0</div>
-          <div class="stat-label">BLOG POSTS</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-value">1</div>
-          <div class="stat-label">SECTIONS</div>
-        </div>
-      </div>
-      <p class="hub-note">Hi there! How are you? hacking is an art. </p>
-      <p class="hub-note">
-        <a href="https://h4rm0ny8.github.io/profile/" target="_blank" rel="noopener noreferrer" style="color: var(--green);">> Back to Profile</a>
-        <span style="opacity:0.5"> | </span>
-          
-      </p>
     </header>
+
+    <div class="nav-tabs">
+      <button class="tab active" data-target="infinity-learning">// Infinity Learning</button>
+<button class="tab" data-target="linux">// Linux Targets</button>
+<button class="tab" data-target="findings">// Findings</button>
+      
+    </div>
+
     
-    <section class="section" id="writeups-linux" data-section>
-      <div class="section-header">
-        <div class="section-hex" aria-hidden="true"></div>
-        <h2 class="section-title"><span>//</span> Linux Targets</h2>
+    <div class="hub-section active" id="tab-infinity-learning">
+      <div class="sec-header">
+        <div class="sec-hex" aria-hidden="true"></div>
+        <div class="sec-title"><span>//</span> INFINITY LEARNING</div>
       </div>
-      <div class="writeups-grid">
-    <article class="writeup-card terminal-theme">
-      <div class="card-glitch-bar"></div>
-      <div class="machine-info">
-        <span class="platform-badge htb">HTB</span>
-        <h3 class="machine-name">Pterodactyl</h3>
-        <span class="difficulty-badge hard">hard</span>
+      <div class="cards">
+    <article class="card writeup-card">
+      <div class="card-cover"><canvas class="mini-canvas" data-seed="1"></canvas></div>
+      <div class="card-glitch"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="platform infinity-learning">Infinity Learning</span>
+          <span class="diff medium">Medium</span>
+        </div>
+        <h3 class="card-name">NotificationX</h3>
+        <div class="card-detail"><p><strong>Initial Access:</strong> Unauthenticated SQL Injection via the 'type' parameter in the NotificationX plugin.</p><p><strong>PrivEsc:</strong> Gaining administrative access to the WordPress dashboard and editing plugin files for RCE.</p></div>
+        <div class="tags"><span class="tag">CVE-2024-1698</span><span class="tag">SQL Injection</span><span class="tag">WordPress</span><span class="tag">RCE</span></div>
+        <a href="posts/writeups/Infinity Learning/on-premise-09/index.html" class="card-btn">[CAT /root/flag.txt]</a>
       </div>
-      <div class="pwn-details"><p><strong>Initial Access:</strong> RCE on Pterodactyl panel path and service pivots.</p><p><strong>PrivEsc:</strong> Chained local misconfig/exploit path to execute SUID bash and get root.</p></div>
-      <div class="tech-tags"><span>CVE-2025-49132</span><span>CVE-2025-6018</span><span>CVE-2025-6019</span><span>Pterodactyl</span></div>
-      <a href="posts/writeups/linux/pterodactyl/index.html" class="btn-read-writeup">[CAT /root/flag.txt]</a>
+    </article>
+
+    <article class="card writeup-card">
+      <div class="card-cover"><canvas class="mini-canvas" data-seed="2"></canvas></div>
+      <div class="card-glitch"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="platform infinity-learning">Infinity Learning</span>
+          <span class="diff easy">Easy</span>
+        </div>
+        <h3 class="card-name">On-Premise-03</h3>
+        <div class="card-detail"><p><strong>Initial Access:</strong> RCE via Laravel debug mode deserialization vulnerability (CVE-2021-3129).</p><p><strong>PrivEsc:</strong> Direct flag retrieval through Remote Code Execution.</p></div>
+        <div class="tags"><span class="tag">CVE-2021-3129</span><span class="tag">Laravel</span><span class="tag">RCE</span><span class="tag">Debug Mode</span></div>
+        <a href="posts/writeups/Infinity Learning/on-premise-03/index.html" class="card-btn">[CAT /root/flag.txt]</a>
+      </div>
     </article></div>
-    </section>
+    </div>
+
+    <div class="hub-section" id="tab-linux">
+      <div class="sec-header">
+        <div class="sec-hex" aria-hidden="true"></div>
+        <div class="sec-title"><span>//</span> LINUX TARGETS</div>
+      </div>
+      <div class="cards">
+    <article class="card writeup-card">
+      <div class="card-cover"><canvas class="mini-canvas" data-seed="3"></canvas></div>
+      <div class="card-glitch"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="platform htb">HTB</span>
+          <span class="diff medium">Medium</span>
+        </div>
+        <h3 class="card-name">Pterodactyl</h3>
+        <div class="card-detail"><p><strong>Initial Access:</strong> RCE on Pterodactyl panel via CVE-2025-49132 (PHP PEAR deserialization).</p><p><strong>PrivEsc:</strong> Chained CVE-2025-6018 and CVE-2025-6019 to execute SUID bash and get root.</p></div>
+        <div class="tags"><span class="tag">CVE-2025-49132</span><span class="tag">CVE-2025-6018</span><span class="tag">CVE-2025-6019</span><span class="tag">Pterodactyl</span></div>
+        <a href="posts/writeups/linux/pterodactyl/index.html" class="card-btn">[CAT /root/flag.txt]</a>
+      </div>
+    </article>
+
+    <article class="card writeup-card">
+      <div class="card-cover"><canvas class="mini-canvas" data-seed="4"></canvas></div>
+      <div class="card-glitch"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="platform lab">LAB</span>
+          <span class="diff medium">Medium</span>
+        </div>
+        <h3 class="card-name">shiro</h3>
+        <div class="card-detail"><p><strong>PrivEsc:</strong> Flag retrieval through direct Remote Code Execution.</p></div>
+        <div class="tags"></div>
+        <a href="posts/writeups/linux/shiro/index.html" class="card-btn">[CAT /root/flag.txt]</a>
+      </div>
+    </article></div>
+    </div>
+
+    <div class="hub-section" id="tab-findings">
+      <div class="sec-header">
+        <div class="sec-hex" aria-hidden="true"></div>
+        <div class="sec-title"><span>//</span> FINDINGS</div>
+      </div>
+      <div class="cards">
+    <article class="card writeup-card">
+      <div class="card-cover"><canvas class="mini-canvas" data-seed="5"></canvas></div>
+      <div class="card-glitch"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="platform lab">LAB</span>
+          <span class="diff medium">Medium</span>
+        </div>
+        <h3 class="card-name">ssrf-gitlab</h3>
+        <div class="card-detail"><p><strong>PrivEsc:</strong> Internal network reconnaissance and port scanning via observable timing differences on connection attempts.</p></div>
+        <div class="tags"></div>
+        <a href="posts/writeups/findings/ssrf-gitlab/index.html" class="card-btn">[CAT /root/flag.txt]</a>
+      </div>
+    </article></div>
+    </div>
     
-     <footer>
+    <footer>
       <span class="hex-dot" aria-hidden="true"></span>
       H4rm0ny Content Hub &copy; 2026
       <span class="hex-dot" aria-hidden="true"></span>
     </footer>
-    
-  </main>
-
+  </div>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>

@@ -92,12 +92,12 @@ I have successfully reproduced the SSRF vulnerability on a self-hosted GitLab in
 
 ### Proof of Concept Video
 
-<video controls width="auto" height="auto">
-  <source src="https://github.com/H4rm0ny8/writeups/raw/refs/heads/main/content/writeups/findings/SSRF_GitLab/poc_video.mp4" type="video/mp4">
+<video controls width="100%">
+  <source src="poc_video.mp4" type="video/mp4">
   Your browser does not support the video tag.
 </video>
 
-[Download PoC Video](https://github.com/H4rm0ny8/writeups/raw/refs/heads/main/content/writeups/findings/SSRF_GitLab/poc_video.mp4)
+[Download PoC Video](poc_video.mp4)
 
 ---
 

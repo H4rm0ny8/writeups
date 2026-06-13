@@ -12,7 +12,19 @@ const WRITEUP_CATEGORIES = {
   linux: "Linux Targets",
   windows: "Windows Targets",
   misc: "Misc Targets",
+  findings: "Findings",
+  Findings: "Findings",
+  "infinity learning": "Infinity Learning",
+  "Infinity Learning": "Infinity Learning",
 };
+
+function categoryTabId(category) {
+  return slugify(category) || "misc";
+}
+
+function categoryLabel(category) {
+  return WRITEUP_CATEGORIES[category] || category;
+}
 
 const BLOG_CATEGORIES = {
   general: "General",
@@ -106,6 +118,7 @@ function markdownToHtml(markdown) {
   let html = "";
   let inCode = false;
   let inList = false;
+  let inBlockquote = false;
   let codeBuffer = [];
 
   const closeList = () => {
@@ -115,17 +128,62 @@ function markdownToHtml(markdown) {
     }
   };
 
-  for (const line of lines) {
+  const closeBlockquote = () => {
+    if (inBlockquote) {
+      html += "</blockquote>\n";
+      inBlockquote = false;
+    }
+  };
+
+  const isTableRow = (line) => line.trim().startsWith("|") && line.trim().endsWith("|");
+
+  const renderTable = (startIndex) => {
+    const rows = [];
+    let index = startIndex;
+    while (index < lines.length && isTableRow(lines[index])) {
+      rows.push(
+        lines[index]
+          .trim()
+          .slice(1, -1)
+          .split("|")
+          .map((cell) => cell.trim())
+      );
+      index++;
+    }
+
+    if (rows.length < 2) return { html: "", nextIndex: startIndex };
+
+    const bodyRows = rows.slice(2);
+    let tableHtml = "<table><thead><tr>";
+    rows[0].forEach((cell) => {
+      tableHtml += `<th>${inlineMarkdown(cell)}</th>`;
+    });
+    tableHtml += "</tr></thead><tbody>";
+    bodyRows.forEach((row) => {
+      tableHtml += "<tr>";
+      row.forEach((cell) => {
+        tableHtml += `<td>${inlineMarkdown(cell)}</td>`;
+      });
+      tableHtml += "</tr>";
+    });
+    tableHtml += "</tbody></table>\n";
+    return { html: tableHtml, nextIndex: index };
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
     const trimmed = line.trim();
 
     if (trimmed.startsWith("<") && !trimmed.startsWith("<!--")) {
       closeList();
-      html += line + "\n";
+      closeBlockquote();
+      html += `${line}\n`;
       continue;
     }
 
     if (line.startsWith("```")) {
       closeList();
+      closeBlockquote();
       if (!inCode) {
         inCode = true;
         codeBuffer = [];
@@ -140,6 +198,35 @@ function markdownToHtml(markdown) {
       codeBuffer.push(line);
       continue;
     }
+
+    if (/^---+$/.test(trimmed)) {
+      closeList();
+      closeBlockquote();
+      html += "<hr />\n";
+      continue;
+    }
+
+    if (isTableRow(line)) {
+      closeList();
+      closeBlockquote();
+      const table = renderTable(i);
+      html += table.html;
+      i = table.nextIndex - 1;
+      continue;
+    }
+
+    if (trimmed.startsWith(">")) {
+      closeList();
+      const quoteText = trimmed.replace(/^>\s?/, "");
+      if (!inBlockquote) {
+        html += "<blockquote>\n";
+        inBlockquote = true;
+      }
+      html += `<p>${inlineMarkdown(quoteText)}</p>\n`;
+      continue;
+    }
+
+    closeBlockquote();
 
     if (line.startsWith("# ")) {
       closeList();
@@ -176,6 +263,7 @@ function markdownToHtml(markdown) {
   }
 
   closeList();
+  closeBlockquote();
   if (inCode) {
     html += `<pre><code>${escapeHtml(codeBuffer.join("\n"))}</code></pre>\n`;
   }
@@ -245,9 +333,10 @@ function copyPostAssets(sourceFile, outputDir) {
   }
 }
 
-function pageShell({ title, body, depth, navDots = "" }) {
+function pageShell({ title, body, depth }) {
   const css = `${"../".repeat(depth)}css/style.css`;
   const js = `${"../".repeat(depth)}js/main.js`;
+  const home = depth === 0 ? "index.html" : `${"../".repeat(depth)}index.html`;
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -263,15 +352,14 @@ function pageShell({ title, body, depth, navDots = "" }) {
 <body class="scanlines">
   <canvas id="hex-canvas" aria-hidden="true"></canvas>
   <div class="cursor-glow" aria-hidden="true"></div>
-  ${navDots}
-  <main class="page">
+  <div class="site">
     ${body}
     <footer>
       <span class="hex-dot" aria-hidden="true"></span>
       H4rm0ny Content Hub &copy; ${new Date().getFullYear()}
       <span class="hex-dot" aria-hidden="true"></span>
     </footer>
-  </main>
+  </div>
   <script type="module" src="${js}"></script>
 </body>
 </html>`;
@@ -279,24 +367,25 @@ function pageShell({ title, body, depth, navDots = "" }) {
 
 function renderWriteupPage(post, htmlBody) {
   const metaLine = [post.difficulty, post.os, post.platform, post.date].filter(Boolean).join(" • ");
+  const home = "../../../../index.html";
 
   const body = `
-    <header class="hero visible" id="hero" data-section>
-      <div class="hero-hex-wrap">
-        <div class="hero-hex" aria-hidden="true">
-          <span class="hero-hex-inner">${escapeHtml((post.platform || "PWN").slice(0, 3).toUpperCase())}</span>
-        </div>
+    <p class="back-link"><a href="${home}">← Back to Hub</a></p>
+    <header class="hero visible" id="hero">
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <div class="scan-line"></div>
+      <div class="hero-content">
+        <div class="hex-badge"><span class="hex-label">${escapeHtml((post.platform || "PWN").slice(0, 3).toUpperCase())}</span></div>
+        <h1 class="site-title">${escapeHtml(post.title)}</h1>
+        <p class="typewriter">${escapeHtml(metaLine || "Offensive security writeup")}</p>
       </div>
-      <h1 class="hero-name">${escapeHtml(post.title)}</h1>
-      <p class="hero-title">${escapeHtml(metaLine || "Offensive security writeup")}</p>
     </header>
-
-    <section class="section visible" id="content" data-section>
-      <div class="section-header">
-        <div class="section-hex" aria-hidden="true"></div>
-        <h2 class="section-title"><span>//</span> WRITEUP</h2>
+    <section class="hub-section active visible" id="content">
+      <div class="sec-header">
+        <div class="sec-hex" aria-hidden="true"></div>
+        <div class="sec-title"><span>//</span> WRITEUP</div>
       </div>
-      <article class="panel md-content">${htmlBody}</article>
+      <article class="panel-article md-content">${htmlBody}</article>
     </section>`;
 
   return pageShell({ title: post.title, body, depth: 4 });
@@ -325,46 +414,50 @@ function renderBlogPage(post, htmlBody) {
   return pageShell({ title: post.title, body, depth: 3 });
 }
 
-function renderWriteupCard(post) {
+function renderWriteupCard(post, seed = 1) {
   const diff = slugify(post.difficulty || "medium");
   const platform = slugify(post.platform || "lab");
-  const tags = (post.tags || []).map(tag => `<span>${escapeHtml(tag)}</span>`).join("");
+  const tags = (post.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
 
   const details = [];
-  if (post.initialAccess) details.push(`<p><strong>Initial Access:</strong> ${escapeHtml(post.initialAccess)}</p>`);
-  if (post.privesc) details.push(`<p><strong>PrivEsc:</strong> ${escapeHtml(post.privesc)}</p>`);
-  if (!details.length && post.summary) details.push(`<p>${escapeHtml(post.summary)}</p>`);
+  if (post.initialAccess) details.push(`<strong>Initial Access:</strong> ${escapeHtml(post.initialAccess)}`);
+  if (post.privesc) details.push(`<strong>PrivEsc:</strong> ${escapeHtml(post.privesc)}`);
+  if (!details.length && post.summary) details.push(escapeHtml(post.summary));
 
   return `
-    <article class="writeup-card terminal-theme">
-      <div class="card-glitch-bar"></div>
-      <div class="machine-info">
-        <span class="platform-badge ${escapeHtml(platform)}">${escapeHtml(post.platform || "LAB")}</span>
-        <h3 class="machine-name">${escapeHtml(post.title)}</h3>
-        <span class="difficulty-badge ${escapeHtml(diff)}">${escapeHtml(post.difficulty || "Medium")}</span>
+    <article class="card writeup-card">
+      <div class="card-cover"><canvas class="mini-canvas" data-seed="${seed}"></canvas></div>
+      <div class="card-glitch"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="platform ${escapeHtml(platform)}">${escapeHtml(post.platform || "LAB")}</span>
+          <span class="diff ${escapeHtml(diff)}">${escapeHtml(post.difficulty || "Medium")}</span>
+        </div>
+        <h3 class="card-name">${escapeHtml(post.title)}</h3>
+        <div class="card-detail">${details.map((item) => `<p>${item}</p>`).join("")}</div>
+        <div class="tags">${tags}</div>
+        <a href="${escapeHtml(post.url)}" class="card-btn">[CAT /root/flag.txt]</a>
       </div>
-      <div class="pwn-details">${details.join("")}</div>
-      <div class="tech-tags">${tags}</div>
-      <a href="${escapeHtml(post.url)}" class="btn-read-writeup">[CAT /root/flag.txt]</a>
     </article>`;
 }
 
 function renderBlogCard(post) {
-  const tags = (post.tags || []).map(tag => `<span>${escapeHtml(tag)}</span>`).join("");
+  const tags = (post.tags || []).map((tag) => `<span class="tag">${escapeHtml(tag)}</span>`).join("");
 
   return `
-    <article class="writeup-card terminal-theme blog-card">
-      <div class="card-glitch-bar"></div>
-      <div class="machine-info">
-        <span class="platform-badge blog">BLOG</span>
-        <h3 class="machine-name">${escapeHtml(post.title)}</h3>
-        <span class="difficulty-badge medium">${escapeHtml(post.date || "")}</span>
+    <article class="card writeup-card blog-card">
+      <div class="card-cover"><canvas class="mini-canvas" data-seed="99"></canvas></div>
+      <div class="card-glitch"></div>
+      <div class="card-body">
+        <div class="card-top">
+          <span class="platform blog">BLOG</span>
+          <span class="diff medium">${escapeHtml(post.date || "")}</span>
+        </div>
+        <h3 class="card-name">${escapeHtml(post.title)}</h3>
+        <div class="card-detail"><p>${escapeHtml(post.summary || "Cybersecurity notes and research.")}</p></div>
+        <div class="tags">${tags}</div>
+        <a href="${escapeHtml(post.url)}" class="card-btn">[READ /var/log/entry.md]</a>
       </div>
-      <div class="pwn-details">
-        <p>${escapeHtml(post.summary || "Cybersecurity notes and research.")}</p>
-      </div>
-      <div class="tech-tags">${tags}</div>
-      <a href="${escapeHtml(post.url)}" class="btn-read-writeup">[READ /var/log/entry.md]</a>
     </article>`;
 }
 
@@ -375,51 +468,83 @@ function renderHub(writeups, blogs) {
     writeupGroups[post.category].push(post);
   }
 
-  const body = `
-    <header class="hero" id="hero" data-section>
-      <div class="hero-hex-wrap">
-        <div class="hero-hex" aria-hidden="true">
-          <span class="hero-hex-inner">PWN</span>
-        </div>
-      </div>
-      <h1 class="hero-name">H4rm0ny Content Hub</h1>
-      <p class="hero-title" id="typewriter">&gt; Obsidian vault synced. Rendering payloads...</p>
+  const categories = Object.keys(writeupGroups);
+  let cardSeed = 1;
 
-      <div class="stats-container">
-        <div class="stat-box">
-          <div class="stat-value">${writeups.length}</div>
-          <div class="stat-label">WRITEUPS</div>
+  const tabs = categories
+    .map(
+      (category, index) =>
+        `<button class="tab${index === 0 ? " active" : ""}" data-target="${categoryTabId(category)}">// ${escapeHtml(categoryLabel(category))}</button>`
+    )
+    .join("\n");
+
+  const sections = categories
+    .map((category, index) => {
+      const cards = writeupGroups[category]
+        .map((post) => renderWriteupCard(post, cardSeed++))
+        .join("\n");
+      return `
+    <div class="hub-section${index === 0 ? " active" : ""}" id="tab-${categoryTabId(category)}">
+      <div class="sec-header">
+        <div class="sec-hex" aria-hidden="true"></div>
+        <div class="sec-title"><span>//</span> ${escapeHtml(categoryLabel(category).toUpperCase())}</div>
+      </div>
+      <div class="cards">${cards}</div>
+    </div>`;
+    })
+    .join("\n");
+
+  const blogSection =
+    blogs.length > 0
+      ? `
+    <div class="hub-section" id="tab-blogs">
+      <div class="sec-header">
+        <div class="sec-hex" aria-hidden="true"></div>
+        <div class="sec-title"><span>//</span> CYBER BLOGS</div>
+      </div>
+      <div class="cards">${blogs.map((post) => renderBlogCard(post)).join("\n")}</div>
+    </div>`
+      : "";
+
+  const blogTab = blogs.length
+    ? `<button class="tab" data-target="blogs">// Cyber Blogs</button>`
+    : "";
+
+  const body = `
+    <header class="hero visible" id="hero">
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <div class="scan-line"></div>
+      <div class="hero-content">
+        <div class="hex-badge"><span class="hex-label">PWN</span></div>
+        <h1 class="site-title">H4rm0ny Content Hub</h1>
+        <p class="typewriter" id="typewriter">&gt; Obsidian vault synced. Rendering payloads...</p>
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-val stat-value" data-count="${writeups.length}">0</div>
+            <div class="stat-lbl stat-label">WRITEUPS</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val stat-value" data-count="${blogs.length}">0</div>
+            <div class="stat-lbl stat-label">BLOG POSTS</div>
+          </div>
+          <div class="stat">
+            <div class="stat-val stat-value" data-count="${categories.length + (blogs.length ? 1 : 0)}">0</div>
+            <div class="stat-lbl stat-label">SECTIONS</div>
+          </div>
         </div>
-        <div class="stat-box">
-          <div class="stat-value">${blogs.length}</div>
-          <div class="stat-label">BLOG POSTS</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-value">${Object.keys(writeupGroups).length}</div>
-          <div class="stat-label">SECTIONS</div>
-        </div>
+        <p class="hub-note">
+          <a href="https://h4rm0ny8.github.io/profile/" target="_blank" rel="noopener noreferrer">&gt; Back to Profile</a>
+        </p>
       </div>
     </header>
 
     <div class="nav-tabs">
-      <button class="tab active" data-target="linux">/// Linux Targets</button>
-      <button class="tab" data-target="findings">/// Findings</button>
-      <button class="tab" data-target="writeup">/// Latest Writeups</button>
+      ${tabs}
+      ${blogTab}
     </div>
 
-    <div class="section active" id="tab-linux">
-      <div class="writeups-grid">
-        ${writeups.map(post => renderWriteupCard(post)).join("\n")}
-      </div>
-    </div>
-
-    ${blogs.length ? `
-    <div class="section" id="tab-findings">
-      <div class="writeups-grid">
-        ${blogs.map(post => renderBlogCard(post)).join("\n")}
-      </div>
-    </div>` : ""}
-  `;
+    ${sections}
+    ${blogSection}`;
 
   return pageShell({ title: "H4rm0ny Content Hub", body, depth: 0 });
 }

