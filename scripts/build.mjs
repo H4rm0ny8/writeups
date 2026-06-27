@@ -67,6 +67,44 @@ function cardInitials(title) {
   return String(title || "??").slice(0, 2).toUpperCase();
 }
 
+function buildAvatarSvg(initials) {
+  const label = escapeHtml(initials);
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-hidden="true">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0a140a"/>
+      <stop offset="100%" stop-color="#122412"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="32" fill="url(#bg)"/>
+  <circle cx="32" cy="32" r="28" fill="none" stroke="#00ff41" stroke-opacity="0.35" stroke-width="1.5"/>
+  <text x="32" y="38" text-anchor="middle" font-family="Consolas, monospace" font-size="18" font-weight="700" fill="#00ff41">${label}</text>
+</svg>`;
+}
+
+function defaultCoverPath(depth) {
+  return `${"../".repeat(depth)}assets/default.png`;
+}
+
+function resolveWriteupMedia(post, sourceDir, outDir, meta, avatarFile, coverFile) {
+  const baseUrl = `posts/writeups/${meta.category}/${meta.slug}`;
+
+  if (avatarFile && fs.existsSync(path.join(sourceDir, avatarFile))) {
+    post.avatarPageUrl = avatarFile;
+  } else {
+    const generated = "avatar.svg";
+    const generatedPath = path.join(outDir, generated);
+    if (!fs.existsSync(generatedPath)) {
+      fs.writeFileSync(generatedPath, buildAvatarSvg(cardInitials(post.title)));
+    }
+    post.avatarPageUrl = generated;
+  }
+  post.avatarUrl = `${baseUrl}/${post.avatarPageUrl}`;
+
+  post.coverUrl =
+    coverFile && fs.existsSync(path.join(sourceDir, coverFile)) ? coverFile : "";
+}
+
 function parseFrontmatter(raw) {
   if (!raw.startsWith("---")) return { data: {}, content: raw };
 
@@ -395,18 +433,15 @@ function renderWriteupHeroBadge(post) {
 }
 
 function renderWriteupPage(post, htmlBody) {
+  const depth = 4;
   const metaLine = [post.difficulty, post.os, post.platform, post.date].filter(Boolean).join(" • ");
-  const hasCover = Boolean(post.coverUrl);
-  const heroClass = hasCover ? "hero writeup-hero has-cover visible" : "hero writeup-hero visible";
-  const coverBg = hasCover
-    ? `<div class="writeup-hero-cover" style="background-image: url('${escapeHtml(post.coverUrl)}')" aria-hidden="true"></div>`
-    : "";
+  const coverSrc = post.coverUrl || defaultCoverPath(depth);
 
   const body = `
     <p class="back-link"><a href="../../../../index.html">← cd ../hub</a></p>
-    <header class="${heroClass}" id="hero" data-section>
-      ${coverBg}
-      <div class="writeup-hero-scrim${hasCover ? "" : " is-minimal"}" aria-hidden="true"></div>
+    <header class="hero writeup-hero has-cover visible" id="hero" data-section>
+      <div class="writeup-hero-cover" style="background-image: url('${escapeHtml(coverSrc)}')" aria-hidden="true"></div>
+      <div class="writeup-hero-scrim" aria-hidden="true"></div>
       <div class="hero-inner">
         ${renderWriteupHeroBadge(post)}
         <h1 class="hero-name">${escapeHtml(post.title)}</h1>
@@ -642,6 +677,8 @@ function build() {
   emptyDir(OUT);
   copyDir(path.join(ROOT, "css"), path.join(OUT, "css"));
   copyDir(path.join(ROOT, "js"), path.join(OUT, "js"));
+  const assetsSrc = path.join(ROOT, "assets");
+  if (fs.existsSync(assetsSrc)) copyDir(assetsSrc, path.join(OUT, "assets"));
   fs.copyFileSync(path.join(ROOT, ".nojekyll"), path.join(OUT, ".nojekyll"));
 
   const files = walkMarkdownFiles(CONTENT).filter((file) => !file.includes(`${path.sep}_templates${path.sep}`));
@@ -698,13 +735,7 @@ function build() {
       ensureDir(outDir);
       copyPostAssets(file, outDir);
       post.url = `posts/writeups/${meta.category}/${meta.slug}/index.html`;
-      if (avatarFile && fs.existsSync(path.join(sourceDir, avatarFile))) {
-        post.avatarUrl = `posts/writeups/${meta.category}/${meta.slug}/${avatarFile}`;
-        post.avatarPageUrl = avatarFile;
-      }
-      if (coverFile && fs.existsSync(path.join(sourceDir, coverFile))) {
-        post.coverUrl = coverFile;
-      }
+      resolveWriteupMedia(post, sourceDir, outDir, meta, avatarFile, coverFile);
       fs.writeFileSync(path.join(outDir, "index.html"), renderWriteupPage(post, htmlBody));
       writeups.push(post);
     }
