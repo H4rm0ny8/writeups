@@ -387,25 +387,31 @@ function pageShell({ title, body, depth, navDots = "", pageClass = "" }) {
 </html>`;
 }
 
+function renderWriteupHeroBadge(post) {
+  if (post.avatarPageUrl) {
+    return `<div class="hero-avatar-wrap"><img class="hero-avatar" src="${escapeHtml(post.avatarPageUrl)}" alt="" loading="eager" /></div>`;
+  }
+  return `<div class="hero-avatar-wrap hero-avatar-fallback"><span class="hero-avatar-initials">${escapeHtml(cardInitials(post.title))}</span></div>`;
+}
+
 function renderWriteupPage(post, htmlBody) {
   const metaLine = [post.difficulty, post.os, post.platform, post.date].filter(Boolean).join(" • ");
-  const coverBlock = post.coverUrl
-    ? `<figure class="writeup-cover"><img src="${escapeHtml(post.coverUrl)}" alt="${escapeHtml(post.title)}" loading="lazy" /></figure>`
+  const hasCover = Boolean(post.coverUrl);
+  const heroClass = hasCover ? "hero writeup-hero has-cover visible" : "hero writeup-hero visible";
+  const coverBg = hasCover
+    ? `<div class="writeup-hero-cover" style="background-image: url('${escapeHtml(post.coverUrl)}')" aria-hidden="true"></div>`
     : "";
 
   const body = `
     <p class="back-link"><a href="../../../../index.html">← cd ../hub</a></p>
-    <header class="hero visible" id="hero" data-section>
+    <header class="${heroClass}" id="hero" data-section>
+      ${coverBg}
+      <div class="writeup-hero-scrim${hasCover ? "" : " is-minimal"}" aria-hidden="true"></div>
       <div class="hero-inner">
-        <div class="hero-hex-wrap">
-          <div class="hero-hex" aria-hidden="true">
-            <span class="hero-hex-inner">${escapeHtml((post.platform || "PWN").slice(0, 3).toUpperCase())}</span>
-          </div>
-        </div>
+        ${renderWriteupHeroBadge(post)}
         <h1 class="hero-name">${escapeHtml(post.title)}</h1>
         <p class="hero-title">${escapeHtml(metaLine || "Offensive security writeup")}</p>
         ${post.summary ? `<p class="hero-summary">${escapeHtml(post.summary)}</p>` : ""}
-        ${coverBlock}
       </div>
     </header>
 
@@ -421,12 +427,16 @@ function renderWriteupPage(post, htmlBody) {
 }
 
 function renderBlogPage(post, htmlBody) {
-  const coverBlock = post.coverUrl
-    ? `<figure class="writeup-cover"><img src="${escapeHtml(post.coverUrl)}" alt="${escapeHtml(post.title)}" loading="lazy" /></figure>`
+  const hasCover = Boolean(post.coverUrl);
+  const heroClass = hasCover ? "hero writeup-hero has-cover visible" : "hero visible";
+  const coverBg = hasCover
+    ? `<div class="writeup-hero-cover" style="background-image: url('${escapeHtml(post.coverUrl)}')" aria-hidden="true"></div>`
     : "";
 
   const body = `
-    <header class="hero visible" id="hero" data-section>
+    <header class="${heroClass}" id="hero" data-section>
+      ${coverBg}
+      ${hasCover ? `<div class="writeup-hero-scrim" aria-hidden="true"></div>` : ""}
       <div class="hero-inner">
         <div class="hero-hex-wrap">
           <div class="hero-hex" aria-hidden="true">
@@ -436,7 +446,6 @@ function renderBlogPage(post, htmlBody) {
         <h1 class="hero-name">${escapeHtml(post.title)}</h1>
         <p class="hero-title">${escapeHtml(post.date || "")}${post.category ? ` • ${post.category}` : ""}</p>
         ${post.summary ? `<p class="hero-summary">${escapeHtml(post.summary)}</p>` : ""}
-        ${coverBlock}
       </div>
     </header>
 
@@ -664,6 +673,7 @@ function build() {
       initialAccess: data.initialAccess || "",
       privesc: data.privesc || "",
       avatarUrl: "",
+      avatarPageUrl: "",
       coverUrl: "",
     };
 
@@ -676,6 +686,7 @@ function build() {
       post.url = `posts/blogs/${meta.category}/${meta.slug}/index.html`;
       if (avatarFile && fs.existsSync(path.join(sourceDir, avatarFile))) {
         post.avatarUrl = `posts/blogs/${meta.category}/${meta.slug}/${avatarFile}`;
+        post.avatarPageUrl = avatarFile;
       }
       if (coverFile && fs.existsSync(path.join(sourceDir, coverFile))) {
         post.coverUrl = coverFile;
@@ -689,6 +700,7 @@ function build() {
       post.url = `posts/writeups/${meta.category}/${meta.slug}/index.html`;
       if (avatarFile && fs.existsSync(path.join(sourceDir, avatarFile))) {
         post.avatarUrl = `posts/writeups/${meta.category}/${meta.slug}/${avatarFile}`;
+        post.avatarPageUrl = avatarFile;
       }
       if (coverFile && fs.existsSync(path.join(sourceDir, coverFile))) {
         post.coverUrl = coverFile;
