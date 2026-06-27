@@ -9,10 +9,9 @@ date: 2026-05-27
 tags:
   - tag-one
   - tag-two
-summary: One-line summary for the hub card and writeup hero.
-# Optional — auto-generated if omitted:
-# avatar: avatar.png
-# cover: cover.jpg
+summary: One-line summary for the hub card.
+avatar: avatar.svg
+cover: cover.png
 initialAccess: How you got the first shell.
 privesc: How you became root / domain admin.
 draft: true
