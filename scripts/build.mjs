@@ -435,13 +435,11 @@ function renderWriteupHeroBadge(post) {
 function renderWriteupPage(post, htmlBody) {
   const depth = 4;
   const metaLine = [post.difficulty, post.os, post.platform, post.date].filter(Boolean).join(" • ");
-  const coverSrc = post.coverUrl || defaultCoverPath(depth);
+  
 
   const body = `
     <p class="back-link"><a href="../../../../index.html">← cd ../hub</a></p>
-    <header class="hero writeup-hero has-cover visible" id="hero" data-section>
-      <div class="writeup-hero-cover" style="background-image: url('${escapeHtml(coverSrc)}')" aria-hidden="true"></div>
-      <div class="writeup-hero-scrim" aria-hidden="true"></div>
+    <header class="hero writeup-hero visible" id="hero" data-section>
       <div class="hero-inner">
         ${renderWriteupHeroBadge(post)}
         <h1 class="hero-name">${escapeHtml(post.title)}</h1>
@@ -464,9 +462,7 @@ function renderWriteupPage(post, htmlBody) {
 function renderBlogPage(post, htmlBody) {
   const hasCover = Boolean(post.coverUrl);
   const heroClass = hasCover ? "hero writeup-hero has-cover visible" : "hero visible";
-  const coverBg = hasCover
-    ? `<div class="writeup-hero-cover" style="background-image: url('${escapeHtml(post.coverUrl)}')" aria-hidden="true"></div>`
-    : "";
+  
 
   const body = `
     <header class="${heroClass}" id="hero" data-section>
