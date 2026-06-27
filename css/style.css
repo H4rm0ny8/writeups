@@ -232,96 +232,22 @@ body:hover .cursor-glow {
   margin: 0.85rem auto 0;
 }
 
-/* ── Writeup page hero (full-width cover + avatar) ── */
-.writeup-page .writeup-hero {
-  width: 100vw;
-  max-width: 100vw;
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding: 3.5rem 1.5rem 2.75rem;
+.writeup-cover {
+  margin: 1.25rem auto 0;
+  max-width: 42rem;
+  border-radius: 8px;
   overflow: hidden;
+  border: 1px solid rgba(0, 255, 65, 0.22);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), 0 0 20px rgba(0, 255, 65, 0.08);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
-.writeup-page .writeup-hero.has-cover {
-  min-height: 44vh;
-  display: flex;
-  align-items: flex-end;
-  padding-top: 4rem;
-}
-
-.writeup-hero-cover {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-  z-index: 0;
-  transform: scale(1.02);
-}
-
-.writeup-hero-scrim {
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-  background: linear-gradient(
-    to bottom,
-    rgba(6, 10, 8, 0.35) 0%,
-    rgba(6, 10, 8, 0.72) 55%,
-    rgba(6, 10, 8, 0.94) 100%
-  );
-}
-
-.writeup-hero-scrim.is-minimal {
-  background: linear-gradient(to bottom, transparent, rgba(6, 10, 8, 0.45));
-}
-
-.writeup-page .writeup-hero .hero-inner {
-  position: relative;
-  z-index: 2;
+.writeup-cover img {
+  display: block;
   width: 100%;
-  max-width: 960px;
-  margin: 0 auto;
-}
-
-.writeup-page .writeup-hero.has-cover .hero-name,
-.writeup-page .writeup-hero.has-cover .hero-title,
-.writeup-page .writeup-hero.has-cover .hero-summary {
-  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.85);
-}
-
-.hero-avatar-wrap {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 1.25rem;
-}
-
-.hero-avatar {
-  width: 96px;
-  height: 96px;
-  border-radius: 50%;
+  max-height: 360px;
   object-fit: cover;
-  border: 2px solid rgba(0, 255, 65, 0.55);
-  box-shadow: 0 0 28px rgba(0, 255, 65, 0.28), 0 8px 24px rgba(0, 0, 0, 0.45);
-}
-
-.hero-avatar-fallback {
-  width: 96px;
-  height: 96px;
-  margin: 0 auto;
-  border-radius: 50%;
-  border: 2px solid rgba(0, 255, 65, 0.45);
-  background: rgba(8, 14, 8, 0.75);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 0 24px rgba(0, 255, 65, 0.2);
-}
-
-.hero-avatar-initials {
-  font-family: var(--font-mono);
-  font-size: 1.6rem;
-  font-weight: 700;
-  color: var(--green);
 }
 
 @keyframes blink {
@@ -1188,13 +1114,11 @@ html.js .section.visible .writeup-card:not(.box-card) {
 }
 
 /* ── Writeup page: animated bg visible everywhere ── */
-.writeup-page {
-  overflow-x: clip;
-}
 .writeup-page .hero,
 .writeup-page .section,
 .writeup-page .back-link,
-.writeup-page .section-header {
+.writeup-page .section-header,
+.writeup-page .writeup-cover {
   background: transparent;
 }
 
