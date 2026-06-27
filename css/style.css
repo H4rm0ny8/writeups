@@ -223,6 +223,33 @@ body:hover .cursor-glow {
   animation: blink 1s step-end infinite;
 }
 
+.hero-summary {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: #9ab89a;
+  max-width: 42rem;
+  margin: 0.85rem auto 0;
+}
+
+.writeup-cover {
+  margin: 1.25rem auto 0;
+  max-width: 42rem;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 255, 65, 0.22);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.35), 0 0 20px rgba(0, 255, 65, 0.08);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+
+.writeup-cover img {
+  display: block;
+  width: 100%;
+  max-height: 360px;
+  object-fit: cover;
+}
+
 @keyframes blink {
   50% { opacity: 0; }
 }
@@ -606,10 +633,22 @@ html.js .section.visible .box-card.writeup-card {
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.65rem;
   font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--text-muted);
+}
+
+.box-summary {
+  font-family: var(--font-mono);
+  font-size: 0.76rem;
+  line-height: 1.5;
+  color: #8fa892;
+  margin: 0 0 0.75rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .box-os {
@@ -1078,7 +1117,8 @@ html.js .section.visible .writeup-card:not(.box-card) {
 .writeup-page .hero,
 .writeup-page .section,
 .writeup-page .back-link,
-.writeup-page .section-header {
+.writeup-page .section-header,
+.writeup-page .writeup-cover {
   background: transparent;
 }
 

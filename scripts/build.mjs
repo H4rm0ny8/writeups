@@ -389,6 +389,9 @@ function pageShell({ title, body, depth, navDots = "", pageClass = "" }) {
 
 function renderWriteupPage(post, htmlBody) {
   const metaLine = [post.difficulty, post.os, post.platform, post.date].filter(Boolean).join(" • ");
+  const coverBlock = post.coverUrl
+    ? `<figure class="writeup-cover"><img src="${escapeHtml(post.coverUrl)}" alt="${escapeHtml(post.title)}" loading="lazy" /></figure>`
+    : "";
 
   const body = `
     <p class="back-link"><a href="../../../../index.html">← cd ../hub</a></p>
@@ -401,6 +404,8 @@ function renderWriteupPage(post, htmlBody) {
         </div>
         <h1 class="hero-name">${escapeHtml(post.title)}</h1>
         <p class="hero-title">${escapeHtml(metaLine || "Offensive security writeup")}</p>
+        ${post.summary ? `<p class="hero-summary">${escapeHtml(post.summary)}</p>` : ""}
+        ${coverBlock}
       </div>
     </header>
 
@@ -416,6 +421,10 @@ function renderWriteupPage(post, htmlBody) {
 }
 
 function renderBlogPage(post, htmlBody) {
+  const coverBlock = post.coverUrl
+    ? `<figure class="writeup-cover"><img src="${escapeHtml(post.coverUrl)}" alt="${escapeHtml(post.title)}" loading="lazy" /></figure>`
+    : "";
+
   const body = `
     <header class="hero visible" id="hero" data-section>
       <div class="hero-inner">
@@ -426,6 +435,8 @@ function renderBlogPage(post, htmlBody) {
         </div>
         <h1 class="hero-name">${escapeHtml(post.title)}</h1>
         <p class="hero-title">${escapeHtml(post.date || "")}${post.category ? ` • ${post.category}` : ""}</p>
+        ${post.summary ? `<p class="hero-summary">${escapeHtml(post.summary)}</p>` : ""}
+        ${coverBlock}
       </div>
     </header>
 
@@ -455,6 +466,10 @@ function renderWriteupCard(post) {
     ? `<img class="box-avatar-img" src="${escapeHtml(post.avatarUrl)}" alt="" loading="lazy" />`
     : `<span class="box-avatar-initials">${escapeHtml(cardInitials(post.title))}</span>`;
 
+  const summaryBlock = post.summary
+    ? `<p class="box-summary">${escapeHtml(post.summary)}</p>`
+    : "";
+
   return `
     <a href="${escapeHtml(post.url)}" class="box-card writeup-card diff-${escapeHtml(diff)}"
       data-difficulty="${escapeHtml(diff)}" data-os="${escapeHtml(osSlug)}" data-category="${escapeHtml(slugify(post.category))}">
@@ -468,6 +483,7 @@ function renderWriteupCard(post) {
           <span class="box-os"><span class="os-dot ${escapeHtml(osSlug)}" aria-hidden="true"></span>${escapeHtml(osLabel)}</span>
           <span class="box-date">${escapeHtml(dateLabel)}</span>
         </div>
+        ${summaryBlock}
         <div class="box-tags">${tags}</div>
       </div>
       <div class="box-accent diff-${escapeHtml(diff)}" aria-hidden="true"></div>
@@ -481,6 +497,10 @@ function renderBlogCard(post) {
     .join("");
   const dateLabel = formatCardDate(post.date);
 
+  const summaryBlock = post.summary
+    ? `<p class="box-summary">${escapeHtml(post.summary)}</p>`
+    : "";
+
   return `
     <a href="${escapeHtml(post.url)}" class="box-card writeup-card blog-card diff-medium" data-difficulty="blog" data-os="blog">
       <div class="box-card-inner">
@@ -493,6 +513,7 @@ function renderBlogCard(post) {
           <span class="box-os"><span class="os-dot blog" aria-hidden="true"></span>${escapeHtml(BLOG_CATEGORIES[post.category] || post.category)}</span>
           <span class="box-date">${escapeHtml(dateLabel)}</span>
         </div>
+        ${summaryBlock}
         <div class="box-tags">${tags}</div>
       </div>
       <div class="box-accent diff-medium" aria-hidden="true"></div>
@@ -627,6 +648,7 @@ function build() {
     const meta = inferMeta(file, data);
     const sourceDir = path.dirname(file);
     const avatarFile = data.avatar ? String(data.avatar).replace(/^["']|["']$/g, "") : "";
+    const coverFile = data.cover ? String(data.cover).replace(/^["']|["']$/g, "") : "";
 
     const post = {
       title: data.title || meta.slug,
@@ -642,6 +664,7 @@ function build() {
       initialAccess: data.initialAccess || "",
       privesc: data.privesc || "",
       avatarUrl: "",
+      coverUrl: "",
     };
 
     const htmlBody = markdownToHtml(content);
@@ -654,6 +677,9 @@ function build() {
       if (avatarFile && fs.existsSync(path.join(sourceDir, avatarFile))) {
         post.avatarUrl = `posts/blogs/${meta.category}/${meta.slug}/${avatarFile}`;
       }
+      if (coverFile && fs.existsSync(path.join(sourceDir, coverFile))) {
+        post.coverUrl = coverFile;
+      }
       fs.writeFileSync(path.join(outDir, "index.html"), renderBlogPage(post, htmlBody));
       blogs.push(post);
     } else {
@@ -663,6 +689,9 @@ function build() {
       post.url = `posts/writeups/${meta.category}/${meta.slug}/index.html`;
       if (avatarFile && fs.existsSync(path.join(sourceDir, avatarFile))) {
         post.avatarUrl = `posts/writeups/${meta.category}/${meta.slug}/${avatarFile}`;
+      }
+      if (coverFile && fs.existsSync(path.join(sourceDir, coverFile))) {
+        post.coverUrl = coverFile;
       }
       fs.writeFileSync(path.join(outDir, "index.html"), renderWriteupPage(post, htmlBody));
       writeups.push(post);
