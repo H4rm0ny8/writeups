@@ -10,6 +10,7 @@ tags:
   - tag-one
   - tag-two
 summary: One-line summary for the hub card.
+avatar: avatar.svg
 initialAccess: How you got the first shell.
 privesc: How you became root / domain admin.
 draft: true

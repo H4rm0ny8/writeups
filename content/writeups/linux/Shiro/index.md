@@ -6,6 +6,7 @@ platform: Infinity Learning
 difficulty: Hard
 os: Linux
 date: 2026-05-26
+avatar: avatar.svg
 tags:
   - CVE-2016-4437
   - shiro

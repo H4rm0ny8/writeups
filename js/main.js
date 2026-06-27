@@ -259,8 +259,48 @@ revealInView();
 window.addEventListener("load", revealInView);
 window.addEventListener("resize", revealInView);
 
-document.querySelectorAll(".writeup-card").forEach((card, index) => {
+document.querySelectorAll(".box-card, .writeup-card:not(.box-card)").forEach((card, index) => {
   card.style.transitionDelay = `${(index % 6) * 0.09}s`;
+});
+
+/* ── Writeup gallery filters ── */
+const filterButtons = document.querySelectorAll(".filter-btn");
+const writeupsGrid = document.getElementById("writeups-grid");
+const filterEmpty = document.getElementById("filter-empty");
+
+function applyWriteupFilter(filter) {
+  if (!writeupsGrid) return;
+  const cards = writeupsGrid.querySelectorAll(".box-card");
+  let visibleCount = 0;
+
+  cards.forEach((card) => {
+    const diff = card.dataset.difficulty || "";
+    const os = card.dataset.os || "";
+    let show = false;
+
+    if (filter === "all") {
+      show = true;
+    } else if (filter === "windows" || filter === "linux") {
+      show = os === filter;
+    } else {
+      show = diff === filter;
+    }
+
+    card.classList.toggle("is-hidden", !show);
+    if (show) visibleCount++;
+  });
+
+  if (filterEmpty) {
+    filterEmpty.hidden = visibleCount > 0;
+  }
+}
+
+filterButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    filterButtons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    applyWriteupFilter(btn.dataset.filter || "all");
+  });
 });
 
 /* ── Section nav dots ── */
@@ -290,9 +330,8 @@ if (sections.length && navDots.length) {
 
 /* ── Writeup card 3D tilt ── */
 if (motionOk) {
-  document.querySelectorAll(".writeup-card").forEach((card) => {
+  document.querySelectorAll(".box-card").forEach((card) => {
     card.addEventListener("mousemove", (e) => {
-      if (e.target.closest("a")) return;
       const rect = card.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;

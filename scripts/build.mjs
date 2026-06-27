@@ -40,6 +40,33 @@ function slugify(value) {
     .replace(/^-+|-+$/g, "");
 }
 
+function normalizeDifficulty(value) {
+  const raw = String(value ?? "").trim();
+  if (!raw || raw === "---" || raw === "-") return "medium";
+  return raw;
+}
+
+function normalizeOs(value) {
+  const raw = String(value ?? "").trim();
+  if (!raw || raw === "---" || raw === "-") return "";
+  return raw;
+}
+
+function formatCardDate(value) {
+  const raw = String(value ?? "").trim();
+  if (!raw) return "";
+  return raw.length >= 7 ? raw.slice(0, 7) : raw;
+}
+
+function cardInitials(title) {
+  const words = String(title || "??")
+    .trim()
+    .split(/\s+/)
+    .filter(Boolean);
+  if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+  return String(title || "??").slice(0, 2).toUpperCase();
+}
+
 function parseFrontmatter(raw) {
   if (!raw.startsWith("---")) return { data: {}, content: raw };
 
@@ -414,73 +441,72 @@ function renderBlogPage(post, htmlBody) {
 }
 
 function renderWriteupCard(post) {
-  const diff = slugify(post.difficulty || "medium");
-  const platform = slugify(post.platform || "lab");
-  const tags = (post.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
+  const diff = slugify(normalizeDifficulty(post.difficulty));
+  const osSlug = slugify(normalizeOs(post.os) || "other");
+  const osLabel = normalizeOs(post.os) || "N/A";
+  const diffLabel = normalizeDifficulty(post.difficulty);
+  const dateLabel = formatCardDate(post.date);
+  const tags = (post.tags || [])
+    .slice(0, 6)
+    .map((tag) => `<span class="box-tag">${escapeHtml(tag)}</span>`)
+    .join("");
 
-  const details = [];
-  if (post.initialAccess) details.push(`<p><strong>Initial Access:</strong> ${escapeHtml(post.initialAccess)}</p>`);
-  if (post.privesc) details.push(`<p><strong>PrivEsc:</strong> ${escapeHtml(post.privesc)}</p>`);
-  if (!details.length && post.summary) details.push(`<p>${escapeHtml(post.summary)}</p>`);
+  const avatarInner = post.avatarUrl
+    ? `<img class="box-avatar-img" src="${escapeHtml(post.avatarUrl)}" alt="" loading="lazy" />`
+    : `<span class="box-avatar-initials">${escapeHtml(cardInitials(post.title))}</span>`;
 
   return `
-    <article class="writeup-card terminal-theme">
-      <span class="card-corner tl" aria-hidden="true"></span>
-      <span class="card-corner tr" aria-hidden="true"></span>
-      <span class="card-corner bl" aria-hidden="true"></span>
-      <span class="card-corner br" aria-hidden="true"></span>
-      <div class="card-glitch-bar"></div>
-      <div class="machine-info">
-        <span class="platform-badge ${escapeHtml(platform)}">${escapeHtml(post.platform || "LAB")}</span>
-        <h3 class="machine-name">${escapeHtml(post.title)}</h3>
-        <span class="difficulty-badge ${escapeHtml(diff)}">${escapeHtml(post.difficulty || "Medium")}</span>
+    <a href="${escapeHtml(post.url)}" class="box-card writeup-card diff-${escapeHtml(diff)}"
+      data-difficulty="${escapeHtml(diff)}" data-os="${escapeHtml(osSlug)}" data-category="${escapeHtml(slugify(post.category))}">
+      <div class="box-card-inner">
+        <div class="box-card-head">
+          <div class="box-avatar">${avatarInner}</div>
+          <h3 class="box-title">${escapeHtml(post.title)}</h3>
+          <span class="box-diff ${escapeHtml(diff)}">${escapeHtml(diffLabel.toUpperCase())}</span>
+        </div>
+        <div class="box-card-meta">
+          <span class="box-os"><span class="os-dot ${escapeHtml(osSlug)}" aria-hidden="true"></span>${escapeHtml(osLabel)}</span>
+          <span class="box-date">${escapeHtml(dateLabel)}</span>
+        </div>
+        <div class="box-tags">${tags}</div>
       </div>
-      <div class="pwn-details">${details.join("")}</div>
-      <div class="tech-tags">${tags}</div>
-      <a href="${escapeHtml(post.url)}" class="btn-read-writeup">[CAT /root/flag.txt]</a>
-    </article>`;
+      <div class="box-accent diff-${escapeHtml(diff)}" aria-hidden="true"></div>
+    </a>`;
 }
 
 function renderBlogCard(post) {
-  const tags = (post.tags || []).map((tag) => `<span>${escapeHtml(tag)}</span>`).join("");
+  const tags = (post.tags || [])
+    .slice(0, 5)
+    .map((tag) => `<span class="box-tag">${escapeHtml(tag)}</span>`)
+    .join("");
+  const dateLabel = formatCardDate(post.date);
 
   return `
-    <article class="writeup-card terminal-theme blog-card">
-      <span class="card-corner tl" aria-hidden="true"></span>
-      <span class="card-corner tr" aria-hidden="true"></span>
-      <span class="card-corner bl" aria-hidden="true"></span>
-      <span class="card-corner br" aria-hidden="true"></span>
-      <div class="card-glitch-bar"></div>
-      <div class="machine-info">
-        <span class="platform-badge blog">BLOG</span>
-        <h3 class="machine-name">${escapeHtml(post.title)}</h3>
-        <span class="difficulty-badge medium">${escapeHtml(post.date || "")}</span>
+    <a href="${escapeHtml(post.url)}" class="box-card writeup-card blog-card diff-medium" data-difficulty="blog" data-os="blog">
+      <div class="box-card-inner">
+        <div class="box-card-head">
+          <div class="box-avatar"><span class="box-avatar-initials">BL</span></div>
+          <h3 class="box-title">${escapeHtml(post.title)}</h3>
+          <span class="box-diff blog">BLOG</span>
+        </div>
+        <div class="box-card-meta">
+          <span class="box-os"><span class="os-dot blog" aria-hidden="true"></span>${escapeHtml(BLOG_CATEGORIES[post.category] || post.category)}</span>
+          <span class="box-date">${escapeHtml(dateLabel)}</span>
+        </div>
+        <div class="box-tags">${tags}</div>
       </div>
-      <div class="pwn-details">
-        <p>${escapeHtml(post.summary || "Cybersecurity notes and research.")}</p>
-      </div>
-      <div class="tech-tags">${tags}</div>
-      <a href="${escapeHtml(post.url)}" class="btn-read-writeup">[READ /var/log/entry.md]</a>
-    </article>`;
+      <div class="box-accent diff-medium" aria-hidden="true"></div>
+    </a>`;
 }
 
 function renderHub(writeups, blogs) {
-  const writeupGroups = {};
-  for (const post of writeups) {
-    if (!writeupGroups[post.category]) writeupGroups[post.category] = [];
-    writeupGroups[post.category].push(post);
-  }
-
   const blogGroups = {};
   for (const post of blogs) {
     if (!blogGroups[post.category]) blogGroups[post.category] = [];
     blogGroups[post.category].push(post);
   }
 
-  const navItems = [{ id: "hero", label: "Dashboard" }];
-  for (const key of Object.keys(writeupGroups)) {
-    navItems.push({ id: `writeups-${key}`, label: WRITEUP_CATEGORIES[key] || key });
-  }
+  const navItems = [{ id: "hero", label: "Dashboard" }, { id: "writeups", label: "Writeups" }];
   if (blogs.length) navItems.push({ id: "blogs", label: "Cyber Blogs" });
 
   const navDots = `
@@ -493,30 +519,43 @@ function renderHub(writeups, blogs) {
       .join("\n    ")}
   </nav>`;
 
-  const writeupSections = Object.entries(writeupGroups)
-    .map(([key, posts]) => {
-      const cards = posts.map(renderWriteupCard).join("\n");
-      return `
-    <section class="section visible" id="writeups-${escapeHtml(key)}" data-section>
-      <div class="section-header">
+  const cards = writeups.map(renderWriteupCard).join("\n");
+
+  const filters = `
+    <div class="writeup-filters" role="toolbar" aria-label="Filter writeups">
+      <button type="button" class="filter-btn active" data-filter="all">ALL</button>
+      <button type="button" class="filter-btn" data-filter="easy">EASY</button>
+      <button type="button" class="filter-btn" data-filter="medium">MEDIUM</button>
+      <button type="button" class="filter-btn" data-filter="hard">HARD</button>
+      <button type="button" class="filter-btn" data-filter="insane">INSANE</button>
+      <button type="button" class="filter-btn" data-filter="windows">WINDOWS</button>
+      <button type="button" class="filter-btn" data-filter="linux">LINUX</button>
+    </div>`;
+
+  const writeupSection = `
+    <section class="section visible" id="writeups" data-section>
+      <div class="section-header gallery-header">
         <div class="section-hex" aria-hidden="true"></div>
-        <h2 class="section-title"><span>//</span> ${escapeHtml(WRITEUP_CATEGORIES[key] || key)}</h2>
+        <div>
+          <p class="gallery-kicker"><span>//</span> OFFENSIVE WRITEUPS</p>
+          <h2 class="gallery-title">Box Writeups</h2>
+        </div>
       </div>
-      <div class="writeups-grid">${cards}</div>
+      ${filters}
+      <div class="writeups-grid box-grid" id="writeups-grid">${cards}</div>
+      <p class="filter-empty" id="filter-empty" hidden>No writeups match this filter.</p>
     </section>`;
-    })
-    .join("\n");
 
   const blogCards = Object.entries(blogGroups)
     .map(([key, posts]) => {
-      const cards = posts.map(renderBlogCard).join("\n");
-      return `<h3 class="card-subtitle">${escapeHtml(BLOG_CATEGORIES[key] || key)}</h3><div class="writeups-grid">${cards}</div>`;
+      const cardsHtml = posts.map(renderBlogCard).join("\n");
+      return `<h3 class="card-subtitle">${escapeHtml(BLOG_CATEGORIES[key] || key)}</h3><div class="writeups-grid box-grid">${cardsHtml}</div>`;
     })
     .join("\n");
 
   const blogSection = blogs.length
     ? `
-    <section class="section" id="blogs" data-section>
+    <section class="section visible" id="blogs" data-section>
       <div class="section-header">
         <div class="section-hex" aria-hidden="true"></div>
         <h2 class="section-title"><span>//</span> Cyber Blogs</h2>
@@ -546,7 +585,7 @@ function renderHub(writeups, blogs) {
             <div class="stat-label">BLOG POSTS</div>
           </div>
           <div class="stat-box">
-            <div class="stat-value" data-count="${Object.keys(writeupGroups).length + Object.keys(blogGroups).length}">0</div>
+            <div class="stat-value" data-count="${navItems.length}">0</div>
             <div class="stat-label">SECTIONS</div>
           </div>
         </div>
@@ -563,7 +602,7 @@ function renderHub(writeups, blogs) {
         </p>
       </div>
     </header>
-    ${writeupSections}
+    ${writeupSection}
     ${blogSection}`;
 
   return pageShell({ title: "H4rm0ny Content Hub", body, depth: 0, navDots });
@@ -586,19 +625,23 @@ function build() {
     if (data.draft) continue;
 
     const meta = inferMeta(file, data);
+    const sourceDir = path.dirname(file);
+    const avatarFile = data.avatar ? String(data.avatar).replace(/^["']|["']$/g, "") : "";
+
     const post = {
       title: data.title || meta.slug,
       type: meta.type,
       category: meta.category,
       slug: meta.slug,
       platform: data.platform || "",
-      difficulty: data.difficulty || "",
-      os: data.os || "",
+      difficulty: normalizeDifficulty(data.difficulty),
+      os: normalizeOs(data.os),
       date: data.date || "",
       tags: Array.isArray(data.tags) ? data.tags : [],
       summary: data.summary || "",
       initialAccess: data.initialAccess || "",
       privesc: data.privesc || "",
+      avatarUrl: "",
     };
 
     const htmlBody = markdownToHtml(content);
@@ -608,6 +651,9 @@ function build() {
       ensureDir(outDir);
       copyPostAssets(file, outDir);
       post.url = `posts/blogs/${meta.category}/${meta.slug}/index.html`;
+      if (avatarFile && fs.existsSync(path.join(sourceDir, avatarFile))) {
+        post.avatarUrl = `posts/blogs/${meta.category}/${meta.slug}/${avatarFile}`;
+      }
       fs.writeFileSync(path.join(outDir, "index.html"), renderBlogPage(post, htmlBody));
       blogs.push(post);
     } else {
@@ -615,6 +661,9 @@ function build() {
       ensureDir(outDir);
       copyPostAssets(file, outDir);
       post.url = `posts/writeups/${meta.category}/${meta.slug}/index.html`;
+      if (avatarFile && fs.existsSync(path.join(sourceDir, avatarFile))) {
+        post.avatarUrl = `posts/writeups/${meta.category}/${meta.slug}/${avatarFile}`;
+      }
       fs.writeFileSync(path.join(outDir, "index.html"), renderWriteupPage(post, htmlBody));
       writeups.push(post);
     }
