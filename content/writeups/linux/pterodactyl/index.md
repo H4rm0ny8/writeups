@@ -7,6 +7,7 @@ difficulty: Medium
 os: Linux
 date: 2026-04-19
 avatar: avatar.png
+cover: cover.png
 tags:
   - CVE-2025-49132
   - CVE-2025-6018
