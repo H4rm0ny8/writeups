@@ -6,6 +6,7 @@ platform: Infinity Learning
 difficulty: Medium 
 os: Linux
 date: 2026-05-20
+avatar: avatar.png
 tags:
   - CVE-2024-1698
   - SQL Injection

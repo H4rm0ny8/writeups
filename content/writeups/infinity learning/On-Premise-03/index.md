@@ -6,6 +6,7 @@ platform: Infinity Learning
 difficulty: Easy
 os: Linux
 date: 2026-05-17
+avatar: avatar.png
 tags:
   - CVE-2021-3129
   - Laravel
