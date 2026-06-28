@@ -19,6 +19,9 @@
   <nav class="nav-dots" aria-label="Section navigation">
     <button class="nav-dot active" data-target="hero" aria-label="Dashboard"></button>
     <button class="nav-dot" data-target="writeups" aria-label="Writeups"></button>
+    <button class="nav-dot" data-target="cat-linux" aria-label="Linux Targets"></button>
+    <button class="nav-dot" data-target="cat-infinity-learning" aria-label="Infinity Learning"></button>
+    <button class="nav-dot" data-target="cat-findings" aria-label="Findings"></button>
   </nav>
   <main class="page">
     
@@ -40,7 +43,7 @@
             <div class="stat-label">BLOG POSTS</div>
           </div>
           <div class="stat-box">
-            <div class="stat-value" data-count="2">0</div>
+            <div class="stat-value" data-count="5">0</div>
             <div class="stat-label">SECTIONS</div>
           </div>
         </div>
@@ -67,6 +70,16 @@
         </div>
       </div>
       
+    <section class="section visible" id="cat-linux" data-section data-category="linux">
+      
+      <div class="section-header gallery-header">
+        <div class="section-hex" aria-hidden="true"></div>
+        <div>
+          <p class="gallery-kicker"><span>//</span> LINUX TARGETS</p>
+          <h2 class="gallery-title">Linux Targets</h2>
+        </div>
+      </div>
+      
     <div class="writeup-search" role="search">
         <span class="search-icon" aria-hidden="true">âŒ•</span>
         <input type="search" id="writeup-search-input" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
@@ -81,7 +94,7 @@
         <button type="button" class="filter-btn" data-filter="windows">WINDOWS</button>
         <button type="button" class="filter-btn" data-filter="linux">LINUX</button>
       </div>
-      <div class="writeups-grid box-grid" id="writeups-grid">
+      <div class="writeups-grid box-grid">
     <a href="posts/writeups/linux/shiro/index.html" class="box-card writeup-card diff-hard"
       data-difficulty="hard" data-os="linux" data-category="linux"
       data-tags="CVE-2016-4437,shiro"
@@ -106,6 +119,41 @@
       <div class="box-accent diff-hard" aria-hidden="true"></div>
     </a>
 
+    <a href="posts/writeups/linux/pterodactyl/index.html" class="box-card writeup-card diff-medium"
+      data-difficulty="medium" data-os="linux" data-category="linux"
+      data-tags="CVE-2025-49132,CVE-2025-6018,CVE-2025-6019,Pterodactyl"
+      data-platform="htb"
+      data-summary="full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes."
+      data-initial-access="rce on pterodactyl panel via cve-2025-49132 (php pear deserialization)."
+      data-privesc="chained cve-2025-6018 and cve-2025-6019 to execute suid bash and get root."
+      data-search="pterodactyl full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes. rce on pterodactyl panel via cve-2025-49132 (php pear deserialization). chained cve-2025-6018 and cve-2025-6019 to execute suid bash and get root. htb linux cve-2025-49132 cve-2025-6018 cve-2025-6019 pterodactyl linux medium">
+      <div class="box-card-inner">
+        <div class="box-card-head">
+          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/linux/pterodactyl/avatar.png" alt="" loading="lazy" /></div>
+          <h3 class="box-title">Pterodactyl</h3>
+          <span class="box-diff medium">MEDIUM</span>
+        </div>
+        <div class="box-card-meta">
+          <span class="box-os"><span class="os-dot linux" aria-hidden="true"></span>Linux</span>
+          <span class="box-date">2026-04</span>
+        </div>
+        <p class="box-summary">Full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes.</p>
+        <div class="box-tags"><span class="box-tag">CVE-2025-49132</span><span class="box-tag">CVE-2025-6018</span><span class="box-tag">CVE-2025-6019</span><span class="box-tag">Pterodactyl</span></div>
+      </div>
+      <div class="box-accent diff-medium" aria-hidden="true"></div>
+    </a></div>
+      <p class="filter-empty" hidden>No writeups match this filter.</p>
+    </section>
+    <section class="section visible" id="cat-infinity-learning" data-section data-category="infinity-learning">
+      
+      <div class="section-header gallery-header">
+        <div class="section-hex" aria-hidden="true"></div>
+        <div>
+          <p class="gallery-kicker"><span>//</span> INFINITY LEARNING</p>
+          <h2 class="gallery-title">Infinity Learning</h2>
+        </div>
+      </div>
+      <div class="writeups-grid box-grid">
     <a href="posts/writeups/Infinity Learning/on-premise-09/index.html" class="box-card writeup-card diff-medium"
       data-difficulty="medium" data-os="linux" data-category="infinity-learning"
       data-tags="CVE-2024-1698,SQL Injection,WordPress,RCE"
@@ -152,32 +200,19 @@
         <div class="box-tags"><span class="box-tag">CVE-2021-3129</span><span class="box-tag">Laravel</span><span class="box-tag">RCE</span><span class="box-tag">Debug Mode</span></div>
       </div>
       <div class="box-accent diff-easy" aria-hidden="true"></div>
-    </a>
-
-    <a href="posts/writeups/linux/pterodactyl/index.html" class="box-card writeup-card diff-medium"
-      data-difficulty="medium" data-os="linux" data-category="linux"
-      data-tags="CVE-2025-49132,CVE-2025-6018,CVE-2025-6019,Pterodactyl"
-      data-platform="htb"
-      data-summary="full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes."
-      data-initial-access="rce on pterodactyl panel via cve-2025-49132 (php pear deserialization)."
-      data-privesc="chained cve-2025-6018 and cve-2025-6019 to execute suid bash and get root."
-      data-search="pterodactyl full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes. rce on pterodactyl panel via cve-2025-49132 (php pear deserialization). chained cve-2025-6018 and cve-2025-6019 to execute suid bash and get root. htb linux cve-2025-49132 cve-2025-6018 cve-2025-6019 pterodactyl linux medium">
-      <div class="box-card-inner">
-        <div class="box-card-head">
-          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/linux/pterodactyl/avatar.png" alt="" loading="lazy" /></div>
-          <h3 class="box-title">Pterodactyl</h3>
-          <span class="box-diff medium">MEDIUM</span>
+    </a></div>
+      <p class="filter-empty" hidden>No writeups match this filter.</p>
+    </section>
+    <section class="section visible" id="cat-findings" data-section data-category="findings">
+      
+      <div class="section-header gallery-header">
+        <div class="section-hex" aria-hidden="true"></div>
+        <div>
+          <p class="gallery-kicker"><span>//</span> FINDINGS</p>
+          <h2 class="gallery-title">Findings</h2>
         </div>
-        <div class="box-card-meta">
-          <span class="box-os"><span class="os-dot linux" aria-hidden="true"></span>Linux</span>
-          <span class="box-date">2026-04</span>
-        </div>
-        <p class="box-summary">Full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes.</p>
-        <div class="box-tags"><span class="box-tag">CVE-2025-49132</span><span class="box-tag">CVE-2025-6018</span><span class="box-tag">CVE-2025-6019</span><span class="box-tag">Pterodactyl</span></div>
       </div>
-      <div class="box-accent diff-medium" aria-hidden="true"></div>
-    </a>
-
+      <div class="writeups-grid box-grid">
     <a href="posts/writeups/Findings/ssrf-gitlab/index.html" class="box-card writeup-card diff-medium"
       data-difficulty="medium" data-os="other" data-category="findings"
       data-tags="SSRF,GitLab,Port Scanning,Reconnaissance"
@@ -201,6 +236,8 @@
       </div>
       <div class="box-accent diff-medium" aria-hidden="true"></div>
     </a></div>
+      <p class="filter-empty" hidden>No writeups match this filter.</p>
+    </section>
       <p class="filter-empty" id="filter-empty" hidden>No writeups match this filter.</p>
     </section>
     

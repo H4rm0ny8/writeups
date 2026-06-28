@@ -16,6 +16,26 @@ const WRITEUP_CATEGORIES = {
   "infinity learning": "Infinity Learning",
 };
 
+function writeupCategoryKey(rawCategory) {
+  return String(rawCategory || "misc")
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "misc";
+}
+
+function writeupCategoryLabel(rawCategory) {
+  const key = writeupCategoryKey(rawCategory);
+  if (WRITEUP_CATEGORIES[key]) return WRITEUP_CATEGORIES[key];
+  // Fallback: humanize the raw category (Title Case)
+  return String(rawCategory || "Misc")
+    .trim()
+    .split(/[\s-_]+/)
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
+}
+
 const BLOG_CATEGORIES = {
   general: "General",
   "red-team": "Red Team",
@@ -590,7 +610,23 @@ function renderHub(writeups, blogs) {
     blogGroups[post.category].push(post);
   }
 
+  // Group writeups by category (preserving order of first appearance)
+  const writeupGroups = {};
+  const categoryOrder = [];
+  for (const post of writeups) {
+    const key = writeupCategoryKey(post.category);
+    if (!writeupGroups[key]) {
+      writeupGroups[key] = [];
+      categoryOrder.push(key);
+    }
+    writeupGroups[key].push(post);
+  }
+
   const navItems = [{ id: "hero", label: "Dashboard" }, { id: "writeups", label: "Writeups" }];
+  for (const key of categoryOrder) {
+    const label = writeupCategoryLabel(writeupGroups[key][0].category);
+    navItems.push({ id: `cat-${key}`, label });
+  }
   if (blogs.length) navItems.push({ id: "blogs", label: "Cyber Blogs" });
 
   const navDots = `
@@ -602,8 +638,6 @@ function renderHub(writeups, blogs) {
       )
       .join("\n    ")}
   </nav>`;
-
-  const cards = writeups.map(renderWriteupCard).join("\n");
 
   const filters = `
     <div class="writeup-search" role="search">
@@ -621,6 +655,40 @@ function renderHub(writeups, blogs) {
         <button type="button" class="filter-btn" data-filter="linux">LINUX</button>
       </div>`;
 
+  // Build a category section per group (search + filters only in first section so they don't duplicate)
+  const writeupSections = categoryOrder
+    .map((key, idx) => {
+      const group = writeupGroups[key];
+      const label = writeupCategoryLabel(group[0].category);
+      const cardsHtml = group.map(renderWriteupCard).join("\n");
+      const isFirst = idx === 0;
+      const headerHtml = isFirst
+        ? `
+      <div class="section-header gallery-header">
+        <div class="section-hex" aria-hidden="true"></div>
+        <div>
+          <p class="gallery-kicker"><span>//</span> ${escapeHtml(label.toUpperCase())}</p>
+          <h2 class="gallery-title">${escapeHtml(label)}</h2>
+        </div>
+      </div>
+      ${filters}`
+        : `
+      <div class="section-header gallery-header">
+        <div class="section-hex" aria-hidden="true"></div>
+        <div>
+          <p class="gallery-kicker"><span>//</span> ${escapeHtml(label.toUpperCase())}</p>
+          <h2 class="gallery-title">${escapeHtml(label)}</h2>
+        </div>
+      </div>`;
+      return `
+    <section class="section visible" id="cat-${escapeHtml(key)}" data-section data-category="${escapeHtml(key)}">
+      ${headerHtml}
+      <div class="writeups-grid box-grid">${cardsHtml}</div>
+      <p class="filter-empty" hidden>No writeups match this filter.</p>
+    </section>`;
+    })
+    .join("");
+
   const writeupSection = `
     <section class="section visible" id="writeups" data-section>
       <div class="section-header gallery-header">
@@ -630,8 +698,7 @@ function renderHub(writeups, blogs) {
           <h2 class="gallery-title">Box Writeups</h2>
         </div>
       </div>
-      ${filters}
-      <div class="writeups-grid box-grid" id="writeups-grid">${cards}</div>
+      ${writeupSections}
       <p class="filter-empty" id="filter-empty" hidden>No writeups match this filter.</p>
     </section>`;
 
