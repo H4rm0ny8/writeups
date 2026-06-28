@@ -713,7 +713,7 @@ footer .hex-dot {
   overflow: hidden;
   opacity: 1;
   transform: translateZ(0);
-  transition: opacity 0.6s ease, border-color 0.25s, box-shadow 0.25s, transform 0.15s ease-out;
+  transition: opacity 0.6s ease, border-color 0.3s, box-shadow 0.3s, transform 0.18s ease-out;
   backdrop-filter: blur(12px) saturate(1.12);
   -webkit-backdrop-filter: blur(12px) saturate(1.12);
 }
