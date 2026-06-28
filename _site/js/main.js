@@ -382,15 +382,40 @@ if (sections.length && navDots.length) {
 /* ── Writeup card 3D tilt ── */
 if (motionOk) {
   document.querySelectorAll(".box-card").forEach((card) => {
-    card.addEventListener("mousemove", (e) => {
-      if (e.target.closest("a.box-tag")) return;
+    const inner = card.querySelector(".box-card-inner");
+    if (!inner) return;
+    let rafId = null;
+    let pendingEvent = null;
+
+    const applyTilt = (e) => {
       const rect = card.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;
-      card.style.transform = `translateX(6px) perspective(400px) rotateY(${x * 4}deg) rotateX(${-y * 4}deg)`;
+      inner.style.transform = `translateZ(0) rotateY(${x * 6}deg) rotateX(${-y * 6}deg)`;
+      rafId = null;
+    };
+
+    const onEnter = () => {
+      card.style.transform = "translateZ(0) translateY(-8px)";
+      card.style.boxShadow = "0 14px 40px rgba(0, 255, 65, 0.22)";
+    };
+
+    card.addEventListener("mouseenter", onEnter);
+
+    card.addEventListener("mousemove", (e) => {
+      pendingEvent = e;
+      if (rafId !== null) return;
+      rafId = requestAnimationFrame(() => applyTilt(pendingEvent));
     });
+
     card.addEventListener("mouseleave", () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+      inner.style.transform = "";
       card.style.transform = "";
+      card.style.boxShadow = "";
     });
   });
 }
