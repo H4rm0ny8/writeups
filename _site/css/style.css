@@ -1162,9 +1162,11 @@ html.js .section.visible .writeup-card:not(.box-card) {
 /* ── Social card (uiverse.io by dovatgabriel) ── */
 .social-card-wrap {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   margin-top: 1.75rem;
   margin-bottom: 0.5rem;
+  gap: 0.75rem;
 }
 
 .social-card {
@@ -1178,7 +1180,7 @@ html.js .section.visible .writeup-card:not(.box-card) {
   transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
   overflow: hidden;
   height: 50px;
-  width: 240px;
+  width: 280px;
   border-radius: 4px;
 }
 
@@ -1212,7 +1214,7 @@ html.js .section.visible .writeup-card:not(.box-card) {
   box-shadow: 0 14px 28px rgba(0, 255, 65, 0.15), 0 10px 10px rgba(0, 0, 0, 0.35);
 }
 
-.social-card:hover span {
+.social-card:hover .social-card-label {
   opacity: 0;
   z-index: -3;
 }
@@ -1227,7 +1229,7 @@ html.js .section.visible .writeup-card:not(.box-card) {
   transform: translateY(100%);
 }
 
-.social-card span {
+.social-card-label {
   position: absolute;
   display: flex;
   align-items: center;
@@ -1243,6 +1245,7 @@ html.js .section.visible .writeup-card:not(.box-card) {
   transition: opacity 0.25s;
   z-index: 2;
   text-shadow: 0 0 8px var(--green-glow);
+  pointer-events: none;
 }
 
 .social-card .social-link {
@@ -1250,25 +1253,34 @@ html.js .section.visible .writeup-card:not(.box-card) {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20%;
+  width: 16.66%;
   height: 100%;
   color: var(--text);
   font-size: 24px;
   text-decoration: none;
   transition: 0.25s;
   z-index: 2;
+  opacity: 0;
+  transform: scale(0.85);
+  pointer-events: none;
+}
+
+.social-card:hover .social-link {
+  opacity: 1;
+  transform: scale(1);
+  pointer-events: auto;
 }
 
 .social-card .social-link svg {
-  height: 22px;
-  width: 22px;
+  height: 20px;
+  width: 20px;
   object-fit: contain;
-  fill: var(--text-muted);
+  fill: #ffffff;
   transition: fill 0.25s ease, filter 0.25s ease;
 }
 
 .social-card .social-link:hover {
-  background-color: rgba(0, 255, 65, 0.12);
+  background-color: rgba(0, 255, 65, 0.18);
   animation: social-bounce 0.4s linear;
 }
 
@@ -1278,12 +1290,21 @@ html.js .section.visible .writeup-card:not(.box-card) {
 }
 
 .social-card .social-link .icon-medium path {
-  fill: var(--text-muted);
+  fill: #ffffff;
   transition: fill 0.25s ease;
 }
 
 .social-card .social-link:hover .icon-medium path {
   fill: var(--green);
+}
+
+.social-tagline {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  letter-spacing: 0.04em;
+  margin: 0;
+  font-style: italic;
 }
 
 @keyframes social-bounce {
