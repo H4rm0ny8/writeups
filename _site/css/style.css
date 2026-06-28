@@ -1259,12 +1259,12 @@ html.js .section.visible .writeup-card:not(.box-card) {
   z-index: 2;
 }
 
-.social-card .social-link img {
+.social-card .social-link svg {
   height: 22px;
   width: 22px;
   object-fit: contain;
-  filter: brightness(0) invert(1);
-  transition: filter 0.25s ease;
+  fill: var(--text-muted);
+  transition: fill 0.25s ease, filter 0.25s ease;
 }
 
 .social-card .social-link:hover {
@@ -1272,8 +1272,18 @@ html.js .section.visible .writeup-card:not(.box-card) {
   animation: social-bounce 0.4s linear;
 }
 
-.social-card .social-link:hover img {
-  filter: brightness(0) invert(1) drop-shadow(0 0 6px var(--green-glow));
+.social-card .social-link:hover svg {
+  fill: var(--green);
+  filter: drop-shadow(0 0 6px var(--green-glow));
+}
+
+.social-card .social-link .icon-medium path {
+  fill: var(--text-muted);
+  transition: fill 0.25s ease;
+}
+
+.social-card .social-link:hover .icon-medium path {
+  fill: var(--green);
 }
 
 @keyframes social-bounce {
