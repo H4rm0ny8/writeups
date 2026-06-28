@@ -712,8 +712,10 @@ footer .hex-dot {
   position: relative;
   overflow: hidden;
   opacity: 1;
-  transform: translateZ(0);
-  transition: opacity 0.6s ease, border-color 0.25s, box-shadow 0.25s, transform 0.18s ease-out;
+  perspective: 600px;
+  -webkit-perspective: 600px;
+  transform-style: preserve-3d;
+  transition: opacity 0.6s ease, border-color 0.25s, box-shadow 0.25s;
   backdrop-filter: blur(12px) saturate(1.12);
   -webkit-backdrop-filter: blur(12px) saturate(1.12);
 }
@@ -741,6 +743,9 @@ html.js .section.visible .box-card.writeup-card {
 
 .box-card-inner {
   padding: 1.1rem 1.15rem 1rem;
+  transition: transform 0.12s cubic-bezier(0.2, 0.7, 0.2, 1);
+  will-change: transform;
+  transform-style: preserve-3d;
 }
 
 .box-card-head {
