@@ -1272,10 +1272,10 @@ html.js .section.visible .writeup-card:not(.box-card) {
 }
 
 .social-card .social-link svg {
-  height: 20px;
-  width: 20px;
+  height: 22px;
+  width: 22px;
   object-fit: contain;
-  fill: #ffffff;
+  fill: var(--text-muted);
   transition: fill 0.25s ease, filter 0.25s ease;
 }
 
@@ -1290,7 +1290,7 @@ html.js .section.visible .writeup-card:not(.box-card) {
 }
 
 .social-card .social-link .icon-medium path {
-  fill: #ffffff;
+  fill: var(--text-muted);
   transition: fill 0.25s ease;
 }
 
