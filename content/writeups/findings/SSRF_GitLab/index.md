@@ -3,11 +3,10 @@ title: SSRF in GitLab
 type: writeup
 category: Findings
 platform: Gitlab
-difficulty: ---
-os: ---
+difficulty: --
+os: --
 date: 2025-11-04
 avatar: image.png
-cover: Fuji-Dark.png
 tags:
   - SSRF
   - GitLab
