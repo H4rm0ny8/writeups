@@ -18,10 +18,7 @@
   
   <nav class="nav-dots" aria-label="Section navigation">
     <button class="nav-dot active" data-target="hero" aria-label="Dashboard"></button>
-    <button class="nav-dot" data-target="writeups" aria-label="Writeups"></button>
-    <button class="nav-dot" data-target="cat-linux" aria-label="Linux Targets"></button>
-    <button class="nav-dot" data-target="cat-infinity-learning" aria-label="Infinity Learning"></button>
-    <button class="nav-dot" data-target="cat-findings" aria-label="Findings"></button>
+    <button class="nav-dot" data-target="writeups-area" aria-label="Writeups"></button>
   </nav>
   <main class="page">
     
@@ -43,7 +40,7 @@
             <div class="stat-label">BLOG POSTS</div>
           </div>
           <div class="stat-box">
-            <div class="stat-value" data-count="5">0</div>
+            <div class="stat-value" data-count="2">0</div>
             <div class="stat-label">SECTIONS</div>
           </div>
         </div>
@@ -61,41 +58,42 @@
       </div>
     </header>
     
-    <section class="section visible" id="writeups" data-section>
+    <nav class="top-tabs" role="tablist" aria-label="Content type">
+      <button type="button" class="top-tab active" role="tab" data-top-tab="all" aria-selected="true">ALL</button>
+      <button type="button" class="top-tab" role="tab" data-top-tab="writeups" aria-selected="false">WRITEUPS</button>
+    </nav>
+    
+    <section class="section visible content-view" id="view-all" data-view="all" data-section>
       <div class="section-header gallery-header">
         <div class="section-hex" aria-hidden="true"></div>
         <div>
-          <p class="gallery-kicker"><span>//</span> OFFENSIVE WRITEUPS</p>
-          <h2 class="gallery-title">Box Writeups</h2>
-        </div>
-      </div>
-      
-    <section class="section visible" id="cat-linux" data-section data-category="linux">
-      
-      <div class="section-header gallery-header">
-        <div class="section-hex" aria-hidden="true"></div>
-        <div>
-          <p class="gallery-kicker"><span>//</span> LINUX TARGETS</p>
-          <h2 class="gallery-title">Linux Targets</h2>
+          <p class="gallery-kicker"><span>//</span> ALL</p>
+          <h2 class="gallery-title">Everything</h2>
         </div>
       </div>
       
     <div class="writeup-search" role="search">
-        <span class="search-icon" aria-hidden="true">âŒ•</span>
-        <input type="search" id="writeup-search-input" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
-        <button type="button" id="writeup-search-clear" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
-      </div>
-      <div class="writeup-filters" role="toolbar" aria-label="Filter writeups">
-        <button type="button" class="filter-btn active" data-filter="all">ALL</button>
-        <button type="button" class="filter-btn" data-filter="easy">EASY</button>
-        <button type="button" class="filter-btn" data-filter="medium">MEDIUM</button>
-        <button type="button" class="filter-btn" data-filter="hard">HARD</button>
-        <button type="button" class="filter-btn" data-filter="insane">INSANE</button>
-        <button type="button" class="filter-btn" data-filter="windows">WINDOWS</button>
-        <button type="button" class="filter-btn" data-filter="linux">LINUX</button>
-      </div>
-      <div class="writeups-grid box-grid">
-    <a href="posts/writeups/linux/shiro/index.html" class="box-card writeup-card diff-hard"
+      <span class="search-icon" aria-hidden="true">âŒ•</span>
+      <input type="search" id="writeup-search-input" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
+      <button type="button" id="writeup-search-clear" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
+    </div>
+      
+    <nav class="sub-tabs" role="tablist" aria-label="All categories">
+      <button type="button" class="sub-tab active" role="tab" data-sub-tab="all-categories" data-category="all" aria-selected="true">ALL</button>
+      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-linux" data-category="linux" aria-selected="false">LINUX TARGETS</button>
+      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-infinity-learning" data-category="infinity-learning" aria-selected="false">INFINITY LEARNING</button>
+      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-findings" data-category="findings" aria-selected="false">FINDINGS</button>
+    </nav>
+      
+    <div class="difficulty-chips" role="toolbar" aria-label="Filter by difficulty">
+      <button type="button" class="diff-chip active" data-difficulty="all">ALL</button>
+      <button type="button" class="diff-chip" data-difficulty="easy">EASY</button>
+      <button type="button" class="diff-chip" data-difficulty="medium">MEDIUM</button>
+      <button type="button" class="diff-chip" data-difficulty="hard">HARD</button>
+      <button type="button" class="diff-chip" data-difficulty="insane">INSANE</button>
+    </div>
+      <div class="writeups-grid box-grid" id="writeups-grid">
+    <a href="posts/writeups/linux/shiro/index.html" class="box-card writeup-card diff-hard" data-post-type="writeup" data-post-category="linux" data-post-difficulty="hard"
       data-difficulty="hard" data-os="linux" data-category="linux"
       data-tags="CVE-2016-4437,shiro"
       data-platform="infinity learning"
@@ -119,42 +117,7 @@
       <div class="box-accent diff-hard" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/linux/pterodactyl/index.html" class="box-card writeup-card diff-medium"
-      data-difficulty="medium" data-os="linux" data-category="linux"
-      data-tags="CVE-2025-49132,CVE-2025-6018,CVE-2025-6019,Pterodactyl"
-      data-platform="htb"
-      data-summary="full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes."
-      data-initial-access="rce on pterodactyl panel via cve-2025-49132 (php pear deserialization)."
-      data-privesc="chained cve-2025-6018 and cve-2025-6019 to execute suid bash and get root."
-      data-search="pterodactyl full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes. rce on pterodactyl panel via cve-2025-49132 (php pear deserialization). chained cve-2025-6018 and cve-2025-6019 to execute suid bash and get root. htb linux cve-2025-49132 cve-2025-6018 cve-2025-6019 pterodactyl linux medium">
-      <div class="box-card-inner">
-        <div class="box-card-head">
-          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/linux/pterodactyl/avatar.png" alt="" loading="lazy" /></div>
-          <h3 class="box-title">Pterodactyl</h3>
-          <span class="box-diff medium">MEDIUM</span>
-        </div>
-        <div class="box-card-meta">
-          <span class="box-os"><span class="os-dot linux" aria-hidden="true"></span>Linux</span>
-          <span class="box-date">2026-04</span>
-        </div>
-        <p class="box-summary">Full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes.</p>
-        <div class="box-tags"><span class="box-tag">CVE-2025-49132</span><span class="box-tag">CVE-2025-6018</span><span class="box-tag">CVE-2025-6019</span><span class="box-tag">Pterodactyl</span></div>
-      </div>
-      <div class="box-accent diff-medium" aria-hidden="true"></div>
-    </a></div>
-      <p class="filter-empty" hidden>No writeups match this filter.</p>
-    </section>
-    <section class="section visible" id="cat-infinity-learning" data-section data-category="infinity-learning">
-      
-      <div class="section-header gallery-header">
-        <div class="section-hex" aria-hidden="true"></div>
-        <div>
-          <p class="gallery-kicker"><span>//</span> INFINITY LEARNING</p>
-          <h2 class="gallery-title">Infinity Learning</h2>
-        </div>
-      </div>
-      <div class="writeups-grid box-grid">
-    <a href="posts/writeups/Infinity Learning/on-premise-09/index.html" class="box-card writeup-card diff-medium"
+    <a href="posts/writeups/Infinity Learning/on-premise-09/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="infinity-learning" data-post-difficulty="medium"
       data-difficulty="medium" data-os="linux" data-category="infinity-learning"
       data-tags="CVE-2024-1698,SQL Injection,WordPress,RCE"
       data-platform="infinity learning"
@@ -178,7 +141,7 @@
       <div class="box-accent diff-medium" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/Infinity Learning/on-premise-03/index.html" class="box-card writeup-card diff-easy"
+    <a href="posts/writeups/Infinity Learning/on-premise-03/index.html" class="box-card writeup-card diff-easy" data-post-type="writeup" data-post-category="infinity-learning" data-post-difficulty="easy"
       data-difficulty="easy" data-os="linux" data-category="infinity-learning"
       data-tags="CVE-2021-3129,Laravel,RCE,Debug Mode"
       data-platform="infinity learning"
@@ -200,20 +163,184 @@
         <div class="box-tags"><span class="box-tag">CVE-2021-3129</span><span class="box-tag">Laravel</span><span class="box-tag">RCE</span><span class="box-tag">Debug Mode</span></div>
       </div>
       <div class="box-accent diff-easy" aria-hidden="true"></div>
+    </a>
+
+    <a href="posts/writeups/linux/pterodactyl/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-difficulty="medium"
+      data-difficulty="medium" data-os="linux" data-category="linux"
+      data-tags="CVE-2025-49132,CVE-2025-6018,CVE-2025-6019,Pterodactyl"
+      data-platform="htb"
+      data-summary="full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes."
+      data-initial-access="rce on pterodactyl panel via cve-2025-49132 (php pear deserialization)."
+      data-privesc="chained cve-2025-6018 and cve-2025-6019 to execute suid bash and get root."
+      data-search="pterodactyl full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes. rce on pterodactyl panel via cve-2025-49132 (php pear deserialization). chained cve-2025-6018 and cve-2025-6019 to execute suid bash and get root. htb linux cve-2025-49132 cve-2025-6018 cve-2025-6019 pterodactyl linux medium">
+      <div class="box-card-inner">
+        <div class="box-card-head">
+          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/linux/pterodactyl/avatar.png" alt="" loading="lazy" /></div>
+          <h3 class="box-title">Pterodactyl</h3>
+          <span class="box-diff medium">MEDIUM</span>
+        </div>
+        <div class="box-card-meta">
+          <span class="box-os"><span class="os-dot linux" aria-hidden="true"></span>Linux</span>
+          <span class="box-date">2026-04</span>
+        </div>
+        <p class="box-summary">Full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes.</p>
+        <div class="box-tags"><span class="box-tag">CVE-2025-49132</span><span class="box-tag">CVE-2025-6018</span><span class="box-tag">CVE-2025-6019</span><span class="box-tag">Pterodactyl</span></div>
+      </div>
+      <div class="box-accent diff-medium" aria-hidden="true"></div>
+    </a>
+
+    <a href="posts/writeups/Findings/ssrf-gitlab/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="findings" data-post-difficulty="medium"
+      data-difficulty="medium" data-os="other" data-category="findings"
+      data-tags="SSRF,GitLab,Port Scanning,Reconnaissance"
+      data-platform="gitlab"
+      data-summary="exploiting a server-side request forgery (ssrf) in gitlab's &quot;import from url&quot; feature to probe internal networks and perform port scanning via timing differences."
+      data-initial-access="ssrf via the &quot;import project from url&quot; feature by supplying an arbitrary url to the `import_url` parameter"
+      data-privesc="internal network reconnaissance and port scanning via observable timing differences on connection attempts."
+      data-search="ssrf in gitlab exploiting a server-side request forgery (ssrf) in gitlab's &quot;import from url&quot; feature to probe internal networks and perform port scanning via timing differences. ssrf via the &quot;import project from url&quot; feature by supplying an arbitrary url to the `import_url` parameter internal network reconnaissance and port scanning via observable timing differences on connection attempts. gitlab findings ssrf gitlab port scanning reconnaissance medium">
+      <div class="box-card-inner">
+        <div class="box-card-head">
+          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/Findings/ssrf-gitlab/image.png" alt="" loading="lazy" /></div>
+          <h3 class="box-title">SSRF in GitLab</h3>
+          <span class="box-diff medium">MEDIUM</span>
+        </div>
+        <div class="box-card-meta">
+          <span class="box-os"><span class="os-dot other" aria-hidden="true"></span>N/A</span>
+          <span class="box-date">2025-11</span>
+        </div>
+        <p class="box-summary">Exploiting a Server-Side Request Forgery (SSRF) in GitLab's &quot;Import From URL&quot; feature to probe internal networks and perform port scanning via timing differences.</p>
+        <div class="box-tags"><span class="box-tag">SSRF</span><span class="box-tag">GitLab</span><span class="box-tag">Port Scanning</span><span class="box-tag">Reconnaissance</span></div>
+      </div>
+      <div class="box-accent diff-medium" aria-hidden="true"></div>
     </a></div>
-      <p class="filter-empty" hidden>No writeups match this filter.</p>
+      <p class="filter-empty" id="filter-empty" hidden>No writeups match this filter.</p>
     </section>
-    <section class="section visible" id="cat-findings" data-section data-category="findings">
-      
+    <section class="section visible content-view" id="view-writeups" data-view="writeups" data-section hidden>
       <div class="section-header gallery-header">
         <div class="section-hex" aria-hidden="true"></div>
         <div>
-          <p class="gallery-kicker"><span>//</span> FINDINGS</p>
-          <h2 class="gallery-title">Findings</h2>
+          <p class="gallery-kicker"><span>//</span> OFFENSIVE WRITEUPS</p>
+          <h2 class="gallery-title">Box Writeups</h2>
         </div>
       </div>
-      <div class="writeups-grid box-grid">
-    <a href="posts/writeups/Findings/ssrf-gitlab/index.html" class="box-card writeup-card diff-medium"
+      
+    <div class="writeup-search" role="search">
+      <span class="search-icon" aria-hidden="true">âŒ•</span>
+      <input type="search" id="writeup-search-input" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
+      <button type="button" id="writeup-search-clear" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
+    </div>
+      
+    <nav class="sub-tabs" role="tablist" aria-label="Writeup categories">
+      <button type="button" class="sub-tab active" role="tab" data-sub-tab="writeup-all-categories" data-category="all" aria-selected="true">ALL</button>
+      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-linux" data-category="linux" aria-selected="false">LINUX TARGETS</button>
+      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-infinity-learning" data-category="infinity-learning" aria-selected="false">INFINITY LEARNING</button>
+      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-findings" data-category="findings" aria-selected="false">FINDINGS</button>
+    </nav>
+      
+    <div class="difficulty-chips" role="toolbar" aria-label="Filter by difficulty">
+      <button type="button" class="diff-chip active" data-difficulty="all">ALL</button>
+      <button type="button" class="diff-chip" data-difficulty="easy">EASY</button>
+      <button type="button" class="diff-chip" data-difficulty="medium">MEDIUM</button>
+      <button type="button" class="diff-chip" data-difficulty="hard">HARD</button>
+      <button type="button" class="diff-chip" data-difficulty="insane">INSANE</button>
+    </div>
+      <div class="writeups-grid box-grid" id="writeups-grid-writeups">
+    <a href="posts/writeups/linux/shiro/index.html" class="box-card writeup-card diff-hard" data-post-type="writeup" data-post-category="linux" data-post-difficulty="hard"
+      data-difficulty="hard" data-os="linux" data-category="linux"
+      data-tags="CVE-2016-4437,shiro"
+      data-platform="infinity learning"
+      data-summary="exploiting apache shiro's remember me vulnerability (cve-2016-4437) to achieve remote code execution and retrieve the flag."
+      data-initial-access="rce via apache shiro deserialization vulnerability using a cracked encryption key and shisoserial."
+      data-privesc="flag retrieval through direct remote code execution."
+      data-search="shiro exploiting apache shiro's remember me vulnerability (cve-2016-4437) to achieve remote code execution and retrieve the flag. rce via apache shiro deserialization vulnerability using a cracked encryption key and shisoserial. flag retrieval through direct remote code execution. infinity learning linux cve-2016-4437 shiro linux hard">
+      <div class="box-card-inner">
+        <div class="box-card-head">
+          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/linux/shiro/avatar.png" alt="" loading="lazy" /></div>
+          <h3 class="box-title">Shiro</h3>
+          <span class="box-diff hard">HARD</span>
+        </div>
+        <div class="box-card-meta">
+          <span class="box-os"><span class="os-dot linux" aria-hidden="true"></span>Linux</span>
+          <span class="box-date">2026-05</span>
+        </div>
+        <p class="box-summary">Exploiting Apache Shiro's Remember Me vulnerability (CVE-2016-4437) to achieve Remote Code Execution and retrieve the flag.</p>
+        <div class="box-tags"><span class="box-tag">CVE-2016-4437</span><span class="box-tag">shiro</span></div>
+      </div>
+      <div class="box-accent diff-hard" aria-hidden="true"></div>
+    </a>
+
+    <a href="posts/writeups/Infinity Learning/on-premise-09/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="infinity-learning" data-post-difficulty="medium"
+      data-difficulty="medium" data-os="linux" data-category="infinity-learning"
+      data-tags="CVE-2024-1698,SQL Injection,WordPress,RCE"
+      data-platform="infinity learning"
+      data-summary="exploiting an unauthenticated sql injection in the notificationx wordpress plugin to extract admin credentials and achieve rce."
+      data-initial-access="unauthenticated sql injection via the 'type' parameter in the notificationx plugin."
+      data-privesc="gaining administrative access to the wordpress dashboard and editing plugin files for rce."
+      data-search="notificationx exploiting an unauthenticated sql injection in the notificationx wordpress plugin to extract admin credentials and achieve rce. unauthenticated sql injection via the 'type' parameter in the notificationx plugin. gaining administrative access to the wordpress dashboard and editing plugin files for rce. infinity learning infinity learning cve-2024-1698 sql injection wordpress rce linux medium">
+      <div class="box-card-inner">
+        <div class="box-card-head">
+          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/Infinity Learning/on-premise-09/avatar.png" alt="" loading="lazy" /></div>
+          <h3 class="box-title">NotificationX</h3>
+          <span class="box-diff medium">MEDIUM</span>
+        </div>
+        <div class="box-card-meta">
+          <span class="box-os"><span class="os-dot linux" aria-hidden="true"></span>Linux</span>
+          <span class="box-date">2026-05</span>
+        </div>
+        <p class="box-summary">Exploiting an unauthenticated SQL Injection in the NotificationX WordPress plugin to extract admin credentials and achieve RCE.</p>
+        <div class="box-tags"><span class="box-tag">CVE-2024-1698</span><span class="box-tag">SQL Injection</span><span class="box-tag">WordPress</span><span class="box-tag">RCE</span></div>
+      </div>
+      <div class="box-accent diff-medium" aria-hidden="true"></div>
+    </a>
+
+    <a href="posts/writeups/Infinity Learning/on-premise-03/index.html" class="box-card writeup-card diff-easy" data-post-type="writeup" data-post-category="infinity-learning" data-post-difficulty="easy"
+      data-difficulty="easy" data-os="linux" data-category="infinity-learning"
+      data-tags="CVE-2021-3129,Laravel,RCE,Debug Mode"
+      data-platform="infinity learning"
+      data-summary="exploiting laravel debug mode to achieve remote code execution via cve-2021-3129."
+      data-initial-access="rce via laravel debug mode deserialization vulnerability (cve-2021-3129)."
+      data-privesc="direct flag retrieval through remote code execution."
+      data-search="on-premise-03 exploiting laravel debug mode to achieve remote code execution via cve-2021-3129. rce via laravel debug mode deserialization vulnerability (cve-2021-3129). direct flag retrieval through remote code execution. infinity learning infinity learning cve-2021-3129 laravel rce debug mode linux easy">
+      <div class="box-card-inner">
+        <div class="box-card-head">
+          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/Infinity Learning/on-premise-03/avatar.png" alt="" loading="lazy" /></div>
+          <h3 class="box-title">On-Premise-03</h3>
+          <span class="box-diff easy">EASY</span>
+        </div>
+        <div class="box-card-meta">
+          <span class="box-os"><span class="os-dot linux" aria-hidden="true"></span>Linux</span>
+          <span class="box-date">2026-05</span>
+        </div>
+        <p class="box-summary">Exploiting Laravel debug mode to achieve Remote Code Execution via CVE-2021-3129.</p>
+        <div class="box-tags"><span class="box-tag">CVE-2021-3129</span><span class="box-tag">Laravel</span><span class="box-tag">RCE</span><span class="box-tag">Debug Mode</span></div>
+      </div>
+      <div class="box-accent diff-easy" aria-hidden="true"></div>
+    </a>
+
+    <a href="posts/writeups/linux/pterodactyl/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-difficulty="medium"
+      data-difficulty="medium" data-os="linux" data-category="linux"
+      data-tags="CVE-2025-49132,CVE-2025-6018,CVE-2025-6019,Pterodactyl"
+      data-platform="htb"
+      data-summary="full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes."
+      data-initial-access="rce on pterodactyl panel via cve-2025-49132 (php pear deserialization)."
+      data-privesc="chained cve-2025-6018 and cve-2025-6019 to execute suid bash and get root."
+      data-search="pterodactyl full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes. rce on pterodactyl panel via cve-2025-49132 (php pear deserialization). chained cve-2025-6018 and cve-2025-6019 to execute suid bash and get root. htb linux cve-2025-49132 cve-2025-6018 cve-2025-6019 pterodactyl linux medium">
+      <div class="box-card-inner">
+        <div class="box-card-head">
+          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/linux/pterodactyl/avatar.png" alt="" loading="lazy" /></div>
+          <h3 class="box-title">Pterodactyl</h3>
+          <span class="box-diff medium">MEDIUM</span>
+        </div>
+        <div class="box-card-meta">
+          <span class="box-os"><span class="os-dot linux" aria-hidden="true"></span>Linux</span>
+          <span class="box-date">2026-04</span>
+        </div>
+        <p class="box-summary">Full lab walkthrough from recon to root with exploit chain and practical troubleshooting notes.</p>
+        <div class="box-tags"><span class="box-tag">CVE-2025-49132</span><span class="box-tag">CVE-2025-6018</span><span class="box-tag">CVE-2025-6019</span><span class="box-tag">Pterodactyl</span></div>
+      </div>
+      <div class="box-accent diff-medium" aria-hidden="true"></div>
+    </a>
+
+    <a href="posts/writeups/Findings/ssrf-gitlab/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="findings" data-post-difficulty="medium"
       data-difficulty="medium" data-os="other" data-category="findings"
       data-tags="SSRF,GitLab,Port Scanning,Reconnaissance"
       data-platform="gitlab"
@@ -238,9 +365,6 @@
     </a></div>
       <p class="filter-empty" hidden>No writeups match this filter.</p>
     </section>
-      <p class="filter-empty" id="filter-empty" hidden>No writeups match this filter.</p>
-    </section>
-    
     <footer>
       <span class="hex-dot" aria-hidden="true"></span>
       H4rm0ny Content Hub &copy; 2026

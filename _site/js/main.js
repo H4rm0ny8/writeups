@@ -263,73 +263,162 @@ document.querySelectorAll(".box-card, .writeup-card:not(.box-card)").forEach((ca
   card.style.transitionDelay = `${(index % 6) * 0.09}s`;
 });
 
-/* ── Writeup gallery filters ── */
-const filterButtons = document.querySelectorAll(".filter-btn");
-const writeupsGrid = document.getElementById("writeups-grid");
-const filterEmpty = document.getElementById("filter-empty");
+/* ── Tabbed views (All / Writeups / Blogs) ── */
+const topTabs = document.querySelectorAll(".top-tab");
+const contentViews = document.querySelectorAll(".content-view");
+const subTabs = document.querySelectorAll(".sub-tab");
+const diffChips = document.querySelectorAll(".diff-chip");
+const searchInput = document.getElementById("writeup-search-input");
+const searchClear = document.getElementById("writeup-search-clear");
 
-let activeFilter = "all";
+let activeTopTab = "all";
+let activeSubCategory = "all";
+let activeDifficulty = "all";
 let searchQuery = "";
 
-function applyWriteupFilter() {
-  if (!writeupsGrid) return;
-  const cards = writeupsGrid.querySelectorAll(".box-card");
+function getActiveView() {
+  return document.querySelector(`.content-view[data-view="${activeTopTab}"]`);
+}
+
+function applyTabFilters() {
+  const view = getActiveView();
+  if (!view) return;
+  const grid = view.querySelector(".writeups-grid");
+  const empty = view.querySelector(".filter-empty");
+  if (!grid) return;
+
+  const cards = grid.querySelectorAll(".box-card");
   let visibleCount = 0;
   const normalizedQuery = searchQuery.trim().toLowerCase();
 
   cards.forEach((card) => {
-    const diff = card.dataset.difficulty || "";
-    const os = card.dataset.os || "";
+    const postType = card.dataset.postType || "writeup";
+    const postCategory = card.dataset.postCategory || "";
+    const postDifficulty = card.dataset.postDifficulty || "";
     const searchBlob = card.dataset.search || "";
 
-    let matchesFilter = false;
-    if (activeFilter === "all") {
-      matchesFilter = true;
-    } else if (activeFilter === "windows" || activeFilter === "linux") {
-      matchesFilter = os === activeFilter;
+    // Top tab = post type match
+    let matchesTop = false;
+    if (activeTopTab === "all") {
+      matchesTop = true;
+    } else if (activeTopTab === "writeups") {
+      matchesTop = postType === "writeup";
+    } else if (activeTopTab === "blogs") {
+      matchesTop = postType === "blog";
+    }
+
+    // Sub-tab = category match
+    let matchesSub = false;
+    if (activeSubCategory === "all") {
+      matchesSub = true;
     } else {
-      matchesFilter = diff === activeFilter;
+      matchesSub = postCategory === activeSubCategory;
+    }
+
+    // Difficulty chip (only meaningful for writeups)
+    let matchesDiff = false;
+    if (activeTopTab === "blogs") {
+      matchesDiff = true;
+    } else if (activeDifficulty === "all") {
+      matchesDiff = true;
+    } else {
+      matchesDiff = postDifficulty === activeDifficulty;
     }
 
     const matchesSearch =
       normalizedQuery === "" || searchBlob.includes(normalizedQuery);
 
-    const show = matchesFilter && matchesSearch;
+    const show = matchesTop && matchesSub && matchesDiff && matchesSearch;
     card.classList.toggle("is-hidden", !show);
     if (show) visibleCount++;
   });
 
-  if (filterEmpty) {
-    filterEmpty.hidden = visibleCount > 0;
-    if (visibleCount === 0) {
-      filterEmpty.textContent =
-        normalizedQuery && activeFilter !== "all"
-          ? `No writeups match "${searchQuery.trim()}" with the current filter.`
-          : normalizedQuery
-          ? `No writeups match "${searchQuery.trim()}".`
-          : "No writeups match this filter.";
-    }
+  if (empty) {
+    empty.hidden = visibleCount > 0;
+    empty.textContent = `No ${activeTopTab === "blogs" ? "blogs" : "writeups"} match.`;
   }
 }
 
-filterButtons.forEach((btn) => {
-  btn.addEventListener("click", () => {
-    filterButtons.forEach((b) => b.classList.remove("active"));
-    btn.classList.add("active");
-    activeFilter = btn.dataset.filter || "all";
-    applyWriteupFilter();
+function setActiveTopTab(tabId) {
+  activeTopTab = tabId;
+  activeSubCategory = "all";
+  activeDifficulty = "all";
+  searchQuery = "";
+  if (searchInput) searchInput.value = "";
+  if (searchClear) searchClear.hidden = true;
+
+  topTabs.forEach((t) => {
+    const isActive = t.dataset.topTab === tabId;
+    t.classList.toggle("active", isActive);
+    t.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+
+  contentViews.forEach((v) => {
+    v.hidden = v.dataset.view !== tabId;
+  });
+
+  // Sync sub-tabs and chips inside the active view
+  const view = getActiveView();
+  if (view) {
+    view.querySelectorAll(".sub-tab").forEach((s) => {
+      const isAll = s.dataset.category === "all";
+      s.classList.toggle("active", isAll);
+      s.setAttribute("aria-selected", isAll ? "true" : "false");
+    });
+    view.querySelectorAll(".diff-chip").forEach((c) => {
+      const isAll = c.dataset.difficulty === "all";
+      c.classList.toggle("active", isAll);
+    });
+  }
+
+  applyTabFilters();
+}
+
+function setActiveSubTab(category, view) {
+  activeSubCategory = category;
+  view.querySelectorAll(".sub-tab").forEach((s) => {
+    const isActive = s.dataset.category === category;
+    s.classList.toggle("active", isActive);
+    s.setAttribute("aria-selected", isActive ? "true" : "false");
+  });
+  applyTabFilters();
+}
+
+function setActiveDifficulty(value, view) {
+  activeDifficulty = value;
+  view.querySelectorAll(".diff-chip").forEach((c) => {
+    c.classList.toggle("active", c.dataset.difficulty === value);
+  });
+  applyTabFilters();
+}
+
+topTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    setActiveTopTab(tab.dataset.topTab);
   });
 });
 
-/* ── Live search bar ── */
-const searchInput = document.getElementById("writeup-search-input");
-const searchClear = document.getElementById("writeup-search-clear");
+subTabs.forEach((tab) => {
+  tab.addEventListener("click", () => {
+    const view = tab.closest(".content-view");
+    if (!view) return;
+    setActiveSubTab(tab.dataset.category, view);
+  });
+});
+
+diffChips.forEach((chip) => {
+  chip.addEventListener("click", () => {
+    const view = chip.closest(".content-view");
+    if (!view) return;
+    setActiveDifficulty(chip.dataset.difficulty, view);
+  });
+});
 
 if (searchInput) {
   searchInput.addEventListener("input", (e) => {
     searchQuery = e.target.value || "";
     if (searchClear) searchClear.hidden = searchQuery.length === 0;
-    applyWriteupFilter();
+    applyTabFilters();
   });
 
   searchInput.addEventListener("keydown", (e) => {
@@ -337,7 +426,7 @@ if (searchInput) {
       searchInput.value = "";
       searchQuery = "";
       if (searchClear) searchClear.hidden = true;
-      applyWriteupFilter();
+      applyTabFilters();
     }
   });
 }
@@ -350,9 +439,12 @@ if (searchClear) {
     }
     searchQuery = "";
     searchClear.hidden = true;
-    applyWriteupFilter();
+    applyTabFilters();
   });
 }
+
+// Initial render
+applyTabFilters();
 
 /* ── Section nav dots ── */
 const navDots = document.querySelectorAll(".nav-dot");

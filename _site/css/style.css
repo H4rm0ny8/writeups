@@ -587,6 +587,124 @@ footer .hex-dot {
   text-shadow: 0 0 24px rgba(0, 255, 65, 0.15);
 }
 
+/* ── Top-level tabs (All / Writeups / Blogs) ── */
+.top-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin: 0 auto 1.25rem;
+  max-width: 720px;
+  padding: 0.5rem;
+  background: rgba(8, 12, 16, 0.55);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.top-tab {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  letter-spacing: 0.1em;
+  padding: 0.6rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  flex: 1 1 auto;
+  min-width: 100px;
+}
+
+.top-tab:hover {
+  color: var(--green);
+  border-color: var(--green-dim);
+}
+
+.top-tab.active {
+  color: var(--green);
+  border-color: var(--green);
+  background: rgba(0, 255, 65, 0.08);
+  box-shadow: 0 0 14px rgba(0, 255, 65, 0.18);
+  text-shadow: 0 0 8px var(--green-glow);
+}
+
+/* ── Sub-tabs (categories under each top tab) ── */
+.sub-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 1rem 0;
+  justify-content: center;
+}
+
+.sub-tab {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: rgba(8, 12, 16, 0.5);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.sub-tab:hover {
+  color: var(--green);
+  border-color: var(--green-dim);
+}
+
+.sub-tab.active {
+  color: var(--green);
+  border-color: var(--green-dim);
+  background: rgba(0, 255, 65, 0.08);
+  box-shadow: 0 0 10px rgba(0, 255, 65, 0.15);
+}
+
+/* ── Difficulty chips ── */
+.difficulty-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin: 0.75rem 0 1rem;
+  justify-content: center;
+}
+
+.diff-chip {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  padding: 0.3rem 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  background: rgba(8, 12, 16, 0.45);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
+}
+
+.diff-chip:hover {
+  color: var(--green);
+  border-color: var(--green-dim);
+}
+
+.diff-chip.active {
+  color: var(--bg);
+  border-color: var(--green);
+  background: var(--green);
+  box-shadow: 0 0 12px var(--green-glow);
+  font-weight: 700;
+}
+
+/* ── Content views (All / Writeups / Blogs sections) ── */
+.content-view[hidden] {
+  display: none !important;
+}
+
 .writeup-filters {
   display: flex;
   flex-wrap: wrap;

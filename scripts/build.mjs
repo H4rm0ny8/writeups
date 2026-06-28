@@ -622,12 +622,39 @@ function renderHub(writeups, blogs) {
     writeupGroups[key].push(post);
   }
 
-  const navItems = [{ id: "hero", label: "Dashboard" }, { id: "writeups", label: "Writeups" }];
-  for (const key of categoryOrder) {
-    const label = writeupCategoryLabel(writeupGroups[key][0].category);
-    navItems.push({ id: `cat-${key}`, label });
-  }
-  if (blogs.length) navItems.push({ id: "blogs", label: "Cyber Blogs" });
+  // ── Tabs navigation ──
+  // Top-level tabs: All / Writeups / Blogs
+  const topTabs = [{ id: "all", label: "ALL" }];
+  if (writeups.length) topTabs.push({ id: "writeups", label: "WRITEUPS" });
+  if (blogs.length) topTabs.push({ id: "blogs", label: "BLOGS" });
+
+  // Sub-tabs per top tab (categories)
+  const writeupSubTabs = categoryOrder.map((key) => ({
+    id: `writeup-${key}`,
+    category: key,
+    label: writeupCategoryLabel(writeupGroups[key][0].category),
+  }));
+  const blogSubTabs = Object.keys(blogGroups).map((key) => ({
+    id: `blog-${key}`,
+    category: key,
+    label: BLOG_CATEGORIES[key] || key,
+  }));
+  const allSubTabs = [...writeupSubTabs, ...blogSubTabs];
+
+  // Difficulty chips (auto from writeup difficulty values)
+  const difficultyChips = [
+    { id: "all-difficulty", label: "ALL", value: "all" },
+    { id: "easy", label: "EASY", value: "easy" },
+    { id: "medium", label: "MEDIUM", value: "medium" },
+    { id: "hard", label: "HARD", value: "hard" },
+    { id: "insane", label: "INSANE", value: "insane" },
+  ];
+
+  const navItems = [
+    { id: "hero", label: "Dashboard" },
+    { id: "writeups-area", label: "Writeups" },
+  ];
+  if (blogs.length) navItems.push({ id: "blogs-area", label: "Cyber Blogs" });
 
   const navDots = `
   <nav class="nav-dots" aria-label="Section navigation">
@@ -639,58 +666,118 @@ function renderHub(writeups, blogs) {
       .join("\n    ")}
   </nav>`;
 
-  const filters = `
+  // Top-level tab bar (always visible above the content)
+  const topTabsHtml = `
+    <nav class="top-tabs" role="tablist" aria-label="Content type">
+      ${topTabs
+        .map(
+          (t, idx) =>
+            `<button type="button" class="top-tab${idx === 0 ? " active" : ""}" role="tab" data-top-tab="${escapeHtml(t.id)}" aria-selected="${idx === 0 ? "true" : "false"}">${escapeHtml(t.label)}</button>`
+        )
+        .join("\n      ")}
+    </nav>`;
+
+  // Sub-tabs bar for ALL view (combines writeup + blog categories)
+  const allSubTabsHtml =
+    allSubTabs.length > 1
+      ? `
+    <nav class="sub-tabs" role="tablist" aria-label="All categories">
+      <button type="button" class="sub-tab active" role="tab" data-sub-tab="all-categories" data-category="all" aria-selected="true">ALL</button>
+      ${allSubTabs
+        .map(
+          (t) =>
+            `<button type="button" class="sub-tab" role="tab" data-sub-tab="${escapeHtml(t.id)}" data-category="${escapeHtml(t.category)}" aria-selected="false">${escapeHtml(t.label.toUpperCase())}</button>`
+        )
+        .join("\n      ")}
+    </nav>`
+      : "";
+
+  // Sub-tabs bar for WRITEUPS view
+  const writeupSubTabsHtml =
+    writeupSubTabs.length > 1
+      ? `
+    <nav class="sub-tabs" role="tablist" aria-label="Writeup categories">
+      <button type="button" class="sub-tab active" role="tab" data-sub-tab="writeup-all-categories" data-category="all" aria-selected="true">ALL</button>
+      ${writeupSubTabs
+        .map(
+          (t) =>
+            `<button type="button" class="sub-tab" role="tab" data-sub-tab="${escapeHtml(t.id)}" data-category="${escapeHtml(t.category)}" aria-selected="false">${escapeHtml(t.label.toUpperCase())}</button>`
+        )
+        .join("\n      ")}
+    </nav>`
+      : "";
+
+  // Sub-tabs bar for BLOGS view
+  const blogSubTabsHtml =
+    blogSubTabs.length > 1
+      ? `
+    <nav class="sub-tabs" role="tablist" aria-label="Blog categories">
+      <button type="button" class="sub-tab active" role="tab" data-sub-tab="blog-all-categories" data-category="all" aria-selected="true">ALL</button>
+      ${blogSubTabs
+        .map(
+          (t) =>
+            `<button type="button" class="sub-tab" role="tab" data-sub-tab="${escapeHtml(t.id)}" data-category="${escapeHtml(t.category)}" aria-selected="false">${escapeHtml(t.label.toUpperCase())}</button>`
+        )
+        .join("\n      ")}
+    </nav>`
+      : "";
+
+  // Difficulty chips (only for writeups/all views)
+  const difficultyChipsHtml =
+    writeups.length
+      ? `
+    <div class="difficulty-chips" role="toolbar" aria-label="Filter by difficulty">
+      ${difficultyChips
+        .map(
+          (c, idx) =>
+            `<button type="button" class="diff-chip${idx === 0 ? " active" : ""}" data-difficulty="${escapeHtml(c.value)}">${escapeHtml(c.label)}</button>`
+        )
+        .join("\n      ")}
+    </div>`
+      : "";
+
+  const searchBar = `
     <div class="writeup-search" role="search">
-        <span class="search-icon" aria-hidden="true">âŒ•</span>
-        <input type="search" id="writeup-search-input" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
-        <button type="button" id="writeup-search-clear" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
-      </div>
-      <div class="writeup-filters" role="toolbar" aria-label="Filter writeups">
-        <button type="button" class="filter-btn active" data-filter="all">ALL</button>
-        <button type="button" class="filter-btn" data-filter="easy">EASY</button>
-        <button type="button" class="filter-btn" data-filter="medium">MEDIUM</button>
-        <button type="button" class="filter-btn" data-filter="hard">HARD</button>
-        <button type="button" class="filter-btn" data-filter="insane">INSANE</button>
-        <button type="button" class="filter-btn" data-filter="windows">WINDOWS</button>
-        <button type="button" class="filter-btn" data-filter="linux">LINUX</button>
-      </div>`;
+      <span class="search-icon" aria-hidden="true">âŒ•</span>
+      <input type="search" id="writeup-search-input" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
+      <button type="button" id="writeup-search-clear" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
+    </div>`;
 
-  // Build a category section per group (search + filters only in first section so they don't duplicate)
-  const writeupSections = categoryOrder
-    .map((key, idx) => {
-      const group = writeupGroups[key];
-      const label = writeupCategoryLabel(group[0].category);
-      const cardsHtml = group.map(renderWriteupCard).join("\n");
-      const isFirst = idx === 0;
-      const headerHtml = isFirst
-        ? `
+  // Render cards with a data-post-type attribute so JS can show/hide based on tabs
+  const renderCardsFor = (posts, type) =>
+    posts
+      .map((p) => {
+        const cardHtml = type === "blog" ? renderBlogCard(p) : renderWriteupCard(p);
+        return cardHtml.replace(
+          /class="(box-card writeup-card[^"]*)"/,
+          `class="$1" data-post-type="${type}" data-post-category="${escapeHtml(writeupCategoryKey(p.category))}" data-post-difficulty="${escapeHtml(slugify(normalizeDifficulty(p.difficulty)))}"`
+        );
+      })
+      .join("\n");
+
+  const allWriteupCards = renderCardsFor(writeups, "writeup");
+  const allBlogCards = renderCardsFor(blogs, "blog");
+
+  // ── ALL view container ──
+  const allView = `
+    <section class="section visible content-view" id="view-all" data-view="all" data-section>
       <div class="section-header gallery-header">
         <div class="section-hex" aria-hidden="true"></div>
         <div>
-          <p class="gallery-kicker"><span>//</span> ${escapeHtml(label.toUpperCase())}</p>
-          <h2 class="gallery-title">${escapeHtml(label)}</h2>
+          <p class="gallery-kicker"><span>//</span> ALL</p>
+          <h2 class="gallery-title">Everything</h2>
         </div>
       </div>
-      ${filters}`
-        : `
-      <div class="section-header gallery-header">
-        <div class="section-hex" aria-hidden="true"></div>
-        <div>
-          <p class="gallery-kicker"><span>//</span> ${escapeHtml(label.toUpperCase())}</p>
-          <h2 class="gallery-title">${escapeHtml(label)}</h2>
-        </div>
-      </div>`;
-      return `
-    <section class="section visible" id="cat-${escapeHtml(key)}" data-section data-category="${escapeHtml(key)}">
-      ${headerHtml}
-      <div class="writeups-grid box-grid">${cardsHtml}</div>
-      <p class="filter-empty" hidden>No writeups match this filter.</p>
+      ${searchBar}
+      ${allSubTabsHtml}
+      ${difficultyChipsHtml}
+      <div class="writeups-grid box-grid" id="writeups-grid">${allWriteupCards}${allBlogCards}</div>
+      <p class="filter-empty" id="filter-empty" hidden>No writeups match this filter.</p>
     </section>`;
-    })
-    .join("");
 
-  const writeupSection = `
-    <section class="section visible" id="writeups" data-section>
+  // ── WRITEUPS view container ──
+  const writeupView = `
+    <section class="section visible content-view" id="view-writeups" data-view="writeups" data-section hidden>
       <div class="section-header gallery-header">
         <div class="section-hex" aria-hidden="true"></div>
         <div>
@@ -698,9 +785,29 @@ function renderHub(writeups, blogs) {
           <h2 class="gallery-title">Box Writeups</h2>
         </div>
       </div>
-      ${writeupSections}
-      <p class="filter-empty" id="filter-empty" hidden>No writeups match this filter.</p>
+      ${searchBar}
+      ${writeupSubTabsHtml}
+      ${difficultyChipsHtml}
+      <div class="writeups-grid box-grid" id="writeups-grid-writeups">${allWriteupCards}</div>
+      <p class="filter-empty" hidden>No writeups match this filter.</p>
     </section>`;
+
+  // ── BLOGS view container ──
+  const blogView = blogs.length
+    ? `
+    <section class="section visible content-view" id="view-blogs" data-view="blogs" data-section hidden>
+      <div class="section-header">
+        <div class="section-hex" aria-hidden="true"></div>
+        <h2 class="section-title"><span>//</span> Cyber Blogs</h2>
+      </div>
+      ${searchBar}
+      ${blogSubTabsHtml}
+      <div class="writeups-grid box-grid" id="writeups-grid-blogs">${allBlogCards}</div>
+      <p class="filter-empty" hidden>No blogs match this filter.</p>
+    </section>`
+    : "";
+
+  const writeupSection = `${allView}${writeupView}${blogView}`;
 
   const blogCards = Object.entries(blogGroups)
     .map(([key, posts]) => {
@@ -756,8 +863,8 @@ function renderHub(writeups, blogs) {
         </p>
       </div>
     </header>
-    ${writeupSection}
-    ${blogSection}`;
+    ${topTabsHtml}
+    ${writeupSection}`;
 
   return pageShell({ title: "H4rm0ny Content Hub", body, depth: 0, navDots });
 }
