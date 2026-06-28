@@ -267,13 +267,13 @@ document.querySelectorAll(".box-card, .writeup-card:not(.box-card)").forEach((ca
 const topTabs = document.querySelectorAll(".top-tab");
 const contentViews = document.querySelectorAll(".content-view");
 const subTabs = document.querySelectorAll(".sub-tab");
-const diffChips = document.querySelectorAll(".diff-chip");
+const filterChips = document.querySelectorAll(".filter-chip");
 const searchInput = document.getElementById("writeup-search-input");
 const searchClear = document.getElementById("writeup-search-clear");
 
 let activeTopTab = "all";
 let activeSubCategory = "all";
-let activeDifficulty = "all";
+const activeFilters = { difficulty: "all", os: "all", platform: "all" };
 let searchQuery = "";
 
 function getActiveView() {
@@ -295,6 +295,8 @@ function applyTabFilters() {
     const postType = card.dataset.postType || "writeup";
     const postCategory = card.dataset.postCategory || "";
     const postDifficulty = card.dataset.postDifficulty || "";
+    const postOs = card.dataset.postOs || "";
+    const postPlatform = card.dataset.postPlatform || "";
     const searchBlob = card.dataset.search || "";
 
     // Top tab = post type match
@@ -315,20 +317,30 @@ function applyTabFilters() {
       matchesSub = postCategory === activeSubCategory;
     }
 
-    // Difficulty chip (only meaningful for writeups)
-    let matchesDiff = false;
+    // Filter chips: difficulty / OS / platform (only meaningful for writeups)
+    let matchesFilters = true;
     if (activeTopTab === "blogs") {
-      matchesDiff = true;
-    } else if (activeDifficulty === "all") {
-      matchesDiff = true;
+      matchesFilters = true;
     } else {
-      matchesDiff = postDifficulty === activeDifficulty;
+      if (activeFilters.difficulty !== "all" && postDifficulty !== activeFilters.difficulty) {
+        matchesFilters = false;
+      }
+      if (matchesFilters && activeFilters.os !== "all" && postOs !== activeFilters.os) {
+        matchesFilters = false;
+      }
+      if (
+        matchesFilters &&
+        activeFilters.platform !== "all" &&
+        postPlatform !== activeFilters.platform
+      ) {
+        matchesFilters = false;
+      }
     }
 
     const matchesSearch =
       normalizedQuery === "" || searchBlob.includes(normalizedQuery);
 
-    const show = matchesTop && matchesSub && matchesDiff && matchesSearch;
+    const show = matchesTop && matchesSub && matchesFilters && matchesSearch;
     card.classList.toggle("is-hidden", !show);
     if (show) visibleCount++;
   });
@@ -342,7 +354,9 @@ function applyTabFilters() {
 function setActiveTopTab(tabId) {
   activeTopTab = tabId;
   activeSubCategory = "all";
-  activeDifficulty = "all";
+  activeFilters.difficulty = "all";
+  activeFilters.os = "all";
+  activeFilters.platform = "all";
   searchQuery = "";
   if (searchInput) searchInput.value = "";
   if (searchClear) searchClear.hidden = true;
@@ -365,8 +379,8 @@ function setActiveTopTab(tabId) {
       s.classList.toggle("active", isAll);
       s.setAttribute("aria-selected", isAll ? "true" : "false");
     });
-    view.querySelectorAll(".diff-chip").forEach((c) => {
-      const isAll = c.dataset.difficulty === "all";
+    view.querySelectorAll(".filter-chip").forEach((c) => {
+      const isAll = c.dataset.filterValue === "all";
       c.classList.toggle("active", isAll);
     });
   }
@@ -384,10 +398,10 @@ function setActiveSubTab(category, view) {
   applyTabFilters();
 }
 
-function setActiveDifficulty(value, view) {
-  activeDifficulty = value;
-  view.querySelectorAll(".diff-chip").forEach((c) => {
-    c.classList.toggle("active", c.dataset.difficulty === value);
+function setActiveFilter(filterType, value, view) {
+  activeFilters[filterType] = value;
+  view.querySelectorAll(`.filter-chip[data-filter-type="${filterType}"]`).forEach((c) => {
+    c.classList.toggle("active", c.dataset.filterValue === value);
   });
   applyTabFilters();
 }
@@ -406,11 +420,11 @@ subTabs.forEach((tab) => {
   });
 });
 
-diffChips.forEach((chip) => {
+filterChips.forEach((chip) => {
   chip.addEventListener("click", () => {
     const view = chip.closest(".content-view");
     if (!view) return;
-    setActiveDifficulty(chip.dataset.difficulty, view);
+    setActiveFilter(chip.dataset.filterType, chip.dataset.filterValue, view);
   });
 });
 

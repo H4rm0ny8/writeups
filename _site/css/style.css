@@ -665,16 +665,33 @@ footer .hex-dot {
   box-shadow: 0 0 10px rgba(0, 255, 65, 0.15);
 }
 
-/* ── Difficulty chips ── */
-.difficulty-chips {
+/* ── Filter chip groups (difficulty / os / platform) ── */
+.filter-chip-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.5rem 0 0.25rem;
+}
+
+.filter-chip-label {
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.16em;
+  color: var(--green-dim);
+  text-transform: uppercase;
+  text-shadow: 0 0 6px var(--green-glow);
+  opacity: 0.85;
+}
+
+.filter-chip-row {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  margin: 0.75rem 0 1rem;
   justify-content: center;
 }
 
-.diff-chip {
+.filter-chip {
   font-family: var(--font-mono);
   font-size: 0.66rem;
   letter-spacing: 0.08em;
@@ -687,12 +704,12 @@ footer .hex-dot {
   transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
 }
 
-.diff-chip:hover {
+.filter-chip:hover {
   color: var(--green);
   border-color: var(--green-dim);
 }
 
-.diff-chip.active {
+.filter-chip.active {
   color: var(--bg);
   border-color: var(--green);
   background: var(--green);

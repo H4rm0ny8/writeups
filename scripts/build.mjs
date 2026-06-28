@@ -641,13 +641,52 @@ function renderHub(writeups, blogs) {
   }));
   const allSubTabs = [...writeupSubTabs, ...blogSubTabs];
 
-  // Difficulty chips (auto from writeup difficulty values)
+  // Auto-generate chips from writeup data
+  const seenDifficulties = new Set();
+  const seenOs = new Set();
+  const seenPlatforms = new Set();
+  for (const post of writeups) {
+    if (post.difficulty) {
+      const key = slugify(normalizeDifficulty(post.difficulty));
+      if (key && key !== "medium") seenDifficulties.add(key);
+      else if (key === "medium") seenDifficulties.add(key);
+    }
+    const osKey = slugify(normalizeOs(post.os) || "");
+    if (osKey && osKey !== "other") seenOs.add(osKey);
+    if (post.platform && post.platform.trim() && post.platform !== "---") {
+      const platKey = slugify(post.platform);
+      if (platKey) seenPlatforms.add(platKey);
+    }
+  }
+
+  const difficultyOrder = ["easy", "medium", "hard", "insane"];
+  const osOrder = ["linux", "windows"];
+  const platformList = Array.from(seenPlatforms).sort();
+
   const difficultyChips = [
     { id: "all-difficulty", label: "ALL", value: "all" },
-    { id: "easy", label: "EASY", value: "easy" },
-    { id: "medium", label: "MEDIUM", value: "medium" },
-    { id: "hard", label: "HARD", value: "hard" },
-    { id: "insane", label: "INSANE", value: "insane" },
+    ...difficultyOrder
+      .filter((d) => seenDifficulties.has(d))
+      .map((d) => ({ id: d, label: d.toUpperCase(), value: d })),
+  ];
+
+  const osChips = [
+    { id: "all-os", label: "ALL", value: "all" },
+    ...osOrder
+      .filter((o) => seenOs.has(o))
+      .map((o) => ({ id: `os-${o}`, label: o.toUpperCase(), value: o })),
+    ...Array.from(seenOs)
+      .filter((o) => !osOrder.includes(o))
+      .map((o) => ({ id: `os-${o}`, label: o.toUpperCase(), value: o })),
+  ];
+
+  const platformChips = [
+    { id: "all-platform", label: "ALL", value: "all" },
+    ...platformList.map((p) => ({
+      id: `platform-${p}`,
+      label: p.replace(/-/g, " ").toUpperCase(),
+      value: p,
+    })),
   ];
 
   const navItems = [
@@ -722,18 +761,30 @@ function renderHub(writeups, blogs) {
     </nav>`
       : "";
 
-  // Difficulty chips (only for writeups/all views)
-  const difficultyChipsHtml =
-    writeups.length
+  // Filter chips: difficulty + OS + platform (only for writeups/all views)
+  const renderChipGroup = (chips, filterType, ariaLabel) =>
+    chips.length > 1
       ? `
-    <div class="difficulty-chips" role="toolbar" aria-label="Filter by difficulty">
-      ${difficultyChips
-        .map(
-          (c, idx) =>
-            `<button type="button" class="diff-chip${idx === 0 ? " active" : ""}" data-difficulty="${escapeHtml(c.value)}">${escapeHtml(c.label)}</button>`
-        )
-        .join("\n      ")}
+    <div class="filter-chip-group" data-filter-type="${filterType}" role="toolbar" aria-label="${escapeHtml(ariaLabel)}">
+      <span class="filter-chip-label">${escapeHtml(ariaLabel)}</span>
+      <div class="filter-chip-row">
+        ${chips
+          .map(
+            (c, idx) =>
+              `<button type="button" class="filter-chip${idx === 0 ? " active" : ""}" data-filter-type="${escapeHtml(filterType)}" data-filter-value="${escapeHtml(c.value)}">${escapeHtml(c.label)}</button>`
+          )
+          .join("\n        ")}
+      </div>
     </div>`
+      : "";
+
+  const writeupChipsHtml =
+    writeups.length
+      ? [
+          renderChipGroup(difficultyChips, "difficulty", "DIFFICULTY"),
+          renderChipGroup(osChips, "os", "OS"),
+          renderChipGroup(platformChips, "platform", "PLATFORM"),
+        ].filter(Boolean).join("")
       : "";
 
   const searchBar = `
@@ -743,14 +794,14 @@ function renderHub(writeups, blogs) {
       <button type="button" id="writeup-search-clear" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
     </div>`;
 
-  // Render cards with a data-post-type attribute so JS can show/hide based on tabs
+  // Render cards with data attributes so JS can show/hide based on tabs + filters
   const renderCardsFor = (posts, type) =>
     posts
       .map((p) => {
         const cardHtml = type === "blog" ? renderBlogCard(p) : renderWriteupCard(p);
         return cardHtml.replace(
           /class="(box-card writeup-card[^"]*)"/,
-          `class="$1" data-post-type="${type}" data-post-category="${escapeHtml(writeupCategoryKey(p.category))}" data-post-difficulty="${escapeHtml(slugify(normalizeDifficulty(p.difficulty)))}"`
+          `class="$1" data-post-type="${type}" data-post-category="${escapeHtml(writeupCategoryKey(p.category))}" data-post-difficulty="${escapeHtml(slugify(normalizeDifficulty(p.difficulty)))}" data-post-os="${escapeHtml(slugify(normalizeOs(p.os) || ""))}" data-post-platform="${escapeHtml(slugify(p.platform || ""))}"`
         );
       })
       .join("\n");
@@ -770,7 +821,7 @@ function renderHub(writeups, blogs) {
       </div>
       ${searchBar}
       ${allSubTabsHtml}
-      ${difficultyChipsHtml}
+      ${writeupChipsHtml}
       <div class="writeups-grid box-grid" id="writeups-grid">${allWriteupCards}${allBlogCards}</div>
       <p class="filter-empty" id="filter-empty" hidden>No writeups match this filter.</p>
     </section>`;
@@ -787,7 +838,7 @@ function renderHub(writeups, blogs) {
       </div>
       ${searchBar}
       ${writeupSubTabsHtml}
-      ${difficultyChipsHtml}
+      ${writeupChipsHtml}
       <div class="writeups-grid box-grid" id="writeups-grid-writeups">${allWriteupCards}</div>
       <p class="filter-empty" hidden>No writeups match this filter.</p>
     </section>`;

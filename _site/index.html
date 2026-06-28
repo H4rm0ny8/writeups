@@ -81,19 +81,36 @@
     <nav class="sub-tabs" role="tablist" aria-label="All categories">
       <button type="button" class="sub-tab active" role="tab" data-sub-tab="all-categories" data-category="all" aria-selected="true">ALL</button>
       <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-linux" data-category="linux" aria-selected="false">LINUX TARGETS</button>
-      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-infinity-learning" data-category="infinity-learning" aria-selected="false">INFINITY LEARNING</button>
       <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-findings" data-category="findings" aria-selected="false">FINDINGS</button>
     </nav>
       
-    <div class="difficulty-chips" role="toolbar" aria-label="Filter by difficulty">
-      <button type="button" class="diff-chip active" data-difficulty="all">ALL</button>
-      <button type="button" class="diff-chip" data-difficulty="easy">EASY</button>
-      <button type="button" class="diff-chip" data-difficulty="medium">MEDIUM</button>
-      <button type="button" class="diff-chip" data-difficulty="hard">HARD</button>
-      <button type="button" class="diff-chip" data-difficulty="insane">INSANE</button>
+    <div class="filter-chip-group" data-filter-type="difficulty" role="toolbar" aria-label="DIFFICULTY">
+      <span class="filter-chip-label">DIFFICULTY</span>
+      <div class="filter-chip-row">
+        <button type="button" class="filter-chip active" data-filter-type="difficulty" data-filter-value="all">ALL</button>
+        <button type="button" class="filter-chip" data-filter-type="difficulty" data-filter-value="easy">EASY</button>
+        <button type="button" class="filter-chip" data-filter-type="difficulty" data-filter-value="medium">MEDIUM</button>
+        <button type="button" class="filter-chip" data-filter-type="difficulty" data-filter-value="hard">HARD</button>
+      </div>
+    </div>
+    <div class="filter-chip-group" data-filter-type="os" role="toolbar" aria-label="OS">
+      <span class="filter-chip-label">OS</span>
+      <div class="filter-chip-row">
+        <button type="button" class="filter-chip active" data-filter-type="os" data-filter-value="all">ALL</button>
+        <button type="button" class="filter-chip" data-filter-type="os" data-filter-value="linux">LINUX</button>
+      </div>
+    </div>
+    <div class="filter-chip-group" data-filter-type="platform" role="toolbar" aria-label="PLATFORM">
+      <span class="filter-chip-label">PLATFORM</span>
+      <div class="filter-chip-row">
+        <button type="button" class="filter-chip active" data-filter-type="platform" data-filter-value="all">ALL</button>
+        <button type="button" class="filter-chip" data-filter-type="platform" data-filter-value="gitlab">GITLAB</button>
+        <button type="button" class="filter-chip" data-filter-type="platform" data-filter-value="htb">HTB</button>
+        <button type="button" class="filter-chip" data-filter-type="platform" data-filter-value="infinity-learning">INFINITY LEARNING</button>
+      </div>
     </div>
       <div class="writeups-grid box-grid" id="writeups-grid">
-    <a href="posts/writeups/linux/shiro/index.html" class="box-card writeup-card diff-hard" data-post-type="writeup" data-post-category="linux" data-post-difficulty="hard"
+    <a href="posts/writeups/linux/shiro/index.html" class="box-card writeup-card diff-hard" data-post-type="writeup" data-post-category="linux" data-post-difficulty="hard" data-post-os="linux" data-post-platform="infinity-learning"
       data-difficulty="hard" data-os="linux" data-category="linux"
       data-tags="CVE-2016-4437,shiro"
       data-platform="infinity learning"
@@ -117,17 +134,17 @@
       <div class="box-accent diff-hard" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/Infinity Learning/on-premise-09/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="infinity-learning" data-post-difficulty="medium"
-      data-difficulty="medium" data-os="linux" data-category="infinity-learning"
+    <a href="posts/writeups/Linux/on-premise-09/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-difficulty="medium" data-post-os="linux" data-post-platform="infinity-learning"
+      data-difficulty="medium" data-os="linux" data-category="linux"
       data-tags="CVE-2024-1698,SQL Injection,WordPress,RCE"
       data-platform="infinity learning"
       data-summary="exploiting an unauthenticated sql injection in the notificationx wordpress plugin to extract admin credentials and achieve rce."
       data-initial-access="unauthenticated sql injection via the 'type' parameter in the notificationx plugin."
       data-privesc="gaining administrative access to the wordpress dashboard and editing plugin files for rce."
-      data-search="notificationx exploiting an unauthenticated sql injection in the notificationx wordpress plugin to extract admin credentials and achieve rce. unauthenticated sql injection via the 'type' parameter in the notificationx plugin. gaining administrative access to the wordpress dashboard and editing plugin files for rce. infinity learning infinity learning cve-2024-1698 sql injection wordpress rce linux medium">
+      data-search="notificationx exploiting an unauthenticated sql injection in the notificationx wordpress plugin to extract admin credentials and achieve rce. unauthenticated sql injection via the 'type' parameter in the notificationx plugin. gaining administrative access to the wordpress dashboard and editing plugin files for rce. infinity learning linux cve-2024-1698 sql injection wordpress rce linux medium">
       <div class="box-card-inner">
         <div class="box-card-head">
-          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/Infinity Learning/on-premise-09/avatar.png" alt="" loading="lazy" /></div>
+          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/Linux/on-premise-09/avatar.png" alt="" loading="lazy" /></div>
           <h3 class="box-title">NotificationX</h3>
           <span class="box-diff medium">MEDIUM</span>
         </div>
@@ -141,17 +158,17 @@
       <div class="box-accent diff-medium" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/Infinity Learning/on-premise-03/index.html" class="box-card writeup-card diff-easy" data-post-type="writeup" data-post-category="infinity-learning" data-post-difficulty="easy"
-      data-difficulty="easy" data-os="linux" data-category="infinity-learning"
+    <a href="posts/writeups/Linux/on-premise-03/index.html" class="box-card writeup-card diff-easy" data-post-type="writeup" data-post-category="linux" data-post-difficulty="easy" data-post-os="linux" data-post-platform="infinity-learning"
+      data-difficulty="easy" data-os="linux" data-category="linux"
       data-tags="CVE-2021-3129,Laravel,RCE,Debug Mode"
       data-platform="infinity learning"
       data-summary="exploiting laravel debug mode to achieve remote code execution via cve-2021-3129."
       data-initial-access="rce via laravel debug mode deserialization vulnerability (cve-2021-3129)."
       data-privesc="direct flag retrieval through remote code execution."
-      data-search="on-premise-03 exploiting laravel debug mode to achieve remote code execution via cve-2021-3129. rce via laravel debug mode deserialization vulnerability (cve-2021-3129). direct flag retrieval through remote code execution. infinity learning infinity learning cve-2021-3129 laravel rce debug mode linux easy">
+      data-search="on-premise-03 exploiting laravel debug mode to achieve remote code execution via cve-2021-3129. rce via laravel debug mode deserialization vulnerability (cve-2021-3129). direct flag retrieval through remote code execution. infinity learning linux cve-2021-3129 laravel rce debug mode linux easy">
       <div class="box-card-inner">
         <div class="box-card-head">
-          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/Infinity Learning/on-premise-03/avatar.png" alt="" loading="lazy" /></div>
+          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/Linux/on-premise-03/avatar.png" alt="" loading="lazy" /></div>
           <h3 class="box-title">On-Premise-03</h3>
           <span class="box-diff easy">EASY</span>
         </div>
@@ -165,7 +182,7 @@
       <div class="box-accent diff-easy" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/linux/pterodactyl/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-difficulty="medium"
+    <a href="posts/writeups/linux/pterodactyl/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-difficulty="medium" data-post-os="linux" data-post-platform="htb"
       data-difficulty="medium" data-os="linux" data-category="linux"
       data-tags="CVE-2025-49132,CVE-2025-6018,CVE-2025-6019,Pterodactyl"
       data-platform="htb"
@@ -189,7 +206,7 @@
       <div class="box-accent diff-medium" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/Findings/ssrf-gitlab/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="findings" data-post-difficulty="medium"
+    <a href="posts/writeups/Findings/ssrf-gitlab/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="findings" data-post-difficulty="medium" data-post-os="" data-post-platform="gitlab"
       data-difficulty="medium" data-os="other" data-category="findings"
       data-tags="SSRF,GitLab,Port Scanning,Reconnaissance"
       data-platform="gitlab"
@@ -232,19 +249,36 @@
     <nav class="sub-tabs" role="tablist" aria-label="Writeup categories">
       <button type="button" class="sub-tab active" role="tab" data-sub-tab="writeup-all-categories" data-category="all" aria-selected="true">ALL</button>
       <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-linux" data-category="linux" aria-selected="false">LINUX TARGETS</button>
-      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-infinity-learning" data-category="infinity-learning" aria-selected="false">INFINITY LEARNING</button>
       <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-findings" data-category="findings" aria-selected="false">FINDINGS</button>
     </nav>
       
-    <div class="difficulty-chips" role="toolbar" aria-label="Filter by difficulty">
-      <button type="button" class="diff-chip active" data-difficulty="all">ALL</button>
-      <button type="button" class="diff-chip" data-difficulty="easy">EASY</button>
-      <button type="button" class="diff-chip" data-difficulty="medium">MEDIUM</button>
-      <button type="button" class="diff-chip" data-difficulty="hard">HARD</button>
-      <button type="button" class="diff-chip" data-difficulty="insane">INSANE</button>
+    <div class="filter-chip-group" data-filter-type="difficulty" role="toolbar" aria-label="DIFFICULTY">
+      <span class="filter-chip-label">DIFFICULTY</span>
+      <div class="filter-chip-row">
+        <button type="button" class="filter-chip active" data-filter-type="difficulty" data-filter-value="all">ALL</button>
+        <button type="button" class="filter-chip" data-filter-type="difficulty" data-filter-value="easy">EASY</button>
+        <button type="button" class="filter-chip" data-filter-type="difficulty" data-filter-value="medium">MEDIUM</button>
+        <button type="button" class="filter-chip" data-filter-type="difficulty" data-filter-value="hard">HARD</button>
+      </div>
+    </div>
+    <div class="filter-chip-group" data-filter-type="os" role="toolbar" aria-label="OS">
+      <span class="filter-chip-label">OS</span>
+      <div class="filter-chip-row">
+        <button type="button" class="filter-chip active" data-filter-type="os" data-filter-value="all">ALL</button>
+        <button type="button" class="filter-chip" data-filter-type="os" data-filter-value="linux">LINUX</button>
+      </div>
+    </div>
+    <div class="filter-chip-group" data-filter-type="platform" role="toolbar" aria-label="PLATFORM">
+      <span class="filter-chip-label">PLATFORM</span>
+      <div class="filter-chip-row">
+        <button type="button" class="filter-chip active" data-filter-type="platform" data-filter-value="all">ALL</button>
+        <button type="button" class="filter-chip" data-filter-type="platform" data-filter-value="gitlab">GITLAB</button>
+        <button type="button" class="filter-chip" data-filter-type="platform" data-filter-value="htb">HTB</button>
+        <button type="button" class="filter-chip" data-filter-type="platform" data-filter-value="infinity-learning">INFINITY LEARNING</button>
+      </div>
     </div>
       <div class="writeups-grid box-grid" id="writeups-grid-writeups">
-    <a href="posts/writeups/linux/shiro/index.html" class="box-card writeup-card diff-hard" data-post-type="writeup" data-post-category="linux" data-post-difficulty="hard"
+    <a href="posts/writeups/linux/shiro/index.html" class="box-card writeup-card diff-hard" data-post-type="writeup" data-post-category="linux" data-post-difficulty="hard" data-post-os="linux" data-post-platform="infinity-learning"
       data-difficulty="hard" data-os="linux" data-category="linux"
       data-tags="CVE-2016-4437,shiro"
       data-platform="infinity learning"
@@ -268,17 +302,17 @@
       <div class="box-accent diff-hard" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/Infinity Learning/on-premise-09/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="infinity-learning" data-post-difficulty="medium"
-      data-difficulty="medium" data-os="linux" data-category="infinity-learning"
+    <a href="posts/writeups/Linux/on-premise-09/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-difficulty="medium" data-post-os="linux" data-post-platform="infinity-learning"
+      data-difficulty="medium" data-os="linux" data-category="linux"
       data-tags="CVE-2024-1698,SQL Injection,WordPress,RCE"
       data-platform="infinity learning"
       data-summary="exploiting an unauthenticated sql injection in the notificationx wordpress plugin to extract admin credentials and achieve rce."
       data-initial-access="unauthenticated sql injection via the 'type' parameter in the notificationx plugin."
       data-privesc="gaining administrative access to the wordpress dashboard and editing plugin files for rce."
-      data-search="notificationx exploiting an unauthenticated sql injection in the notificationx wordpress plugin to extract admin credentials and achieve rce. unauthenticated sql injection via the 'type' parameter in the notificationx plugin. gaining administrative access to the wordpress dashboard and editing plugin files for rce. infinity learning infinity learning cve-2024-1698 sql injection wordpress rce linux medium">
+      data-search="notificationx exploiting an unauthenticated sql injection in the notificationx wordpress plugin to extract admin credentials and achieve rce. unauthenticated sql injection via the 'type' parameter in the notificationx plugin. gaining administrative access to the wordpress dashboard and editing plugin files for rce. infinity learning linux cve-2024-1698 sql injection wordpress rce linux medium">
       <div class="box-card-inner">
         <div class="box-card-head">
-          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/Infinity Learning/on-premise-09/avatar.png" alt="" loading="lazy" /></div>
+          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/Linux/on-premise-09/avatar.png" alt="" loading="lazy" /></div>
           <h3 class="box-title">NotificationX</h3>
           <span class="box-diff medium">MEDIUM</span>
         </div>
@@ -292,17 +326,17 @@
       <div class="box-accent diff-medium" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/Infinity Learning/on-premise-03/index.html" class="box-card writeup-card diff-easy" data-post-type="writeup" data-post-category="infinity-learning" data-post-difficulty="easy"
-      data-difficulty="easy" data-os="linux" data-category="infinity-learning"
+    <a href="posts/writeups/Linux/on-premise-03/index.html" class="box-card writeup-card diff-easy" data-post-type="writeup" data-post-category="linux" data-post-difficulty="easy" data-post-os="linux" data-post-platform="infinity-learning"
+      data-difficulty="easy" data-os="linux" data-category="linux"
       data-tags="CVE-2021-3129,Laravel,RCE,Debug Mode"
       data-platform="infinity learning"
       data-summary="exploiting laravel debug mode to achieve remote code execution via cve-2021-3129."
       data-initial-access="rce via laravel debug mode deserialization vulnerability (cve-2021-3129)."
       data-privesc="direct flag retrieval through remote code execution."
-      data-search="on-premise-03 exploiting laravel debug mode to achieve remote code execution via cve-2021-3129. rce via laravel debug mode deserialization vulnerability (cve-2021-3129). direct flag retrieval through remote code execution. infinity learning infinity learning cve-2021-3129 laravel rce debug mode linux easy">
+      data-search="on-premise-03 exploiting laravel debug mode to achieve remote code execution via cve-2021-3129. rce via laravel debug mode deserialization vulnerability (cve-2021-3129). direct flag retrieval through remote code execution. infinity learning linux cve-2021-3129 laravel rce debug mode linux easy">
       <div class="box-card-inner">
         <div class="box-card-head">
-          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/Infinity Learning/on-premise-03/avatar.png" alt="" loading="lazy" /></div>
+          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/Linux/on-premise-03/avatar.png" alt="" loading="lazy" /></div>
           <h3 class="box-title">On-Premise-03</h3>
           <span class="box-diff easy">EASY</span>
         </div>
@@ -316,7 +350,7 @@
       <div class="box-accent diff-easy" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/linux/pterodactyl/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-difficulty="medium"
+    <a href="posts/writeups/linux/pterodactyl/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-difficulty="medium" data-post-os="linux" data-post-platform="htb"
       data-difficulty="medium" data-os="linux" data-category="linux"
       data-tags="CVE-2025-49132,CVE-2025-6018,CVE-2025-6019,Pterodactyl"
       data-platform="htb"
@@ -340,7 +374,7 @@
       <div class="box-accent diff-medium" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/Findings/ssrf-gitlab/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="findings" data-post-difficulty="medium"
+    <a href="posts/writeups/Findings/ssrf-gitlab/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="findings" data-post-difficulty="medium" data-post-os="" data-post-platform="gitlab"
       data-difficulty="medium" data-os="other" data-category="findings"
       data-tags="SSRF,GitLab,Port Scanning,Reconnaissance"
       data-platform="gitlab"

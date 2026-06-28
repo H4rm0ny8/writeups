@@ -1,7 +1,7 @@
 ---
 title: On-Premise-03
 type: writeup
-category: Infinity Learning
+category: Linux
 platform: Infinity Learning
 difficulty: Easy
 os: Linux

@@ -1,7 +1,7 @@
 ---
 title: NotificationX
 type: writeup
-category: Infinity Learning
+category: Linux
 platform: Infinity Learning
 difficulty: Medium 
 os: Linux
