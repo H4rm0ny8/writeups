@@ -62,13 +62,13 @@ function slugify(value) {
 
 function normalizeDifficulty(value) {
   const raw = String(value ?? "").trim();
-  if (!raw || raw === "---" || raw === "-") return "medium";
+  if (!raw || /^-+$/.test(raw)) return "medium";
   return raw;
 }
 
 function normalizeOs(value) {
   const raw = String(value ?? "").trim();
-  if (!raw || raw === "---" || raw === "-") return "";
+  if (!raw || /^-+$/.test(raw)) return "";
   return raw;
 }
 
@@ -485,6 +485,10 @@ function renderBlogPage(post, htmlBody) {
   const heroClass = hasCover ? "hero writeup-hero has-cover visible" : "hero visible";
   
 
+  const coverBg = hasCover
+    ? `<div class="writeup-hero-bg" style="background-image:url('${escapeHtml(post.coverUrl)}')" aria-hidden="true"></div>`
+    : "";
+
   const body = `
     <header class="${heroClass}" id="hero" data-section>
       ${coverBg}
@@ -624,9 +628,13 @@ function renderHub(writeups, blogs) {
 
   // ── Tabs navigation ──
   // Top-level tabs: All / Writeups / Blogs
-  const topTabs = [{ id: "all", label: "ALL" }];
-  if (writeups.length) topTabs.push({ id: "writeups", label: "WRITEUPS" });
+  // Top tabs: Blogs first (default), then Writeups. No "ALL" tab.
+  const topTabs = [];
   if (blogs.length) topTabs.push({ id: "blogs", label: "BLOGS" });
+  if (writeups.length) topTabs.push({ id: "writeups", label: "WRITEUPS" });
+
+  // If neither has content, fall back to a single placeholder
+  if (!topTabs.length) topTabs.push({ id: "empty", label: "NO CONTENT" });
 
   // Sub-tabs per top tab (categories)
   const writeupSubTabs = categoryOrder.map((key) => ({
@@ -639,7 +647,6 @@ function renderHub(writeups, blogs) {
     category: key,
     label: BLOG_CATEGORIES[key] || key,
   }));
-  const allSubTabs = [...writeupSubTabs, ...blogSubTabs];
 
   // Auto-generate chips from writeup data
   const seenDifficulties = new Set();
@@ -716,22 +723,7 @@ function renderHub(writeups, blogs) {
         .join("\n      ")}
     </nav>`;
 
-  // Sub-tabs bar for ALL view (combines writeup + blog categories)
-  const allSubTabsHtml =
-    allSubTabs.length > 1
-      ? `
-    <nav class="sub-tabs" role="tablist" aria-label="All categories">
-      <button type="button" class="sub-tab active" role="tab" data-sub-tab="all-categories" data-category="all" aria-selected="true">ALL</button>
-      ${allSubTabs
-        .map(
-          (t) =>
-            `<button type="button" class="sub-tab" role="tab" data-sub-tab="${escapeHtml(t.id)}" data-category="${escapeHtml(t.category)}" aria-selected="false">${escapeHtml(t.label.toUpperCase())}</button>`
-        )
-        .join("\n      ")}
-    </nav>`
-      : "";
-
-  // Sub-tabs bar for WRITEUPS view
+  // Sub-tabs bar for BLOGS view (per blog category)
   const writeupSubTabsHtml =
     writeupSubTabs.length > 1
       ? `
@@ -809,23 +801,6 @@ function renderHub(writeups, blogs) {
   const allWriteupCards = renderCardsFor(writeups, "writeup");
   const allBlogCards = renderCardsFor(blogs, "blog");
 
-  // ── ALL view container ──
-  const allView = `
-    <section class="section visible content-view" id="view-all" data-view="all" data-section>
-      <div class="section-header gallery-header">
-        <div class="section-hex" aria-hidden="true"></div>
-        <div>
-          <p class="gallery-kicker"><span>//</span> ALL</p>
-          <h2 class="gallery-title">Everything</h2>
-        </div>
-      </div>
-      ${searchBar}
-      ${allSubTabsHtml}
-      ${writeupChipsHtml}
-      <div class="writeups-grid box-grid" id="writeups-grid">${allWriteupCards}${allBlogCards}</div>
-      <p class="filter-empty" id="filter-empty" hidden>No writeups match this filter.</p>
-    </section>`;
-
   // ── WRITEUPS view container ──
   const writeupView = `
     <section class="section visible content-view" id="view-writeups" data-view="writeups" data-section hidden>
@@ -846,7 +821,7 @@ function renderHub(writeups, blogs) {
   // ── BLOGS view container ──
   const blogView = blogs.length
     ? `
-    <section class="section visible content-view" id="view-blogs" data-view="blogs" data-section hidden>
+    <section class="section visible content-view" id="view-blogs" data-view="blogs" data-section>
       <div class="section-header">
         <div class="section-hex" aria-hidden="true"></div>
         <h2 class="section-title"><span>//</span> Cyber Blogs</h2>
@@ -858,7 +833,7 @@ function renderHub(writeups, blogs) {
     </section>`
     : "";
 
-  const writeupSection = `${allView}${writeupView}${blogView}`;
+  const writeupSection = `${blogView}${writeupView}`;
 
   const blogCards = Object.entries(blogGroups)
     .map(([key, posts]) => {

@@ -263,7 +263,7 @@ document.querySelectorAll(".box-card, .writeup-card:not(.box-card)").forEach((ca
   card.style.transitionDelay = `${(index % 6) * 0.09}s`;
 });
 
-/* ── Tabbed views (All / Writeups / Blogs) ── */
+/* ── Tabbed views (Blogs / Writeups) ── */
 const topTabs = document.querySelectorAll(".top-tab");
 const contentViews = document.querySelectorAll(".content-view");
 const subTabs = document.querySelectorAll(".sub-tab");
@@ -271,7 +271,7 @@ const filterChips = document.querySelectorAll(".filter-chip");
 const searchInput = document.getElementById("writeup-search-input");
 const searchClear = document.getElementById("writeup-search-clear");
 
-let activeTopTab = "all";
+let activeTopTab = "blogs";
 let activeSubCategory = "all";
 const activeFilters = { difficulty: "all", os: "all", platform: "all" };
 let searchQuery = "";
@@ -301,12 +301,12 @@ function applyTabFilters() {
 
     // Top tab = post type match
     let matchesTop = false;
-    if (activeTopTab === "all") {
-      matchesTop = true;
-    } else if (activeTopTab === "writeups") {
+    if (activeTopTab === "writeups") {
       matchesTop = postType === "writeup";
     } else if (activeTopTab === "blogs") {
       matchesTop = postType === "blog";
+    } else {
+      matchesTop = true; // fallback (e.g., "empty" tab)
     }
 
     // Sub-tab = category match
