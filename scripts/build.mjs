@@ -656,10 +656,8 @@ function renderHub(writeups, blogs) {
   const body = `
     <header class="hero visible" id="hero" data-section>
       <div class="hero-inner">
-        <div class="hero-hex-wrap">
-          <div class="hero-hex" aria-hidden="true">
-            <span class="hero-hex-inner">PWN</span>
-          </div>
+        <div class="hero-gif-wrap">
+          <img class="hero-gif" src="assets/nour354.gif" alt="" loading="eager" />
         </div>
         <h1 class="hero-name">H4rm0ny Content Hub</h1>
         <p class="hero-title" id="typewriter" aria-live="polite">> Initializing operator session...</p>

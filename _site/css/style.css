@@ -162,6 +162,36 @@ body:hover .cursor-glow {
   margin-bottom: 1.5rem;
 }
 
+.hero-gif-wrap {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  position: relative;
+}
+
+.hero-gif {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--green);
+  background: var(--bg);
+  box-shadow:
+    0 0 20px var(--green-glow),
+    0 0 40px rgba(0, 255, 65, 0.15),
+    inset 0 0 12px rgba(0, 255, 65, 0.1);
+  animation: hex-pulse 3s ease-in-out infinite;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero-gif:hover {
+  transform: scale(1.06);
+  box-shadow:
+    0 0 28px var(--green-glow),
+    0 0 60px rgba(0, 255, 65, 0.22),
+    inset 0 0 14px rgba(0, 255, 65, 0.15);
+}
+
 .hero-hex {
   width: 120px;
   height: 138px;
