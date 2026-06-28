@@ -382,8 +382,6 @@ if (sections.length && navDots.length) {
 /* ── Writeup card 3D tilt ── */
 if (motionOk) {
   document.querySelectorAll(".box-card").forEach((card) => {
-    const inner = card.querySelector(".box-card-inner");
-    if (!inner) return;
     let rafId = null;
     let pendingEvent = null;
 
@@ -391,7 +389,7 @@ if (motionOk) {
       const rect = card.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;
-      inner.style.transform = `translateZ(0) translateY(-4px) rotateY(${x * 5}deg) rotateX(${-y * 5}deg)`;
+      card.style.transform = `perspective(600px) translateY(-4px) rotateY(${x * 5}deg) rotateX(${-y * 5}deg)`;
       rafId = null;
     };
 
@@ -406,7 +404,7 @@ if (motionOk) {
         cancelAnimationFrame(rafId);
         rafId = null;
       }
-      inner.style.transform = "";
+      card.style.transform = "";
     });
   });
 }
