@@ -259,9 +259,100 @@ revealInView();
 window.addEventListener("load", revealInView);
 window.addEventListener("resize", revealInView);
 
-document.querySelectorAll(".writeup-card").forEach((card, index) => {
+document.querySelectorAll(".box-card, .writeup-card:not(.box-card)").forEach((card, index) => {
   card.style.transitionDelay = `${(index % 6) * 0.09}s`;
 });
+
+/* ── Writeup gallery filters ── */
+const filterButtons = document.querySelectorAll(".filter-btn");
+const writeupsGrid = document.getElementById("writeups-grid");
+const filterEmpty = document.getElementById("filter-empty");
+
+let activeFilter = "all";
+let searchQuery = "";
+
+function applyWriteupFilter() {
+  if (!writeupsGrid) return;
+  const cards = writeupsGrid.querySelectorAll(".box-card");
+  let visibleCount = 0;
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+
+  cards.forEach((card) => {
+    const diff = card.dataset.difficulty || "";
+    const os = card.dataset.os || "";
+    const searchBlob = card.dataset.search || "";
+
+    let matchesFilter = false;
+    if (activeFilter === "all") {
+      matchesFilter = true;
+    } else if (activeFilter === "windows" || activeFilter === "linux") {
+      matchesFilter = os === activeFilter;
+    } else {
+      matchesFilter = diff === activeFilter;
+    }
+
+    const matchesSearch =
+      normalizedQuery === "" || searchBlob.includes(normalizedQuery);
+
+    const show = matchesFilter && matchesSearch;
+    card.classList.toggle("is-hidden", !show);
+    if (show) visibleCount++;
+  });
+
+  if (filterEmpty) {
+    filterEmpty.hidden = visibleCount > 0;
+    if (visibleCount === 0) {
+      filterEmpty.textContent =
+        normalizedQuery && activeFilter !== "all"
+          ? `No writeups match "${searchQuery.trim()}" with the current filter.`
+          : normalizedQuery
+          ? `No writeups match "${searchQuery.trim()}".`
+          : "No writeups match this filter.";
+    }
+  }
+}
+
+filterButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    filterButtons.forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    activeFilter = btn.dataset.filter || "all";
+    applyWriteupFilter();
+  });
+});
+
+/* ── Live search bar ── */
+const searchInput = document.getElementById("writeup-search-input");
+const searchClear = document.getElementById("writeup-search-clear");
+
+if (searchInput) {
+  searchInput.addEventListener("input", (e) => {
+    searchQuery = e.target.value || "";
+    if (searchClear) searchClear.hidden = searchQuery.length === 0;
+    applyWriteupFilter();
+  });
+
+  searchInput.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      searchInput.value = "";
+      searchQuery = "";
+      if (searchClear) searchClear.hidden = true;
+      applyWriteupFilter();
+    }
+  });
+}
+
+if (searchClear) {
+  searchClear.addEventListener("click", () => {
+    if (searchInput) {
+      searchInput.value = "";
+      searchInput.focus();
+    }
+    searchQuery = "";
+    searchClear.hidden = true;
+    applyWriteupFilter();
+  });
+}
 
 /* ── Section nav dots ── */
 const navDots = document.querySelectorAll(".nav-dot");
@@ -290,9 +381,8 @@ if (sections.length && navDots.length) {
 
 /* ── Writeup card 3D tilt ── */
 if (motionOk) {
-  document.querySelectorAll(".writeup-card").forEach((card) => {
+  document.querySelectorAll(".box-card").forEach((card) => {
     card.addEventListener("mousemove", (e) => {
-      if (e.target.closest("a")) return;
       const rect = card.getBoundingClientRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
       const y = (e.clientY - rect.top) / rect.height - 0.5;

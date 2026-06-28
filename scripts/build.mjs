@@ -502,6 +502,22 @@ function renderWriteupCard(post) {
     .map((tag) => `<span class="box-tag">${escapeHtml(tag)}</span>`)
     .join("");
 
+  // Build a compact search index from every searchable field
+  const searchBlob = [
+    post.title,
+    post.summary,
+    post.initialAccess,
+    post.privesc,
+    post.platform,
+    post.category,
+    (post.tags || []).join(" "),
+    post.os,
+    post.difficulty,
+  ]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase();
+
   const avatarInner = post.avatarUrl
     ? `<img class="box-avatar-img" src="${escapeHtml(post.avatarUrl)}" alt="" loading="lazy" />`
     : `<span class="box-avatar-initials">${escapeHtml(cardInitials(post.title))}</span>`;
@@ -512,7 +528,13 @@ function renderWriteupCard(post) {
 
   return `
     <a href="${escapeHtml(post.url)}" class="box-card writeup-card diff-${escapeHtml(diff)}"
-      data-difficulty="${escapeHtml(diff)}" data-os="${escapeHtml(osSlug)}" data-category="${escapeHtml(slugify(post.category))}">
+      data-difficulty="${escapeHtml(diff)}" data-os="${escapeHtml(osSlug)}" data-category="${escapeHtml(slugify(post.category))}"
+      data-tags="${escapeHtml((post.tags || []).join(","))}"
+      data-platform="${escapeHtml((post.platform || "").toLowerCase())}"
+      data-summary="${escapeHtml((post.summary || "").toLowerCase())}"
+      data-initial-access="${escapeHtml((post.initialAccess || "").toLowerCase())}"
+      data-privesc="${escapeHtml((post.privesc || "").toLowerCase())}"
+      data-search="${escapeHtml(searchBlob)}">
       <div class="box-card-inner">
         <div class="box-card-head">
           <div class="box-avatar">${avatarInner}</div>
@@ -583,15 +605,20 @@ function renderHub(writeups, blogs) {
   const cards = writeups.map(renderWriteupCard).join("\n");
 
   const filters = `
-    <div class="writeup-filters" role="toolbar" aria-label="Filter writeups">
-      <button type="button" class="filter-btn active" data-filter="all">ALL</button>
-      <button type="button" class="filter-btn" data-filter="easy">EASY</button>
-      <button type="button" class="filter-btn" data-filter="medium">MEDIUM</button>
-      <button type="button" class="filter-btn" data-filter="hard">HARD</button>
-      <button type="button" class="filter-btn" data-filter="insane">INSANE</button>
-      <button type="button" class="filter-btn" data-filter="windows">WINDOWS</button>
-      <button type="button" class="filter-btn" data-filter="linux">LINUX</button>
-    </div>`;
+    <div class="writeup-search" role="search">
+        <span class="search-icon" aria-hidden="true">⌕</span>
+        <input type="search" id="writeup-search-input" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
+        <button type="button" id="writeup-search-clear" class="search-clear" aria-label="Clear search" hidden>×</button>
+      </div>
+      <div class="writeup-filters" role="toolbar" aria-label="Filter writeups">
+        <button type="button" class="filter-btn active" data-filter="all">ALL</button>
+        <button type="button" class="filter-btn" data-filter="easy">EASY</button>
+        <button type="button" class="filter-btn" data-filter="medium">MEDIUM</button>
+        <button type="button" class="filter-btn" data-filter="hard">HARD</button>
+        <button type="button" class="filter-btn" data-filter="insane">INSANE</button>
+        <button type="button" class="filter-btn" data-filter="windows">WINDOWS</button>
+        <button type="button" class="filter-btn" data-filter="linux">LINUX</button>
+      </div>`;
 
   const writeupSection = `
     <section class="section visible" id="writeups" data-section>
