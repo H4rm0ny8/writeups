@@ -36,6 +36,18 @@ function writeupCategoryLabel(rawCategory) {
     .join(" ");
 }
 
+// Map any writeup category to one of two top-level tabs:
+//   - "findings" (security research writeups)
+//   - "box"      (anything else: linux/windows/AD/CTF labs)
+function writeupBoxKey(rawCategory) {
+  const key = writeupCategoryKey(rawCategory);
+  return key === "findings" ? "findings" : "box";
+}
+
+function writeupBoxLabel(rawCategory) {
+  return writeupBoxKey(rawCategory) === "findings" ? "Findings" : "Boxes";
+}
+
 const BLOG_CATEGORIES = {
   general: "General",
   "red-team": "Red Team",
@@ -723,18 +735,14 @@ function renderHub(writeups, blogs) {
         .join("\n      ")}
     </nav>`;
 
-  // Sub-tabs bar for BLOGS view (per blog category)
+  // Sub-tabs bar for WRITEUPS view (Findings / Boxes only)
   const writeupSubTabsHtml =
-    writeupSubTabs.length > 1
+    writeups.length
       ? `
-    <nav class="sub-tabs" role="tablist" aria-label="Writeup categories">
-      <button type="button" class="sub-tab active" role="tab" data-sub-tab="writeup-all-categories" data-category="all" aria-selected="true">ALL</button>
-      ${writeupSubTabs
-        .map(
-          (t) =>
-            `<button type="button" class="sub-tab" role="tab" data-sub-tab="${escapeHtml(t.id)}" data-category="${escapeHtml(t.category)}" aria-selected="false">${escapeHtml(t.label.toUpperCase())}</button>`
-        )
-        .join("\n      ")}
+    <nav class="sub-tabs" role="tablist" aria-label="Writeup type">
+      <button type="button" class="sub-tab active" role="tab" data-sub-tab="writeup-all-boxes" data-box="all" aria-selected="true">ALL</button>
+      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-findings" data-box="findings" aria-selected="false">FINDINGS</button>
+      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-boxes" data-box="box" aria-selected="false">BOXES</button>
     </nav>`
       : "";
 
@@ -779,11 +787,11 @@ function renderHub(writeups, blogs) {
         ].filter(Boolean).join("")
       : "";
 
-  const searchBar = `
+  const searchBar = (scopeId) => `
     <div class="writeup-search" role="search">
       <span class="search-icon" aria-hidden="true">âŒ•</span>
-      <input type="search" id="writeup-search-input" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
-      <button type="button" id="writeup-search-clear" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
+      <input type="search" id="writeup-search-input-${scopeId}" data-search-scope="${scopeId}" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
+      <button type="button" id="writeup-search-clear-${scopeId}" data-clear-scope="${scopeId}" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
     </div>`;
 
   // Render cards with data attributes so JS can show/hide based on tabs + filters
@@ -793,7 +801,7 @@ function renderHub(writeups, blogs) {
         const cardHtml = type === "blog" ? renderBlogCard(p) : renderWriteupCard(p);
         return cardHtml.replace(
           /class="(box-card writeup-card[^"]*)"/,
-          `class="$1" data-post-type="${type}" data-post-category="${escapeHtml(writeupCategoryKey(p.category))}" data-post-difficulty="${escapeHtml(slugify(normalizeDifficulty(p.difficulty)))}" data-post-os="${escapeHtml(slugify(normalizeOs(p.os) || ""))}" data-post-platform="${escapeHtml(slugify(p.platform || ""))}"`
+          `class="$1" data-post-type="${type}" data-post-category="${escapeHtml(writeupCategoryKey(p.category))}" data-post-box="${escapeHtml(writeupBoxKey(p.category))}" data-post-difficulty="${escapeHtml(slugify(normalizeDifficulty(p.difficulty)))}" data-post-os="${escapeHtml(slugify(normalizeOs(p.os) || ""))}" data-post-platform="${escapeHtml(slugify(p.platform || ""))}"`
         );
       })
       .join("\n");
@@ -811,7 +819,7 @@ function renderHub(writeups, blogs) {
           <h2 class="gallery-title">Box Writeups</h2>
         </div>
       </div>
-      ${searchBar}
+      ${searchBar("writeups")}
       ${writeupSubTabsHtml}
       ${writeupChipsHtml}
       <div class="writeups-grid box-grid" id="writeups-grid-writeups">${allWriteupCards}</div>
@@ -826,7 +834,7 @@ function renderHub(writeups, blogs) {
         <div class="section-hex" aria-hidden="true"></div>
         <h2 class="section-title"><span>//</span> Cyber Blogs</h2>
       </div>
-      ${searchBar}
+      ${searchBar("blogs")}
       ${blogSubTabsHtml}
       <div class="writeups-grid box-grid" id="writeups-grid-blogs">${allBlogCards}</div>
       <p class="filter-empty" hidden>No blogs match this filter.</p>

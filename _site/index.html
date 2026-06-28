@@ -72,12 +72,12 @@
       
     <div class="writeup-search" role="search">
       <span class="search-icon" aria-hidden="true">âŒ•</span>
-      <input type="search" id="writeup-search-input" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
-      <button type="button" id="writeup-search-clear" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
+      <input type="search" id="writeup-search-input-blogs" data-search-scope="blogs" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
+      <button type="button" id="writeup-search-clear-blogs" data-clear-scope="blogs" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
     </div>
       
       <div class="writeups-grid box-grid" id="writeups-grid-blogs">
-    <a href="posts/blogs/red-team/anyblog/index.html" class="box-card writeup-card blog-card diff-medium" data-post-type="blog" data-post-category="red-team" data-post-difficulty="medium" data-post-os="" data-post-platform="" data-difficulty="blog" data-os="blog">
+    <a href="posts/blogs/red-team/anyblog/index.html" class="box-card writeup-card blog-card diff-medium" data-post-type="blog" data-post-category="red-team" data-post-box="box" data-post-difficulty="medium" data-post-os="" data-post-platform="" data-difficulty="blog" data-os="blog">
       <div class="box-card-inner">
         <div class="box-card-head">
           <div class="box-avatar"><span class="box-avatar-initials">BL</span></div>
@@ -106,14 +106,14 @@
       
     <div class="writeup-search" role="search">
       <span class="search-icon" aria-hidden="true">âŒ•</span>
-      <input type="search" id="writeup-search-input" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
-      <button type="button" id="writeup-search-clear" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
+      <input type="search" id="writeup-search-input-writeups" data-search-scope="writeups" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
+      <button type="button" id="writeup-search-clear-writeups" data-clear-scope="writeups" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
     </div>
       
-    <nav class="sub-tabs" role="tablist" aria-label="Writeup categories">
-      <button type="button" class="sub-tab active" role="tab" data-sub-tab="writeup-all-categories" data-category="all" aria-selected="true">ALL</button>
-      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-linux" data-category="linux" aria-selected="false">LINUX TARGETS</button>
-      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-findings" data-category="findings" aria-selected="false">FINDINGS</button>
+    <nav class="sub-tabs" role="tablist" aria-label="Writeup type">
+      <button type="button" class="sub-tab active" role="tab" data-sub-tab="writeup-all-boxes" data-box="all" aria-selected="true">ALL</button>
+      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-findings" data-box="findings" aria-selected="false">FINDINGS</button>
+      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-boxes" data-box="box" aria-selected="false">BOXES</button>
     </nav>
       
     <div class="filter-chip-group" data-filter-type="difficulty" role="toolbar" aria-label="DIFFICULTY">
@@ -142,7 +142,7 @@
       </div>
     </div>
       <div class="writeups-grid box-grid" id="writeups-grid-writeups">
-    <a href="posts/writeups/linux/shiro/index.html" class="box-card writeup-card diff-hard" data-post-type="writeup" data-post-category="linux" data-post-difficulty="hard" data-post-os="linux" data-post-platform="infinity-learning"
+    <a href="posts/writeups/linux/shiro/index.html" class="box-card writeup-card diff-hard" data-post-type="writeup" data-post-category="linux" data-post-box="box" data-post-difficulty="hard" data-post-os="linux" data-post-platform="infinity-learning"
       data-difficulty="hard" data-os="linux" data-category="linux"
       data-tags="CVE-2016-4437,shiro"
       data-platform="infinity learning"
@@ -166,7 +166,7 @@
       <div class="box-accent diff-hard" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/Linux/on-premise-09/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-difficulty="medium" data-post-os="linux" data-post-platform="infinity-learning"
+    <a href="posts/writeups/Linux/on-premise-09/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-box="box" data-post-difficulty="medium" data-post-os="linux" data-post-platform="infinity-learning"
       data-difficulty="medium" data-os="linux" data-category="linux"
       data-tags="CVE-2024-1698,SQL Injection,WordPress,RCE"
       data-platform="infinity learning"
@@ -190,7 +190,7 @@
       <div class="box-accent diff-medium" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/Linux/on-premise-03/index.html" class="box-card writeup-card diff-easy" data-post-type="writeup" data-post-category="linux" data-post-difficulty="easy" data-post-os="linux" data-post-platform="infinity-learning"
+    <a href="posts/writeups/Linux/on-premise-03/index.html" class="box-card writeup-card diff-easy" data-post-type="writeup" data-post-category="linux" data-post-box="box" data-post-difficulty="easy" data-post-os="linux" data-post-platform="infinity-learning"
       data-difficulty="easy" data-os="linux" data-category="linux"
       data-tags="CVE-2021-3129,Laravel,RCE,Debug Mode"
       data-platform="infinity learning"
@@ -214,7 +214,7 @@
       <div class="box-accent diff-easy" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/linux/pterodactyl/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-difficulty="medium" data-post-os="linux" data-post-platform="htb"
+    <a href="posts/writeups/linux/pterodactyl/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-box="box" data-post-difficulty="medium" data-post-os="linux" data-post-platform="htb"
       data-difficulty="medium" data-os="linux" data-category="linux"
       data-tags="CVE-2025-49132,CVE-2025-6018,CVE-2025-6019,Pterodactyl"
       data-platform="htb"
@@ -238,7 +238,7 @@
       <div class="box-accent diff-medium" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/Findings/ssrf-gitlab/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="findings" data-post-difficulty="medium" data-post-os="" data-post-platform="gitlab"
+    <a href="posts/writeups/Findings/ssrf-gitlab/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="findings" data-post-box="findings" data-post-difficulty="medium" data-post-os="" data-post-platform="gitlab"
       data-difficulty="medium" data-os="other" data-category="findings"
       data-tags="SSRF,GitLab,Port Scanning,Reconnaissance"
       data-platform="gitlab"

@@ -268,13 +268,12 @@ const topTabs = document.querySelectorAll(".top-tab");
 const contentViews = document.querySelectorAll(".content-view");
 const subTabs = document.querySelectorAll(".sub-tab");
 const filterChips = document.querySelectorAll(".filter-chip");
-const searchInput = document.getElementById("writeup-search-input");
-const searchClear = document.getElementById("writeup-search-clear");
+const searchInputs = document.querySelectorAll("[data-search-scope]");
 
 let activeTopTab = "blogs";
-let activeSubCategory = "all";
+let activeSubBox = "all";
 const activeFilters = { difficulty: "all", os: "all", platform: "all" };
-let searchQuery = "";
+const searchQueries = { writeups: "", blogs: "" };
 
 function getActiveView() {
   return document.querySelector(`.content-view[data-view="${activeTopTab}"]`);
@@ -289,11 +288,12 @@ function applyTabFilters() {
 
   const cards = grid.querySelectorAll(".box-card");
   let visibleCount = 0;
-  const normalizedQuery = searchQuery.trim().toLowerCase();
+  const queryKey = activeTopTab === "blogs" ? "blogs" : "writeups";
+  const normalizedQuery = searchQueries[queryKey].trim().toLowerCase();
 
   cards.forEach((card) => {
     const postType = card.dataset.postType || "writeup";
-    const postCategory = card.dataset.postCategory || "";
+    const postBox = card.dataset.postBox || "";
     const postDifficulty = card.dataset.postDifficulty || "";
     const postOs = card.dataset.postOs || "";
     const postPlatform = card.dataset.postPlatform || "";
@@ -306,15 +306,13 @@ function applyTabFilters() {
     } else if (activeTopTab === "blogs") {
       matchesTop = postType === "blog";
     } else {
-      matchesTop = true; // fallback (e.g., "empty" tab)
+      matchesTop = true;
     }
 
-    // Sub-tab = category match
-    let matchesSub = false;
-    if (activeSubCategory === "all") {
-      matchesSub = true;
-    } else {
-      matchesSub = postCategory === activeSubCategory;
+    // Sub-tab (within WRITEUPS): findings / box / all
+    let matchesSub = true;
+    if (activeTopTab === "writeups" && activeSubBox !== "all") {
+      matchesSub = postBox === activeSubBox;
     }
 
     // Filter chips: difficulty / OS / platform (only meaningful for writeups)
@@ -353,13 +351,10 @@ function applyTabFilters() {
 
 function setActiveTopTab(tabId) {
   activeTopTab = tabId;
-  activeSubCategory = "all";
+  activeSubBox = "all";
   activeFilters.difficulty = "all";
   activeFilters.os = "all";
   activeFilters.platform = "all";
-  searchQuery = "";
-  if (searchInput) searchInput.value = "";
-  if (searchClear) searchClear.hidden = true;
 
   topTabs.forEach((t) => {
     const isActive = t.dataset.topTab === tabId;
@@ -375,7 +370,7 @@ function setActiveTopTab(tabId) {
   const view = getActiveView();
   if (view) {
     view.querySelectorAll(".sub-tab").forEach((s) => {
-      const isAll = s.dataset.category === "all";
+      const isAll = (s.dataset.box || "all") === "all";
       s.classList.toggle("active", isAll);
       s.setAttribute("aria-selected", isAll ? "true" : "false");
     });
@@ -388,10 +383,10 @@ function setActiveTopTab(tabId) {
   applyTabFilters();
 }
 
-function setActiveSubTab(category, view) {
-  activeSubCategory = category;
+function setActiveSubBox(box, view) {
+  activeSubBox = box;
   view.querySelectorAll(".sub-tab").forEach((s) => {
-    const isActive = s.dataset.category === category;
+    const isActive = (s.dataset.box || "all") === box;
     s.classList.toggle("active", isActive);
     s.setAttribute("aria-selected", isActive ? "true" : "false");
   });
@@ -416,7 +411,7 @@ subTabs.forEach((tab) => {
   tab.addEventListener("click", () => {
     const view = tab.closest(".content-view");
     if (!view) return;
-    setActiveSubTab(tab.dataset.category, view);
+    setActiveSubBox(tab.dataset.box || "all", view);
   });
 });
 
@@ -428,34 +423,37 @@ filterChips.forEach((chip) => {
   });
 });
 
-if (searchInput) {
-  searchInput.addEventListener("input", (e) => {
-    searchQuery = e.target.value || "";
-    if (searchClear) searchClear.hidden = searchQuery.length === 0;
+// Per-scope search input wiring
+searchInputs.forEach((input) => {
+  const scope = input.dataset.searchScope;
+  const clearBtn = document.querySelector(`[data-clear-scope="${scope}"]`);
+  input.value = searchQueries[scope] || "";
+
+  input.addEventListener("input", (e) => {
+    searchQueries[scope] = e.target.value || "";
+    if (clearBtn) clearBtn.hidden = searchQueries[scope].length === 0;
     applyTabFilters();
   });
 
-  searchInput.addEventListener("keydown", (e) => {
+  input.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
-      searchInput.value = "";
-      searchQuery = "";
-      if (searchClear) searchClear.hidden = true;
+      input.value = "";
+      searchQueries[scope] = "";
+      if (clearBtn) clearBtn.hidden = true;
       applyTabFilters();
     }
   });
-}
 
-if (searchClear) {
-  searchClear.addEventListener("click", () => {
-    if (searchInput) {
-      searchInput.value = "";
-      searchInput.focus();
-    }
-    searchQuery = "";
-    searchClear.hidden = true;
-    applyTabFilters();
-  });
-}
+  if (clearBtn) {
+    clearBtn.addEventListener("click", () => {
+      input.value = "";
+      input.focus();
+      searchQueries[scope] = "";
+      clearBtn.hidden = true;
+      applyTabFilters();
+    });
+  }
+});
 
 // Initial render
 applyTabFilters();
