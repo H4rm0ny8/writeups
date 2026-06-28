@@ -65,84 +65,19 @@
     </nav>
     
     <section class="section visible content-view" id="view-writeups" data-view="writeups" data-section>
-      <div class="section-header gallery-header">
-        <div class="section-hex" aria-hidden="true"></div>
-        <div>
-          <p class="gallery-kicker"><span>//</span> OFFENSIVE WRITEUPS</p>
-          <h2 class="gallery-title">Box Writeups</h2>
-        </div>
-      </div>
       
-    <div class="app-container">
-      <div class="wallet" data-wallet="writeups">
-        <div class="wallet-back"></div>
-        
-    <div class="wallet-card stripe" data-open-view="view-writeup-findings" role="button" tabindex="0" aria-label="Open Findings">
-      <div class="card-inner">
-        <div class="card-top">
-          <span>Findings</span>
-          <div class="chip"></div>
-        </div>
-        <div class="card-bottom">
-          <div class="card-info">
-            <span class="label">Vuln Research</span>
-            <span class="value">1 entries</span>
-          </div>
-          <div class="card-number-wrapper">
-            <span class="hidden-stars">$ â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ</span>
-            <span class="card-number">VIEW_FINDINGS</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="wallet-card stripe" data-open-view="view-writeup-boxes" role="button" tabindex="0" aria-label="Open Boxes">
-      <div class="card-inner">
-        <div class="card-top">
-          <span>Boxes</span>
-          <div class="chip"></div>
-        </div>
-        <div class="card-bottom">
-          <div class="card-info">
-            <span class="label">HTB / CTF Labs</span>
-            <span class="value">4 entries</span>
-          </div>
-          <div class="card-number-wrapper">
-            <span class="hidden-stars">$ â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ</span>
-            <span class="card-number">VIEW_BOXES</span>
-          </div>
-        </div>
-      </div>
-    </div>
-        <div class="pocket">
-          <svg class="pocket-svg" viewBox="0 0 280 160" fill="none">
-            <path d="M 0 20 C 0 10, 5 10, 10 10 C 20 10, 25 25, 40 25 L 240 25 C 255 25, 260 10, 270 10 C 275 10, 280 10, 280 20 L 280 120 C 280 155, 260 160, 240 160 L 40 160 C 20 160, 0 155, 0 120 Z" fill="var(--wallet-pocket-fill)"></path>
-            <path d="M 8 22 C 8 16, 12 16, 15 16 C 23 16, 27 29, 40 29 L 240 29 C 253 29, 257 16, 265 16 C 268 16, 272 16, 272 22 L 272 120 C 272 150, 255 152, 240 152 L 40 152 C 25 152, 8 152, 8 120 Z" stroke="var(--wallet-pocket-stroke)" stroke-width="1.5" stroke-dasharray="6 4"></path>
-          </svg>
-          <div class="pocket-content">
-            <div style="position: relative; height: 24px; width: 100%;">
-              <div class="balance-stars">â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ</div>
-              <div class="balance-real">5 writeups</div>
-            </div>
-            <div style="color: var(--wallet-pocket-label); font-size: 12px; font-weight: 500;">Writeups</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-      <div class="wallet-detail" id="view-writeup-findings" hidden>
-        <div class="wallet-detail-header">
-          <button type="button" class="wallet-back-btn" data-close-view>← back to wallet</button>
-          <h3>Findings</h3>
-          <p class="wallet-detail-meta">Vulnerability research writeups</p>
-        </div>
-        
     <div class="writeup-search" role="search">
       <span class="search-icon" aria-hidden="true">âŒ•</span>
-      <input type="search" id="writeup-search-input-findings" data-search-scope="findings" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
-      <button type="button" id="writeup-search-clear-findings" data-clear-scope="findings" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
+      <input type="search" id="writeup-search-input-writeups" data-search-scope="writeups" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
+      <button type="button" id="writeup-search-clear-writeups" data-clear-scope="writeups" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
     </div>
-        
+      
+    <nav class="sub-tabs" role="tablist" aria-label="Writeup type">
+      <button type="button" class="sub-tab active" role="tab" data-sub-tab="writeup-all-boxes" data-box="all" aria-selected="true">ALL</button>
+      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-findings" data-box="findings" aria-selected="false">FINDINGS</button>
+      <button type="button" class="sub-tab" role="tab" data-sub-tab="writeup-boxes" data-box="box" aria-selected="false">BOXES</button>
+    </nav>
+      
     <div class="filter-chip-group" data-filter-type="difficulty" role="toolbar" aria-label="DIFFICULTY">
       <span class="filter-chip-label">DIFFICULTY</span>
       <div class="filter-chip-row">
@@ -168,73 +103,8 @@
         <button type="button" class="filter-chip" data-filter-type="platform" data-filter-value="infinity-learning">INFINITY LEARNING</button>
       </div>
     </div>
-        <div class="writeups-grid box-grid">
-    <a href="posts/writeups/Findings/ssrf-gitlab/index.html" class="box-card writeup-card diff-medium"
-      data-difficulty="medium" data-os="other" data-category="findings"
-      data-tags="SSRF,GitLab,Port Scanning,Reconnaissance"
-      data-platform="gitlab"
-      data-summary="exploiting a server-side request forgery (ssrf) in gitlab's &quot;import from url&quot; feature to probe internal networks and perform port scanning via timing differences."
-      data-initial-access="ssrf via the &quot;import project from url&quot; feature by supplying an arbitrary url to the `import_url` parameter"
-      data-privesc="internal network reconnaissance and port scanning via observable timing differences on connection attempts."
-      data-search="ssrf in gitlab exploiting a server-side request forgery (ssrf) in gitlab's &quot;import from url&quot; feature to probe internal networks and perform port scanning via timing differences. ssrf via the &quot;import project from url&quot; feature by supplying an arbitrary url to the `import_url` parameter internal network reconnaissance and port scanning via observable timing differences on connection attempts. gitlab findings ssrf gitlab port scanning reconnaissance medium">
-      <div class="box-card-inner">
-        <div class="box-card-head">
-          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/Findings/ssrf-gitlab/image.png" alt="" loading="lazy" /></div>
-          <h3 class="box-title">SSRF in GitLab</h3>
-          <span class="box-diff medium">MEDIUM</span>
-        </div>
-        <div class="box-card-meta">
-          <span class="box-os"><span class="os-dot other" aria-hidden="true"></span>N/A</span>
-          <span class="box-date">2025-11</span>
-        </div>
-        <p class="box-summary">Exploiting a Server-Side Request Forgery (SSRF) in GitLab's &quot;Import From URL&quot; feature to probe internal networks and perform port scanning via timing differences.</p>
-        <div class="box-tags"><span class="box-tag">SSRF</span><span class="box-tag">GitLab</span><span class="box-tag">Port Scanning</span><span class="box-tag">Reconnaissance</span></div>
-      </div>
-      <div class="box-accent diff-medium" aria-hidden="true"></div>
-    </a></div>
-        <p class="filter-empty" hidden>No findings match.</p>
-      </div>
-
-      <div class="wallet-detail" id="view-writeup-boxes" hidden>
-        <div class="wallet-detail-header">
-          <button type="button" class="wallet-back-btn" data-close-view>← back to wallet</button>
-          <h3>Boxes</h3>
-          <p class="wallet-detail-meta">HTB, CTF, and lab writeups</p>
-        </div>
-        
-    <div class="writeup-search" role="search">
-      <span class="search-icon" aria-hidden="true">âŒ•</span>
-      <input type="search" id="writeup-search-input-boxes" data-search-scope="boxes" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
-      <button type="button" id="writeup-search-clear-boxes" data-clear-scope="boxes" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
-    </div>
-        
-    <div class="filter-chip-group" data-filter-type="difficulty" role="toolbar" aria-label="DIFFICULTY">
-      <span class="filter-chip-label">DIFFICULTY</span>
-      <div class="filter-chip-row">
-        <button type="button" class="filter-chip active" data-filter-type="difficulty" data-filter-value="all">ALL</button>
-        <button type="button" class="filter-chip" data-filter-type="difficulty" data-filter-value="easy">EASY</button>
-        <button type="button" class="filter-chip" data-filter-type="difficulty" data-filter-value="medium">MEDIUM</button>
-        <button type="button" class="filter-chip" data-filter-type="difficulty" data-filter-value="hard">HARD</button>
-      </div>
-    </div>
-    <div class="filter-chip-group" data-filter-type="os" role="toolbar" aria-label="OS">
-      <span class="filter-chip-label">OS</span>
-      <div class="filter-chip-row">
-        <button type="button" class="filter-chip active" data-filter-type="os" data-filter-value="all">ALL</button>
-        <button type="button" class="filter-chip" data-filter-type="os" data-filter-value="linux">LINUX</button>
-      </div>
-    </div>
-    <div class="filter-chip-group" data-filter-type="platform" role="toolbar" aria-label="PLATFORM">
-      <span class="filter-chip-label">PLATFORM</span>
-      <div class="filter-chip-row">
-        <button type="button" class="filter-chip active" data-filter-type="platform" data-filter-value="all">ALL</button>
-        <button type="button" class="filter-chip" data-filter-type="platform" data-filter-value="gitlab">GITLAB</button>
-        <button type="button" class="filter-chip" data-filter-type="platform" data-filter-value="htb">HTB</button>
-        <button type="button" class="filter-chip" data-filter-type="platform" data-filter-value="infinity-learning">INFINITY LEARNING</button>
-      </div>
-    </div>
-        <div class="writeups-grid box-grid">
-    <a href="posts/writeups/linux/shiro/index.html" class="box-card writeup-card diff-hard"
+      <div class="writeups-grid box-grid" id="writeups-grid-writeups">
+    <a href="posts/writeups/linux/shiro/index.html" class="box-card writeup-card diff-hard" data-post-type="writeup" data-post-category="linux" data-post-box="box" data-post-difficulty="hard" data-post-os="linux" data-post-platform="infinity-learning"
       data-difficulty="hard" data-os="linux" data-category="linux"
       data-tags="CVE-2016-4437,shiro"
       data-platform="infinity learning"
@@ -258,7 +128,7 @@
       <div class="box-accent diff-hard" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/Linux/on-premise-09/index.html" class="box-card writeup-card diff-medium"
+    <a href="posts/writeups/Linux/on-premise-09/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-box="box" data-post-difficulty="medium" data-post-os="linux" data-post-platform="infinity-learning"
       data-difficulty="medium" data-os="linux" data-category="linux"
       data-tags="CVE-2024-1698,SQL Injection,WordPress,RCE"
       data-platform="infinity learning"
@@ -282,7 +152,7 @@
       <div class="box-accent diff-medium" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/Linux/on-premise-03/index.html" class="box-card writeup-card diff-easy"
+    <a href="posts/writeups/Linux/on-premise-03/index.html" class="box-card writeup-card diff-easy" data-post-type="writeup" data-post-category="linux" data-post-box="box" data-post-difficulty="easy" data-post-os="linux" data-post-platform="infinity-learning"
       data-difficulty="easy" data-os="linux" data-category="linux"
       data-tags="CVE-2021-3129,Laravel,RCE,Debug Mode"
       data-platform="infinity learning"
@@ -306,7 +176,7 @@
       <div class="box-accent diff-easy" aria-hidden="true"></div>
     </a>
 
-    <a href="posts/writeups/linux/pterodactyl/index.html" class="box-card writeup-card diff-medium"
+    <a href="posts/writeups/linux/pterodactyl/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="linux" data-post-box="box" data-post-difficulty="medium" data-post-os="linux" data-post-platform="htb"
       data-difficulty="medium" data-os="linux" data-category="linux"
       data-tags="CVE-2025-49132,CVE-2025-6018,CVE-2025-6019,Pterodactyl"
       data-platform="htb"
@@ -328,68 +198,43 @@
         <div class="box-tags"><span class="box-tag">CVE-2025-49132</span><span class="box-tag">CVE-2025-6018</span><span class="box-tag">CVE-2025-6019</span><span class="box-tag">Pterodactyl</span></div>
       </div>
       <div class="box-accent diff-medium" aria-hidden="true"></div>
-    </a></div>
-        <p class="filter-empty" hidden>No boxes match.</p>
+    </a>
+
+    <a href="posts/writeups/Findings/ssrf-gitlab/index.html" class="box-card writeup-card diff-medium" data-post-type="writeup" data-post-category="findings" data-post-box="findings" data-post-difficulty="medium" data-post-os="" data-post-platform="gitlab"
+      data-difficulty="medium" data-os="other" data-category="findings"
+      data-tags="SSRF,GitLab,Port Scanning,Reconnaissance"
+      data-platform="gitlab"
+      data-summary="exploiting a server-side request forgery (ssrf) in gitlab's &quot;import from url&quot; feature to probe internal networks and perform port scanning via timing differences."
+      data-initial-access="ssrf via the &quot;import project from url&quot; feature by supplying an arbitrary url to the `import_url` parameter"
+      data-privesc="internal network reconnaissance and port scanning via observable timing differences on connection attempts."
+      data-search="ssrf in gitlab exploiting a server-side request forgery (ssrf) in gitlab's &quot;import from url&quot; feature to probe internal networks and perform port scanning via timing differences. ssrf via the &quot;import project from url&quot; feature by supplying an arbitrary url to the `import_url` parameter internal network reconnaissance and port scanning via observable timing differences on connection attempts. gitlab findings ssrf gitlab port scanning reconnaissance medium">
+      <div class="box-card-inner">
+        <div class="box-card-head">
+          <div class="box-avatar"><img class="box-avatar-img" src="posts/writeups/Findings/ssrf-gitlab/image.png" alt="" loading="lazy" /></div>
+          <h3 class="box-title">SSRF in GitLab</h3>
+          <span class="box-diff medium">MEDIUM</span>
+        </div>
+        <div class="box-card-meta">
+          <span class="box-os"><span class="os-dot other" aria-hidden="true"></span>N/A</span>
+          <span class="box-date">2025-11</span>
+        </div>
+        <p class="box-summary">Exploiting a Server-Side Request Forgery (SSRF) in GitLab's &quot;Import From URL&quot; feature to probe internal networks and perform port scanning via timing differences.</p>
+        <div class="box-tags"><span class="box-tag">SSRF</span><span class="box-tag">GitLab</span><span class="box-tag">Port Scanning</span><span class="box-tag">Reconnaissance</span></div>
       </div>
+      <div class="box-accent diff-medium" aria-hidden="true"></div>
+    </a></div>
+      <p class="filter-empty" hidden>No writeups match this filter.</p>
     </section>
     <section class="section visible content-view" id="view-blogs" data-view="blogs" data-section hidden>
-      <div class="section-header">
-        <div class="section-hex" aria-hidden="true"></div>
-        <h2 class="section-title"><span>//</span> Cyber Blogs</h2>
-      </div>
       
-    <div class="app-container">
-      <div class="wallet" data-wallet="blogs">
-        <div class="wallet-back"></div>
-        
-    <div class="wallet-card stripe" data-open-view="view-blog-red-team" role="button" tabindex="0" aria-label="Open Red Team">
-      <div class="card-inner">
-        <div class="card-top">
-          <span>Red Team</span>
-          <div class="chip"></div>
-        </div>
-        <div class="card-bottom">
-          <div class="card-info">
-            <span class="label">Cyber Blog</span>
-            <span class="value">1 entries</span>
-          </div>
-          <div class="card-number-wrapper">
-            <span class="hidden-stars">$ â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ</span>
-            <span class="card-number">VIEW_RED-TEAM</span>
-          </div>
-        </div>
-      </div>
-    </div>
-        <div class="pocket">
-          <svg class="pocket-svg" viewBox="0 0 280 160" fill="none">
-            <path d="M 0 20 C 0 10, 5 10, 10 10 C 20 10, 25 25, 40 25 L 240 25 C 255 25, 260 10, 270 10 C 275 10, 280 10, 280 20 L 280 120 C 280 155, 260 160, 240 160 L 40 160 C 20 160, 0 155, 0 120 Z" fill="var(--wallet-pocket-fill)"></path>
-            <path d="M 8 22 C 8 16, 12 16, 15 16 C 23 16, 27 29, 40 29 L 240 29 C 253 29, 257 16, 265 16 C 268 16, 272 16, 272 22 L 272 120 C 272 150, 255 152, 240 152 L 40 152 C 25 152, 8 152, 8 120 Z" stroke="var(--wallet-pocket-stroke)" stroke-width="1.5" stroke-dasharray="6 4"></path>
-          </svg>
-          <div class="pocket-content">
-            <div style="position: relative; height: 24px; width: 100%;">
-              <div class="balance-stars">â–ˆâ–ˆâ–ˆâ–ˆâ–ˆâ–ˆ</div>
-              <div class="balance-real">1 post</div>
-            </div>
-            <div style="color: var(--wallet-pocket-label); font-size: 12px; font-weight: 500;">Cyber Blogs</div>
-          </div>
-        </div>
-      </div>
-    </div>
-      
-      <div class="wallet-detail" id="view-blog-red-team" hidden>
-        <div class="wallet-detail-header">
-          <button type="button" class="wallet-back-btn" data-close-view>← back to wallet</button>
-          <h3>Red Team</h3>
-          <p class="wallet-detail-meta">Red Team posts</p>
-        </div>
-        
     <div class="writeup-search" role="search">
       <span class="search-icon" aria-hidden="true">âŒ•</span>
-      <input type="search" id="writeup-search-input-blog-red-team" data-search-scope="blog-red-team" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
-      <button type="button" id="writeup-search-clear-blog-red-team" data-clear-scope="blog-red-team" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
+      <input type="search" id="writeup-search-input-blogs" data-search-scope="blogs" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
+      <button type="button" id="writeup-search-clear-blogs" data-clear-scope="blogs" class="search-clear" aria-label="Clear search" hidden>Ã—</button>
     </div>
-        <div class="writeups-grid box-grid">
-    <a href="posts/blogs/red-team/anyblog/index.html" class="box-card writeup-card blog-card diff-medium" data-difficulty="blog" data-os="blog">
+      
+      <div class="writeups-grid box-grid" id="writeups-grid-blogs">
+    <a href="posts/blogs/red-team/anyblog/index.html" class="box-card writeup-card blog-card diff-medium" data-post-type="blog" data-post-category="red-team" data-post-box="box" data-post-difficulty="medium" data-post-os="" data-post-platform="" data-difficulty="blog" data-os="blog">
       <div class="box-card-inner">
         <div class="box-card-head">
           <div class="box-avatar"><span class="box-avatar-initials">BL</span></div>
@@ -405,8 +250,7 @@
       </div>
       <div class="box-accent diff-medium" aria-hidden="true"></div>
     </a></div>
-        <p class="filter-empty" hidden>No blogs in this category.</p>
-      </div>
+      <p class="filter-empty" hidden>No blogs match this filter.</p>
     </section>
     <footer>
       <span class="hex-dot" aria-hidden="true"></span>
