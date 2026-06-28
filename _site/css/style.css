@@ -665,43 +665,59 @@ footer .hex-dot {
   box-shadow: 0 0 10px rgba(0, 255, 65, 0.15);
 }
 
-/* ── Filter chip groups (difficulty / os / platform) ── */
+/* ── Filter chip groups (difficulty / os / platform) — inline toggle list ── */
+.filter-chip-groups {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.6rem;
+  margin: 0.75rem 0 1rem;
+  justify-content: center;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
 .filter-chip-group {
   display: flex;
-  flex-direction: column;
   align-items: center;
   gap: 0.4rem;
-  margin: 0.5rem 0 0.25rem;
+  background: rgba(8, 12, 16, 0.45);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.3rem 0.5rem;
+  flex-shrink: 0;
 }
 
 .filter-chip-label {
   font-family: var(--font-mono);
-  font-size: 0.65rem;
-  letter-spacing: 0.16em;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
   color: var(--green-dim);
   text-transform: uppercase;
   text-shadow: 0 0 6px var(--green-glow);
   opacity: 0.85;
+  padding-right: 0.4rem;
+  border-right: 1px solid var(--border);
+  white-space: nowrap;
 }
 
 .filter-chip-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.4rem;
-  justify-content: center;
+  gap: 0.3rem;
 }
 
 .filter-chip {
   font-family: var(--font-mono);
-  font-size: 0.66rem;
-  letter-spacing: 0.08em;
-  padding: 0.3rem 0.65rem;
+  font-size: 0.64rem;
+  letter-spacing: 0.06em;
+  padding: 0.25rem 0.55rem;
   border: 1px solid var(--border);
   border-radius: 3px;
-  background: rgba(8, 12, 16, 0.45);
+  background: rgba(8, 12, 16, 0.4);
   color: var(--text-muted);
   cursor: pointer;
   transition: color 0.2s, border-color 0.2s, background 0.2s, box-shadow 0.2s;
+  white-space: nowrap;
 }
 
 .filter-chip:hover {

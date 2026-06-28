@@ -780,11 +780,13 @@ function renderHub(writeups, blogs) {
 
   const writeupChipsHtml =
     writeups.length
-      ? [
+      ? `<div class="filter-chip-groups">${[
           renderChipGroup(difficultyChips, "difficulty", "DIFFICULTY"),
           renderChipGroup(osChips, "os", "OS"),
           renderChipGroup(platformChips, "platform", "PLATFORM"),
-        ].filter(Boolean).join("")
+        ]
+          .filter(Boolean)
+          .join("")}</div>`
       : "";
 
   const searchBar = (scopeId) => `
@@ -813,7 +815,6 @@ function renderHub(writeups, blogs) {
   const writeupView = `
     <section class="section visible content-view" id="view-writeups" data-view="writeups" data-section>
       ${searchBar("writeups")}
-      ${writeupSubTabsHtml}
       ${writeupChipsHtml}
       <div class="writeups-grid box-grid" id="writeups-grid-writeups">${allWriteupCards}</div>
       <p class="filter-empty" hidden>No writeups match this filter.</p>
@@ -824,7 +825,6 @@ function renderHub(writeups, blogs) {
     ? `
     <section class="section visible content-view" id="view-blogs" data-view="blogs" data-section hidden>
       ${searchBar("blogs")}
-      ${blogSubTabsHtml}
       <div class="writeups-grid box-grid" id="writeups-grid-blogs">${allBlogCards}</div>
       <p class="filter-empty" hidden>No blogs match this filter.</p>
     </section>`
