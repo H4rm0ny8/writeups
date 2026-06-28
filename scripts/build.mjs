@@ -117,7 +117,8 @@ function parseFrontmatter(raw) {
   let currentKey = null;
 
   for (const line of yamlBlock.split("\n")) {
-    const listItem = line.match(/^\s+-\s+(.+)$/);
+    const cleanLine = line.replace(/\r$/, "");
+    const listItem = cleanLine.match(/^\s+-\s+(.+)$/);
     if (listItem) {
       if (!currentKey) continue;
       if (!Array.isArray(data[currentKey])) data[currentKey] = [];
@@ -125,7 +126,7 @@ function parseFrontmatter(raw) {
       continue;
     }
 
-    const match = line.match(/^([\w-]+):\s*(.*)$/);
+    const match = cleanLine.match(/^([\w-]+):\s*(.*)$/);
     if (!match) continue;
 
     currentKey = match[1];
