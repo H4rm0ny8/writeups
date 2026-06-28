@@ -1159,6 +1159,130 @@ html.js .section.visible .writeup-card:not(.box-card) {
   color: var(--green);
 }
 
+/* ── Social card (uiverse.io by dovatgabriel) ── */
+.social-card-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.social-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  overflow: hidden;
+  height: 50px;
+  width: 240px;
+  border-radius: 4px;
+}
+
+.social-card::before,
+.social-card::after {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  width: 50%;
+  height: 100%;
+  transition: 0.25s linear;
+  z-index: 1;
+}
+
+.social-card::before {
+  content: "";
+  left: 0;
+  justify-content: flex-end;
+  background: linear-gradient(90deg, rgba(0, 255, 65, 0.18), rgba(0, 200, 50, 0.18));
+}
+
+.social-card::after {
+  content: "";
+  right: 0;
+  justify-content: flex-start;
+  background: linear-gradient(90deg, rgba(0, 200, 50, 0.18), rgba(0, 255, 65, 0.18));
+}
+
+.social-card:hover {
+  border-color: var(--green-dim);
+  box-shadow: 0 14px 28px rgba(0, 255, 65, 0.15), 0 10px 10px rgba(0, 0, 0, 0.35);
+}
+
+.social-card:hover span {
+  opacity: 0;
+  z-index: -3;
+}
+
+.social-card:hover::before {
+  opacity: 0.5;
+  transform: translateY(-100%);
+}
+
+.social-card:hover::after {
+  opacity: 0.5;
+  transform: translateY(100%);
+}
+
+.social-card span {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  color: var(--green);
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  opacity: 1;
+  transition: opacity 0.25s;
+  z-index: 2;
+  text-shadow: 0 0 8px var(--green-glow);
+}
+
+.social-card .social-link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20%;
+  height: 100%;
+  color: var(--text);
+  font-size: 24px;
+  text-decoration: none;
+  transition: 0.25s;
+  z-index: 2;
+}
+
+.social-card .social-link img {
+  height: 22px;
+  width: 22px;
+  object-fit: contain;
+  filter: brightness(0) invert(1);
+  transition: filter 0.25s ease;
+}
+
+.social-card .social-link:hover {
+  background-color: rgba(0, 255, 65, 0.12);
+  animation: social-bounce 0.4s linear;
+}
+
+.social-card .social-link:hover img {
+  filter: brightness(0) invert(1) drop-shadow(0 0 6px var(--green-glow));
+}
+
+@keyframes social-bounce {
+  40% { transform: scale(1.4); }
+  60% { transform: scale(0.8); }
+  80% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
 .back-link {
   margin-bottom: 1rem;
   font-family: var(--font-mono);
