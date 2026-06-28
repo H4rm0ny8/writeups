@@ -1,4 +1,4 @@
-:root {
+﻿:root {
   --bg: #050805;
   --bg-elevated: #0a120a;
   --surface: #0f1a0f;
@@ -37,7 +37,7 @@ body {
   min-height: 100vh;
 }
 
-/* ── Honeycomb background canvas (full page) ── */
+/* â”€â”€ Honeycomb background canvas (full page) â”€â”€ */
 #hex-canvas {
   position: fixed;
   top: 0;
@@ -49,7 +49,7 @@ body {
   opacity: 1;
 }
 
-/* ── Cursor glow ── */
+/* â”€â”€ Cursor glow â”€â”€ */
 .cursor-glow {
   position: fixed;
   width: 320px;
@@ -87,7 +87,7 @@ body:hover .cursor-glow {
   background: radial-gradient(ellipse at center, transparent 65%, rgba(0, 0, 0, 0.22) 100%);
 }
 
-/* ── Layout ── */
+/* â”€â”€ Layout â”€â”€ */
 .page {
   position: relative;
   z-index: 2;
@@ -97,7 +97,7 @@ body:hover .cursor-glow {
   background: transparent;
 }
 
-/* ── Scanline overlay ── */
+/* â”€â”€ Scanline overlay â”€â”€ */
 .scanlines::after {
   content: "";
   position: fixed;
@@ -113,7 +113,7 @@ body:hover .cursor-glow {
   );
 }
 
-/* ── Header / Hero ── */
+/* â”€â”€ Header / Hero â”€â”€ */
 .hero {
   position: relative;
   text-align: center;
@@ -262,7 +262,7 @@ body:hover .cursor-glow {
   margin: 0.85rem auto 0;
 }
 
-/* ── Writeup page hero (full-width cover + avatar) ── */
+/* â”€â”€ Writeup page hero (full-width cover + avatar) â”€â”€ */
 .writeup-page .writeup-hero {
   width: 100vw;
   max-width: 100vw;
@@ -358,7 +358,7 @@ body:hover .cursor-glow {
   50% { opacity: 0; }
 }
 
-/* ── Sections ── */
+/* â”€â”€ Sections â”€â”€ */
 .section {
   margin-top: 2.5rem;
   opacity: 1;
@@ -502,7 +502,7 @@ html.js .panel:not(.visible) {
   margin-top: 0;
 }
 
-/* ── Footer ── */
+/* â”€â”€ Footer â”€â”€ */
 footer {
   text-align: center;
   margin-top: 3rem;
@@ -524,7 +524,7 @@ footer .hex-dot {
   animation: hex-pulse 2s ease-in-out infinite;
 }
 
-/* ── Nav dots ── */
+/* â”€â”€ Nav dots â”€â”€ */
 .nav-dots {
   position: fixed;
   right: 1rem;
@@ -554,7 +554,7 @@ footer .hex-dot {
   box-shadow: 0 0 10px var(--green-glow);
 }
 
-/* ── Hub / writeup gallery ── */
+/* â”€â”€ Hub / writeup gallery â”€â”€ */
 .writeups-grid,
 .box-grid {
   display: grid;
@@ -629,7 +629,7 @@ footer .hex-dot {
   color: var(--text-muted);
 }
 
-/* ── Live search bar ── */
+/* â”€â”€ Live search bar â”€â”€ */
 .writeup-search {
   position: relative;
   margin-top: 1rem;
@@ -1158,158 +1158,6 @@ html.js .section.visible .writeup-card:not(.box-card) {
 .hub-note code {
   color: var(--green);
 }
-
-/* ── Social card (uiverse.io by dovatgabriel) ── */
-.social-card-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 1.75rem;
-  margin-bottom: 0.5rem;
-  gap: 0.75rem;
-}
-
-.social-card {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--bg-elevated);
-  border: 1px solid var(--border);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-  overflow: hidden;
-  height: 50px;
-  width: 280px;
-  border-radius: 4px;
-}
-
-.social-card::before,
-.social-card::after {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  width: 50%;
-  height: 100%;
-  transition: 0.25s linear;
-  z-index: 1;
-}
-
-.social-card::before {
-  content: "";
-  left: 0;
-  justify-content: flex-end;
-  background: linear-gradient(90deg, rgba(0, 255, 65, 0.18), rgba(0, 200, 50, 0.18));
-}
-
-.social-card::after {
-  content: "";
-  right: 0;
-  justify-content: flex-start;
-  background: linear-gradient(90deg, rgba(0, 200, 50, 0.18), rgba(0, 255, 65, 0.18));
-}
-
-.social-card:hover {
-  border-color: var(--green-dim);
-  box-shadow: 0 14px 28px rgba(0, 255, 65, 0.15), 0 10px 10px rgba(0, 0, 0, 0.35);
-}
-
-.social-card:hover .social-card-label {
-  opacity: 0;
-  z-index: -3;
-}
-
-.social-card:hover::before {
-  opacity: 0.5;
-  transform: translateY(-100%);
-}
-
-.social-card:hover::after {
-  opacity: 0.5;
-  transform: translateY(100%);
-}
-
-.social-card-label {
-  position: absolute;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  color: var(--green);
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  opacity: 1;
-  transition: opacity 0.25s;
-  z-index: 2;
-  text-shadow: 0 0 8px var(--green-glow);
-  pointer-events: none;
-}
-
-.social-card .social-link {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 16.66%;
-  height: 100%;
-  color: var(--text);
-  font-size: 24px;
-  text-decoration: none;
-  transition: 0.25s;
-  z-index: 2;
-  opacity: 0;
-  transform: scale(0.85);
-  pointer-events: none;
-}
-
-.social-card:hover .social-link {
-  opacity: 1;
-  transform: scale(1);
-  pointer-events: auto;
-}
-
-.social-card .social-link svg {
-  height: 22px;
-  width: 22px;
-  object-fit: contain;
-  fill: var(--text-muted);
-  transition: fill 0.25s ease, filter 0.25s ease;
-}
-
-.social-card .social-link:hover {
-  background-color: rgba(0, 255, 65, 0.18);
-  animation: social-bounce 0.4s linear;
-}
-
-.social-card .social-link:hover svg {
-  fill: var(--green);
-  filter: drop-shadow(0 0 6px var(--green-glow));
-}
-
-.social-card .social-link .icon-medium path {
-  fill: var(--text-muted);
-  transition: fill 0.25s ease;
-}
-
-.social-card .social-link:hover .icon-medium path {
-  fill: var(--green);
-}
-
-.social-tagline {
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  letter-spacing: 0.04em;
-  margin: 0;
-  font-style: italic;
-}
-
-@keyframes social-bounce {
-  40% { transform: scale(1.4); }
-  60% { transform: scale(0.8); }
   80% { transform: scale(1.2); }
   100% { transform: scale(1); }
 }
@@ -1331,7 +1179,7 @@ html.js .section.visible .writeup-card:not(.box-card) {
   text-shadow: 0 0 8px var(--green-glow);
 }
 
-/* ── Markdown body ── */
+/* â”€â”€ Markdown body â”€â”€ */
 .md-content {
   font-size: 0.95rem;
 }
@@ -1479,7 +1327,7 @@ html.js .section.visible .writeup-card:not(.box-card) {
   background: rgba(10, 18, 10, 0.55);
 }
 
-/* ── Writeup page: animated bg visible everywhere ── */
+/* â”€â”€ Writeup page: animated bg visible everywhere â”€â”€ */
 .writeup-page {
   overflow-x: clip;
 }
