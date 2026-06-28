@@ -455,6 +455,56 @@ searchInputs.forEach((input) => {
   }
 });
 
+// ── Wallet interactions: open a sub-view on card click ──
+const walletCards = document.querySelectorAll(".wallet-card[data-open-view]");
+const walletDetails = document.querySelectorAll(".wallet-detail");
+const walletCloseBtns = document.querySelectorAll("[data-close-view]");
+
+function openWalletDetail(viewId) {
+  const view = document.getElementById(viewId);
+  if (!view) return;
+  // Hide all wallet-details inside the same content-view, show this one
+  const parentContentView = view.closest(".content-view");
+  if (parentContentView) {
+    parentContentView.querySelectorAll(".wallet-detail").forEach((d) => {
+      d.hidden = d.id !== viewId;
+    });
+    parentContentView.querySelectorAll(".wallet[data-wallet]").forEach((w) => {
+      w.hidden = true;
+    });
+  }
+}
+
+function closeWalletDetail() {
+  // Show all wallets inside current content-view, hide all details
+  const activeView = document.querySelector(".content-view:not([hidden])");
+  if (!activeView) return;
+  activeView.querySelectorAll(".wallet-detail").forEach((d) => {
+    d.hidden = true;
+  });
+  activeView.querySelectorAll(".wallet[data-wallet]").forEach((w) => {
+    w.hidden = false;
+  });
+}
+
+walletCards.forEach((card) => {
+  card.addEventListener("click", () => {
+    openWalletDetail(card.dataset.openView);
+  });
+  card.addEventListener("keydown", (e) => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      openWalletDetail(card.dataset.openView);
+    }
+  });
+});
+
+walletCloseBtns.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    closeWalletDetail();
+  });
+});
+
 // Initial render
 applyTabFilters();
 

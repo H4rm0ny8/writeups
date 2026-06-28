@@ -1283,6 +1283,340 @@ html.js .section.visible .writeup-card:not(.box-card) {
   color: var(--text-muted);
 }
 
+/* ── Wallet (uiverse.io by byllzz, themed) ── */
+:root {
+  --wallet-pocket-fill: #0a140a;
+  --wallet-pocket-stroke: #1a2e1a;
+  --wallet-pocket-label: #698263;
+  --wallet-card-stripe-bg: linear-gradient(135deg, #00c832 0%, #00ff41 100%);
+  --wallet-card-stripe-text: #04140a;
+  --wallet-card-wise-bg: linear-gradient(135deg, #0a140a 0%, #122412 100%);
+  --wallet-card-wise-text: #d4e8d4;
+  --wallet-card-paypal-bg: #ffffff;
+  --wallet-card-paypal-text: #04140a;
+}
+
+.app-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem 0 2.5rem;
+}
+
+.wallet {
+  position: relative;
+  width: 280px;
+  height: 230px;
+  cursor: pointer;
+  perspective: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  transition: transform 0.4s ease;
+}
+
+.wallet::after {
+  content: "Hover to inspect cards";
+  position: absolute;
+  bottom: -28px;
+  font-family: var(--font-mono);
+  font-style: italic;
+  color: var(--green-dim);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.wallet:hover {
+  transform: translateY(-5px);
+}
+
+.wallet:hover::after {
+  color: var(--green);
+}
+
+@keyframes slideIntoPocket {
+  0% { transform: translateY(-100px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.wallet-back {
+  position: absolute;
+  bottom: 0;
+  width: 280px;
+  height: 200px;
+  background: linear-gradient(135deg, #0a140a 0%, #122412 100%);
+  border: 1px solid var(--green-dim);
+  border-radius: 22px 22px 60px 60px;
+  z-index: 5;
+  box-shadow:
+    inset 0 25px 35px rgba(0, 0, 0, 0.4),
+    inset 0 5px 15px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(0, 255, 65, 0.1);
+}
+
+.wallet-card {
+  position: absolute;
+  width: 260px;
+  height: 140px;
+  left: 10px;
+  border-radius: 16px;
+  padding: 18px;
+  color: white;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    0 -4px 15px rgba(0, 0, 0, 0.3),
+    0 0 14px rgba(0, 255, 65, 0.15);
+  transition:
+    transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
+    box-shadow 0.3s ease,
+    z-index 0s;
+  animation: slideIntoPocket 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  cursor: pointer;
+  outline: none;
+}
+
+.wallet-card:focus-visible {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.3),
+    0 -4px 15px rgba(0, 0, 0, 0.3),
+    0 0 0 2px var(--green),
+    0 0 22px var(--green-glow);
+}
+
+.wallet-card .card-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.wallet-card .card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.wallet-card .chip {
+  width: 32px;
+  height: 24px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.wallet-card .card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.wallet-card .label {
+  font-size: 8px;
+  opacity: 0.7;
+  text-transform: uppercase;
+  margin-bottom: 2px;
+  display: block;
+  letter-spacing: 0.05em;
+}
+
+.wallet-card .value {
+  font-size: 10px;
+  font-weight: 500;
+  font-family: var(--font-mono);
+}
+
+.wallet-card .card-number-wrapper {
+  text-align: right;
+}
+
+.wallet-card .hidden-stars {
+  font-size: 16px;
+  letter-spacing: 2px;
+  font-family: var(--font-mono);
+}
+
+.wallet-card .card-number {
+  display: none;
+  font-size: 14px;
+  letter-spacing: 1px;
+  font-family: monospace;
+}
+
+/* Card variants — themed */
+.wallet-card.stripe {
+  background: var(--wallet-card-stripe-bg);
+  color: var(--wallet-card-stripe-text);
+  bottom: 90px;
+  z-index: 10;
+  animation-delay: 0.1s;
+}
+
+.wallet-card.wise {
+  background: var(--wallet-card-wise-bg);
+  color: var(--wallet-card-wise-text);
+  bottom: 65px;
+  z-index: 20;
+  border: 1px solid var(--green-dim);
+  animation-delay: 0.2s;
+}
+
+.wallet-card.paypal {
+  background: var(--wallet-card-paypal-bg);
+  color: var(--wallet-card-paypal-text);
+  bottom: 40px;
+  z-index: 30;
+  animation-delay: 0.3s;
+}
+
+/* Pocket */
+.pocket {
+  position: absolute;
+  bottom: 0;
+  width: 280px;
+  height: 160px;
+  z-index: 40;
+  filter: drop-shadow(0 15px 25px rgba(20, 40, 20, 0.4));
+}
+
+.pocket-content {
+  position: absolute;
+  top: 45px;
+  width: 100%;
+  text-align: center;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.balance-stars {
+  color: #839e7b;
+  font-size: 24px;
+  letter-spacing: 4px;
+  font-family: var(--font-mono);
+  transition: 0.3s;
+}
+
+.balance-real {
+  color: var(--green);
+  font-size: 22px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 10px);
+  transition: 0.3s;
+  text-shadow: 0 0 10px var(--green-glow);
+}
+
+/* Hover effects */
+.wallet:hover .stripe {
+  transform: translateY(-75px) rotate(-3deg);
+}
+
+.wallet:hover .wise {
+  transform: translateY(-45px) rotate(2deg);
+}
+
+.wallet:hover .paypal {
+  transform: translateY(-10px);
+}
+
+/* Single card hover */
+.wallet-card:hover {
+  z-index: 100 !important;
+  transition-delay: 0s !important;
+}
+
+.wallet:hover .wallet-card.stripe:hover {
+  transform: translateY(-60px) scale(1.05) rotate(0);
+}
+
+.wallet:hover .wallet-card.wise:hover {
+  transform: translateY(-70px) scale(1.05) rotate(0);
+}
+
+.wallet:hover .wallet-card.paypal:hover {
+  transform: translateY(-60px) scale(1.05) rotate(0);
+}
+
+.wallet-card:hover .hidden-stars {
+  display: none;
+}
+
+.wallet-card:hover .card-number {
+  display: block;
+}
+
+.wallet:hover .balance-stars {
+  opacity: 0;
+}
+
+.wallet:hover .balance-real {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+/* ── Wallet detail views ── */
+.wallet-detail {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px dashed var(--border);
+}
+
+.wallet-detail-header {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.wallet-detail-header h3 {
+  font-family: var(--font-mono);
+  font-size: 1.15rem;
+  letter-spacing: 0.06em;
+  color: var(--green);
+  margin: 0;
+  text-shadow: 0 0 10px var(--green-glow);
+}
+
+.wallet-detail-meta {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin: 0;
+}
+
+.wallet-back-btn {
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  letter-spacing: 0.06em;
+  padding: 0.4rem 0.75rem;
+  background: transparent;
+  color: var(--green-dim);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+}
+
+.wallet-back-btn:hover {
+  color: var(--green);
+  border-color: var(--green);
+  background: rgba(0, 255, 65, 0.06);
+}
+
 .hub-note {
   margin-top: 1.25rem;
   font-family: var(--font-mono);

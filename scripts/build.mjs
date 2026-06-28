@@ -809,9 +809,108 @@ function renderHub(writeups, blogs) {
   const allWriteupCards = renderCardsFor(writeups, "writeup");
   const allBlogCards = renderCardsFor(blogs, "blog");
 
+  // ── Wallet HTML helpers ──
+  // Build a uiverse-style "wallet" with N inner cards. Each inner card opens
+  // a sub-view (data-target-view) on click.
+  const renderWalletCard = ({ id, label, sub, view, count }) => `
+    <div class="wallet-card stripe" data-open-view="${escapeHtml(view)}" role="button" tabindex="0" aria-label="Open ${escapeHtml(label)}">
+      <div class="card-inner">
+        <div class="card-top">
+          <span>${escapeHtml(label)}</span>
+          <div class="chip"></div>
+        </div>
+        <div class="card-bottom">
+          <div class="card-info">
+            <span class="label">${escapeHtml(sub)}</span>
+            <span class="value">${escapeHtml(String(count))} entries</span>
+          </div>
+          <div class="card-number-wrapper">
+            <span class="hidden-stars">$ ${"â–ˆ".repeat(6)}</span>
+            <span class="card-number">VIEW_${escapeHtml(id.toUpperCase())}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  // Wallet for WRITEUPS: two cards (FINDINGS + BOXES)
+  const writeupWalletCards = [
+    renderWalletCard({
+      id: "findings",
+      label: "Findings",
+      sub: "Vuln Research",
+      view: "view-writeup-findings",
+      count: writeupGroups["findings"]?.length || 0,
+    }),
+    renderWalletCard({
+      id: "boxes",
+      label: "Boxes",
+      sub: "HTB / CTF Labs",
+      view: "view-writeup-boxes",
+      count: writeups.length - (writeupGroups["findings"]?.length || 0),
+    }),
+  ].join("\n");
+
+  const writeupWalletHtml = `
+    <div class="app-container">
+      <div class="wallet" data-wallet="writeups">
+        <div class="wallet-back"></div>
+        ${writeupWalletCards}
+        <div class="pocket">
+          <svg class="pocket-svg" viewBox="0 0 280 160" fill="none">
+            <path d="M 0 20 C 0 10, 5 10, 10 10 C 20 10, 25 25, 40 25 L 240 25 C 255 25, 260 10, 270 10 C 275 10, 280 10, 280 20 L 280 120 C 280 155, 260 160, 240 160 L 40 160 C 20 160, 0 155, 0 120 Z" fill="var(--wallet-pocket-fill)"></path>
+            <path d="M 8 22 C 8 16, 12 16, 15 16 C 23 16, 27 29, 40 29 L 240 29 C 253 29, 257 16, 265 16 C 268 16, 272 16, 272 22 L 272 120 C 272 150, 255 152, 240 152 L 40 152 C 25 152, 8 152, 8 120 Z" stroke="var(--wallet-pocket-stroke)" stroke-width="1.5" stroke-dasharray="6 4"></path>
+          </svg>
+          <div class="pocket-content">
+            <div style="position: relative; height: 24px; width: 100%;">
+              <div class="balance-stars">${"â–ˆ".repeat(6)}</div>
+              <div class="balance-real">${writeups.length} writeups</div>
+            </div>
+            <div style="color: var(--wallet-pocket-label); font-size: 12px; font-weight: 500;">Writeups</div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  // Wallet for BLOGS: one card per blog category
+  const blogWalletCards = Object.keys(blogGroups)
+    .map((key) =>
+      renderWalletCard({
+        id: key,
+        label: BLOG_CATEGORIES[key] || key,
+        sub: "Cyber Blog",
+        view: `view-blog-${key}`,
+        count: blogGroups[key].length,
+      })
+    )
+    .join("\n");
+
+  const blogWalletHtml =
+    blogs.length > 0
+      ? `
+    <div class="app-container">
+      <div class="wallet" data-wallet="blogs">
+        <div class="wallet-back"></div>
+        ${blogWalletCards}
+        <div class="pocket">
+          <svg class="pocket-svg" viewBox="0 0 280 160" fill="none">
+            <path d="M 0 20 C 0 10, 5 10, 10 10 C 20 10, 25 25, 40 25 L 240 25 C 255 25, 260 10, 270 10 C 275 10, 280 10, 280 20 L 280 120 C 280 155, 260 160, 240 160 L 40 160 C 20 160, 0 155, 0 120 Z" fill="var(--wallet-pocket-fill)"></path>
+            <path d="M 8 22 C 8 16, 12 16, 15 16 C 23 16, 27 29, 40 29 L 240 29 C 253 29, 257 16, 265 16 C 268 16, 272 16, 272 22 L 272 120 C 272 150, 255 152, 240 152 L 40 152 C 25 152, 8 152, 8 120 Z" stroke="var(--wallet-pocket-stroke)" stroke-width="1.5" stroke-dasharray="6 4"></path>
+          </svg>
+          <div class="pocket-content">
+            <div style="position: relative; height: 24px; width: 100%;">
+              <div class="balance-stars">${"â–ˆ".repeat(6)}</div>
+              <div class="balance-real">${blogs.length} ${blogs.length === 1 ? "post" : "posts"}</div>
+            </div>
+            <div style="color: var(--wallet-pocket-label); font-size: 12px; font-weight: 500;">Cyber Blogs</div>
+          </div>
+        </div>
+      </div>
+    </div>`
+      : "";
+
   // ── WRITEUPS view container ──
   const writeupView = `
-    <section class="section visible content-view" id="view-writeups" data-view="writeups" data-section hidden>
+    <section class="section visible content-view" id="view-writeups" data-view="writeups" data-section>
       <div class="section-header gallery-header">
         <div class="section-hex" aria-hidden="true"></div>
         <div>
@@ -819,47 +918,63 @@ function renderHub(writeups, blogs) {
           <h2 class="gallery-title">Box Writeups</h2>
         </div>
       </div>
-      ${searchBar("writeups")}
-      ${writeupSubTabsHtml}
-      ${writeupChipsHtml}
-      <div class="writeups-grid box-grid" id="writeups-grid-writeups">${allWriteupCards}</div>
-      <p class="filter-empty" hidden>No writeups match this filter.</p>
+      ${writeupWalletHtml}
+
+      <div class="wallet-detail" id="view-writeup-findings" hidden>
+        <div class="wallet-detail-header">
+          <button type="button" class="wallet-back-btn" data-close-view>← back to wallet</button>
+          <h3>Findings</h3>
+          <p class="wallet-detail-meta">Vulnerability research writeups</p>
+        </div>
+        ${searchBar("findings")}
+        ${writeupChipsHtml}
+        <div class="writeups-grid box-grid">${writeupGroups["findings"]?.map((p) => renderWriteupCard(p)).join("\n") || ""}</div>
+        <p class="filter-empty" hidden>No findings match.</p>
+      </div>
+
+      <div class="wallet-detail" id="view-writeup-boxes" hidden>
+        <div class="wallet-detail-header">
+          <button type="button" class="wallet-back-btn" data-close-view>← back to wallet</button>
+          <h3>Boxes</h3>
+          <p class="wallet-detail-meta">HTB, CTF, and lab writeups</p>
+        </div>
+        ${searchBar("boxes")}
+        ${writeupChipsHtml}
+        <div class="writeups-grid box-grid">${categoryOrder.filter((k) => k !== "findings").map((k) => writeupGroups[k].map((p) => renderWriteupCard(p)).join("\n")).join("\n")}</div>
+        <p class="filter-empty" hidden>No boxes match.</p>
+      </div>
     </section>`;
 
   // ── BLOGS view container ──
-  const blogView = blogs.length
-    ? `
-    <section class="section visible content-view" id="view-blogs" data-view="blogs" data-section>
-      <div class="section-header">
-        <div class="section-hex" aria-hidden="true"></div>
-        <h2 class="section-title"><span>//</span> Cyber Blogs</h2>
-      </div>
-      ${searchBar("blogs")}
-      ${blogSubTabsHtml}
-      <div class="writeups-grid box-grid" id="writeups-grid-blogs">${allBlogCards}</div>
-      <p class="filter-empty" hidden>No blogs match this filter.</p>
-    </section>`
-    : "";
-
-  const writeupSection = `${blogView}${writeupView}`;
-
-  const blogCards = Object.entries(blogGroups)
-    .map(([key, posts]) => {
-      const cardsHtml = posts.map(renderBlogCard).join("\n");
-      return `<h3 class="card-subtitle">${escapeHtml(BLOG_CATEGORIES[key] || key)}</h3><div class="writeups-grid box-grid">${cardsHtml}</div>`;
-    })
+  const blogDetailViews = Object.keys(blogGroups)
+    .map(
+      (key) => `
+      <div class="wallet-detail" id="view-blog-${escapeHtml(key)}" hidden>
+        <div class="wallet-detail-header">
+          <button type="button" class="wallet-back-btn" data-close-view>← back to wallet</button>
+          <h3>${escapeHtml(BLOG_CATEGORIES[key] || key)}</h3>
+          <p class="wallet-detail-meta">${escapeHtml(BLOG_CATEGORIES[key] || key)} posts</p>
+        </div>
+        ${searchBar(`blog-${key}`)}
+        <div class="writeups-grid box-grid">${blogGroups[key].map((p) => renderBlogCard(p)).join("\n")}</div>
+        <p class="filter-empty" hidden>No blogs in this category.</p>
+      </div>`
+    )
     .join("\n");
 
-  const blogSection = blogs.length
+  const blogView = blogs.length
     ? `
-    <section class="section visible" id="blogs" data-section>
+    <section class="section visible content-view" id="view-blogs" data-view="blogs" data-section hidden>
       <div class="section-header">
         <div class="section-hex" aria-hidden="true"></div>
         <h2 class="section-title"><span>//</span> Cyber Blogs</h2>
       </div>
-      ${blogCards}
+      ${blogWalletHtml}
+      ${blogDetailViews}
     </section>`
     : "";
+
+  const writeupSection = `${writeupView}${blogView}`;
 
   const body = `
     <header class="hero visible" id="hero" data-section>
