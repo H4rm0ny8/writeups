@@ -2,7 +2,7 @@
 title: SSRF in GitLab
 type: writeup
 category: Findings
-platform: Gitlab
+platform: FINDINGS
 difficulty: --
 os: --
 date: 2025-11-04
