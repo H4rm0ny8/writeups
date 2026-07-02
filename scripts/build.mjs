@@ -836,7 +836,7 @@ function renderHub(writeups, blogs) {
     <header class="hero visible" id="hero" data-section>
       <div class="hero-inner">
         <div class="hero-gif-wrap">
-          <img class="hero-gif" src="assets/nour354.gif" alt="" loading="eager" />
+          <img class="hero-gif" src="assets/avatar.gif" alt="" loading="eager" />
         </div>
         <h1 class="hero-name">H4rm0ny Content Hub</h1>
         <p class="hero-title" id="typewriter" aria-live="polite">> Initializing operator session...</p>

