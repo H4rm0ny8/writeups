@@ -467,11 +467,11 @@ function renderWriteupHeroBadge(post) {
 
 function renderWriteupPage(post, htmlBody) {
   const depth = 4;
-  const metaLine = [post.difficulty, post.os, post.platform, post.date].filter(Boolean).join(" â€¢ ");
+  const metaLine = [post.difficulty, post.os, post.platform, post.date].filter(Boolean).join(" • ");
   
 
   const body = `
-    <p class="back-link"><a href="../../../../index.html">â† cd ../hub</a></p>
+    <p class="back-link"><a href="../../../../index.html">← cd ../hub</a></p>
     <header class="hero writeup-hero visible" id="hero" data-section>
       <div class="hero-inner">
         ${renderWriteupHeroBadge(post)}
