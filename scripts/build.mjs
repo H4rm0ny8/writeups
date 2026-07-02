@@ -639,11 +639,11 @@ function renderHub(writeups, blogs) {
   }
 
   // ── Tabs navigation ──
-  // Top-level tabs: All / Writeups / Blogs
-  // Top tabs: Blogs first (default), then Writeups. No "ALL" tab.
+  // Top-level tabs: Writeups first (default), then Blogs.
+  // Order matters: topTabs[0] is the default tab on initial render + refresh.
   const topTabs = [];
-  if (blogs.length) topTabs.push({ id: "blogs", label: "BLOGS" });
   if (writeups.length) topTabs.push({ id: "writeups", label: "WRITEUPS" });
+  if (blogs.length) topTabs.push({ id: "blogs", label: "BLOGS" });
 
   // If neither has content, fall back to a single placeholder
   if (!topTabs.length) topTabs.push({ id: "empty", label: "NO CONTENT" });
@@ -812,8 +812,12 @@ function renderHub(writeups, blogs) {
   const allBlogCards = renderCardsFor(blogs, "blog");
 
   // ── WRITEUPS view container (no wallet, plain grid + inline sub-tabs) ──
+  // Default active tab: BLOGS (per the build's topTabs[0]). Inactive view is
+  // hidden via the `hidden` attribute AND the missing `.visible` class so
+  // the `.section.visible { display: block }` CSS rule doesn't override it.
+  const writeupViewClass = topTabs[0]?.id === "writeups" ? "section visible content-view" : "section content-view";
   const writeupView = `
-    <section class="section visible content-view" id="view-writeups" data-view="writeups" data-section>
+    <section class="${writeupViewClass}" id="view-writeups" data-view="writeups" data-section${topTabs[0]?.id === "writeups" ? "" : " hidden"}>
       ${searchBar("writeups")}
       ${writeupChipsHtml}
       <div class="writeups-grid box-grid" id="writeups-grid-writeups">${allWriteupCards}</div>
@@ -823,7 +827,7 @@ function renderHub(writeups, blogs) {
   // ── BLOGS view container ──
   const blogView = blogs.length
     ? `
-    <section class="section visible content-view" id="view-blogs" data-view="blogs" data-section hidden>
+    <section class="section ${topTabs[0]?.id === "blogs" ? "visible" : ""} content-view" id="view-blogs" data-view="blogs" data-section${topTabs[0]?.id === "blogs" ? "" : " hidden"}>
       ${searchBar("blogs")}
       <div class="writeups-grid box-grid" id="writeups-grid-blogs">${allBlogCards}</div>
       <p class="filter-empty" hidden>No blogs match this filter.</p>
