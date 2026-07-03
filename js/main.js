@@ -270,7 +270,7 @@ const subTabs = document.querySelectorAll(".sub-tab");
 const filterChips = document.querySelectorAll(".filter-chip");
 const searchInputs = document.querySelectorAll("[data-search-scope]");
 
-let activeTopTab = "blogs";
+let activeTopTab = "writeups";
 let activeSubBox = "all";
 const activeFilters = { difficulty: "all", os: "all", platform: "all" };
 const searchQueries = { writeups: "", blogs: "" };
