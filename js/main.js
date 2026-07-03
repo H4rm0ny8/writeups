@@ -156,8 +156,8 @@ if (scrollProgress) {
 const titles = [
   "Red Team Operator",
   "Active Directory Exploitation",
-  "Initial Access Specialist",
-  "Privilege Escalation Hunter",
+  "Initial Access & Privilege Escalation",
+  "Bug Bounty Hunter",
   "Offensive Security Researcher",
 ];
 
