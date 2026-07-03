@@ -245,16 +245,23 @@ function revealInView() {
   });
 }
 
-const revealObserver = new IntersectionObserver(
-  (entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) entry.target.classList.add("visible");
-    });
-  },
-  { threshold: 0.08, rootMargin: "0px 0px -30px 0px" }
-);
+let revealObserver = null;
+try {
+  revealObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) entry.target.classList.add("visible");
+      });
+    },
+    { threshold: 0.08, rootMargin: "0px 0px -30px 0px" }
+  );
+} catch (e) {
+  revealObserver = null;
+}
 
-revealEls.forEach((el) => revealObserver.observe(el));
+if (revealObserver) {
+  revealEls.forEach((el) => revealObserver.observe(el));
+}
 revealInView();
 window.addEventListener("load", revealInView);
 window.addEventListener("resize", revealInView);
@@ -458,6 +465,34 @@ searchInputs.forEach((input) => {
 // Initial render
 applyTabFilters();
 
+// Defensive re-render once the page is fully loaded (covers late-mounting content)
+window.addEventListener("DOMContentLoaded", () => {
+  // Re-bind search inputs in case they were added late
+  document.querySelectorAll("[data-search-scope]").forEach((input) => {
+    if (input.dataset.searchBound === "1") return;
+    input.dataset.searchBound = "1";
+    const scope = input.dataset.searchScope;
+    const clearBtn = document.querySelector(`[data-clear-scope="${scope}"]`);
+
+    input.addEventListener("input", (e) => {
+      searchQueries[scope] = e.target.value || "";
+      if (clearBtn) clearBtn.hidden = searchQueries[scope].length === 0;
+      applyTabFilters();
+    });
+
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        input.value = "";
+        searchQueries[scope] = "";
+        if (clearBtn) clearBtn.hidden = true;
+        applyTabFilters();
+      }
+    });
+  });
+  applyTabFilters();
+});
+window.addEventListener("load", applyTabFilters);
+
 /* ── Section nav dots ── */
 const navDots = document.querySelectorAll(".nav-dot");
 const sections = document.querySelectorAll("[data-section]");
@@ -470,17 +505,22 @@ navDots.forEach((dot) => {
 });
 
 if (sections.length && navDots.length) {
-  const sectionObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          navDots.forEach((d) => d.classList.toggle("active", d.dataset.target === entry.target.id));
-        }
-      });
-    },
-    { threshold: 0.4 }
-  );
-  sections.forEach((s) => sectionObserver.observe(s));
+  let sectionObserver = null;
+  try {
+    sectionObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            navDots.forEach((d) => d.classList.toggle("active", d.dataset.target === entry.target.id));
+          }
+        });
+      },
+      { threshold: 0.4 }
+    );
+    sections.forEach((s) => sectionObserver.observe(s));
+  } catch (e) {
+    // ignore
+  }
 }
 
 /* ── Writeup card 3D tilt ── */
@@ -527,16 +567,20 @@ if (motionOk) {
 /* ── Code block scan on view ── */
 const codeBlocks = document.querySelectorAll(".md-content pre");
 if (codeBlocks.length && motionOk) {
-  const codeObserver = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("code-active");
-          codeObserver.unobserve(entry.target);
-        }
-      });
-    },
-    { threshold: 0.3 }
-  );
-  codeBlocks.forEach((block) => codeObserver.observe(block));
+  try {
+    const codeObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("code-active");
+            codeObserver.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 0.3 }
+    );
+    codeBlocks.forEach((block) => codeObserver.observe(block));
+  } catch (e) {
+    // ignore
+  }
 }
