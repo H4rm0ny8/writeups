@@ -144,18 +144,18 @@ Set the target options and fired it off.
 Inside `Data/1/`, the user account definitions for `wacky` were sitting in `users/wacky.xml`, complete with a password hash. Before cracking, `settings.xml` conveniently spelled out the hashing scheme in use:
  
 ```bash
-<snip>
+ <snip>
     <EnableSHA256>1</EnableSHA256>
     <SaltingString>WingFTP</SaltingString>
-<snip>
+ <snip>
 ```
  
 `SHA-256(password + salt)`, salt = `WingFTP`. Good enough to build a hashcat attack.
  
 ```bash
 $ cat wacky.xml
-<?xml version="1.0" ?>
-<USER_ACCOUNTS Description="Wing FTP Server User Accounts">
+ <?xml version="1.0" ?>
+  <USER_ACCOUNTS Description="Wing FTP Server User Accounts">
     <USER>
         <UserName>wacky</UserName>
         <EnableAccount>1</EnableAccount>
@@ -164,7 +164,7 @@ $ cat wacky.xml
         <ProtocolType>63</ProtocolType>
         <snip>
     </USER>
-</USER_ACCOUNTS>
+ </USER_ACCOUNTS>
 ```
  
 ![image.png](image%203.png)
