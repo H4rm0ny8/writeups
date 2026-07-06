@@ -83,7 +83,7 @@ Code review turned up an old **Apache CXF** library bundled with the service. Ap
 
 Example malicious payload dropped straight into the `content` field of the `submitReport` request:
 
-```xml
+```
 <xop:Include href="file:///etc/passwd"/>
 ```
 
