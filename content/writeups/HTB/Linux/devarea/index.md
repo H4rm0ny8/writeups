@@ -84,7 +84,7 @@ Code review turned up an old **Apache CXF** library bundled with the service. Ap
 Example malicious payload dropped straight into the `content` field of the `submitReport` request:
 
 ```
-<xop:Include href="file:///etc/passwd"/>
+ '<xop:Include href="file:///etc/passwd"/>'
 ```
 
 A public PoC made this trivial to weaponize: [CVE-2022-46364-Poc (GitHub)](https://github.com/kasem545/CVE-2022-46364-Poc)
