@@ -3,7 +3,7 @@ title: CCTV
 type: writeup
 category: linux
 platform: HTB
-difficulty: Medium
+difficulty: Easy
 os: Linux
 date: 
 avatar: avatar.png
