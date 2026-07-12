@@ -5,7 +5,7 @@ category: linux
 platform: HTB
 difficulty: Easy
 os: Linux
-date: 
+date: 2026-05-14
 avatar: avatar.png
 tags:
   - CVE-2024-51482
