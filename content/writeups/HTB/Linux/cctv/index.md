@@ -183,10 +183,10 @@ Sent the payload, and — root shell acquired.
 ```bash
 root@cctv:/home/sa_mark# cat user.txt
 cat user.txt
-cb91a99cb035898731fe4b454d077e7d
+
 root@cctv:/home/sa_mark# cat /root/root.txt
 cat /root/root.txt
-82c34c56b9fec3b117c6a79111bf6379
+
 root@cctv:/home/sa_mark# 
 ```
 
