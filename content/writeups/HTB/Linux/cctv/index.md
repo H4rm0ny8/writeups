@@ -23,6 +23,12 @@ privesc: Tunneled to a local motionEye instance, recovered its admin credentials
 
 # CCTV
 
+A ZoneMinder instance with default creds, a juicy SQL injection, a cracked hash, and a motionEye RCE that hands us root — basically a security camera watching everything except itself.
+SQL injection on ZoneMinder's event tag-removal endpoint via CVE-2024-51482, used to dump user password hashes; cracked mark's hash with rockyou for SSH access.
+Tunneled to a local motionEye instance, recovered its admin credentials from motion.conf, and exploited an authenticated RCE in motionEye's config validation to get a root shell.
+
+---
+
 As always, we start with our nmap scan.
 
 ![image.png](image.png)
