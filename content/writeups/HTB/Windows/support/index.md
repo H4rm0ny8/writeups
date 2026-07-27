@@ -248,7 +248,7 @@ $ evil-winrm -i 10.129.1.210 -u administrator -H <Administrator Hash>
 
 ![image.png](image%2020.png)
 
-*Gaining administrative access via Pass-the-Hash using `evil-winrm`.*
+_Gaining administrative access via Pass-the-Hash using `evil-winrm`._
 
 ![image.png](image%2021.png)
 
