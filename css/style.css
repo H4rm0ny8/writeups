@@ -787,30 +787,12 @@ footer .hex-dot {
   max-width: 520px;
 }
 
-.writeup-search .search-icon {
-  position: absolute;
-  left: 0.85rem;
-  top: 50%;
-  transform: translateY(-50%);
-  font-family: var(--font-mono);
-  font-size: 1.05rem;
-  color: var(--green);
-  text-shadow: 0 0 8px var(--green-glow);
-  pointer-events: none;
-  transition: color 0.2s;
-}
-
-.writeup-search:focus-within .search-icon {
-  color: var(--green);
-  text-shadow: 0 0 12px var(--green-glow);
-}
-
 .writeup-search input[type="search"] {
   width: 100%;
   font-family: var(--font-mono);
   font-size: 0.85rem;
   letter-spacing: 0.02em;
-  padding: 0.7rem 2.4rem 0.7rem 2.5rem;
+  padding: 0.7rem 2.4rem 0.7rem 0.85rem;
   background: rgba(8, 12, 16, 0.65);
   color: var(--green);
   border: 1px solid var(--border);

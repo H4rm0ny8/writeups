@@ -791,7 +791,6 @@ function renderHub(writeups, blogs) {
 
   const searchBar = (scopeId) => `
     <div class="writeup-search" role="search">
-      <span class="search-icon" aria-hidden="true">âŒ•</span>
       <input type="search" id="writeup-search-input-${scopeId}" data-search-scope="${scopeId}" placeholder="grep -ri 'cve, wordpress, privesc, ssh...'" autocomplete="off" spellcheck="false" aria-label="Search writeups by name, CVE, tag, or content" />
       <button type="button" id="writeup-search-clear-${scopeId}" data-clear-scope="${scopeId}" class="search-clear" aria-label="Clear search" hidden>*</button>
     </div>`;
