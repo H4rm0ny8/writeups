@@ -179,8 +179,7 @@ function parseFrontmatter(raw) {
 
 function inlineMarkdown(text) {
   const parts = [];
-  const pattern =
-    /!\[([^\]]*)\]\(([^)]+)\)|\[([^\]]+)\]\(([^)]+)\)|\*\*([^*]+)\*\*|\*([^*]+)\*|`([^`]+)`/g;
+  const pattern = /!\[([^\]]*)\]\(([^)]+)\)|\[([^\]]+)\]\(([^)]+)\)|`([^`]+)`|\*\*([^*]+)\*\*/g;
   let last = 0;
   let match;
 
@@ -191,11 +190,9 @@ function inlineMarkdown(text) {
     } else if (match[3]) {
       parts.push(`<a href="${escapeHtml(match[4])}">${escapeHtml(match[3])}</a>`);
     } else if (match[5]) {
-      parts.push(`<strong>${escapeHtml(match[5])}</strong>`);
+      parts.push(`<code>${escapeHtml(match[5])}</code>`);
     } else if (match[6]) {
-      parts.push(`<em>${inlineMarkdown(match[6])}</em>`);
-    } else if (match[7]) {
-      parts.push(`<code>${escapeHtml(match[7])}</code>`);
+      parts.push(`<strong>${escapeHtml(match[6])}</strong>`);
     }
     last = pattern.lastIndex;
   }

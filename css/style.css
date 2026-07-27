@@ -668,12 +668,10 @@ footer .hex-dot {
 /* ── Filter chip groups (difficulty / os / platform) — inline toggle list ── */
 .filter-chip-groups {
   display: flex;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
   gap: 0.6rem;
   margin: 0.75rem 0 1rem;
   justify-content: center;
-  overflow-x: auto;
-  padding-bottom: 0.25rem;
 }
 
 .filter-chip-group {
