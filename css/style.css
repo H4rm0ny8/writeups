@@ -1287,29 +1287,57 @@ html.js .section.visible .writeup-card:not(.box-card) {
   gap: 0.65rem;
 }
 
+.htb-profile-wrap {
+  position: relative;
+  display: inline-block;
+  padding: 3px;
+  background: linear-gradient(90deg, var(--green), var(--green-dim));
+  border-radius: 0.9em;
+  transition: all 0.4s ease;
+}
+
+.htb-profile-wrap::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  border-radius: 0.9em;
+  z-index: -1;
+  filter: blur(0);
+  transition: filter 0.4s ease;
+}
+
+.htb-profile-wrap:hover::before {
+  background: linear-gradient(90deg, var(--green), var(--green-dim));
+  filter: blur(1.2em);
+}
+
+.htb-profile-wrap:active::before {
+  filter: blur(0.2em);
+}
+
 .htb-profile-btn {
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;
   font-family: var(--font-mono);
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   text-decoration: none;
-  color: #111;
-  background: #9fe654;
-  border: 1px solid #b8ff6a;
-  border-radius: 4px;
-  padding: 0.55rem 1.15rem;
-  box-shadow: 0 0 14px rgba(159, 230, 84, 0.25);
-  transition: color 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  padding: 0.6em 0.9em;
+  border-radius: 0.65em;
+  border: none;
+  background-color: #000;
+  color: var(--green);
+  cursor: pointer;
+  box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.7);
+  transition: color 0.2s;
 }
 
 .htb-profile-btn:hover {
-  background: #b8ff6a;
-  box-shadow: 0 0 22px rgba(159, 230, 84, 0.45);
-  transform: translateY(-1px);
+  color: #fff;
 }
 
 .htb-profile-btn__mark {

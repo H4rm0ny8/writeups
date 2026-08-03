@@ -870,10 +870,12 @@ function renderHub(writeups, blogs) {
         </div>
 
         <div class="hub-actions">
-          <a href="https://app.hackthebox.com/public/users/2965498" class="htb-profile-btn" target="_blank" rel="noopener noreferrer">
-            <span class="htb-profile-btn__mark" aria-hidden="true">⬡</span>
-            <span>HTB Profile</span>
-          </a>
+          <div class="htb-profile-wrap">
+            <a href="https://app.hackthebox.com/public/users/2965498" class="htb-profile-btn" target="_blank" rel="noopener noreferrer">
+              <span class="htb-profile-btn__mark" aria-hidden="true">⬡</span>
+              <span>HTB Profile</span>
+            </a>
+          </div>
           <p class="hub-tagline">Hacking is an art.</p>
         </div>
       </div>
