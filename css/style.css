@@ -1279,17 +1279,50 @@ html.js .section.visible .writeup-card:not(.box-card) {
   color: var(--text-muted);
 }
 
+.hub-actions {
   margin-top: 1.25rem;
-  font-family: var(--font-mono);
-  font-size: 0.82rem;
-  color: var(--text-muted);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.65rem;
 }
 
-.hub-note code {
-  color: var(--green);
+.htb-profile-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-decoration: none;
+  color: #111;
+  background: #9fe654;
+  border: 1px solid #b8ff6a;
+  border-radius: 4px;
+  padding: 0.55rem 1.15rem;
+  box-shadow: 0 0 14px rgba(159, 230, 84, 0.25);
+  transition: color 0.2s, background 0.2s, border-color 0.2s, box-shadow 0.2s, transform 0.2s;
 }
-  80% { transform: scale(1.2); }
-  100% { transform: scale(1); }
+
+.htb-profile-btn:hover {
+  background: #b8ff6a;
+  box-shadow: 0 0 22px rgba(159, 230, 84, 0.45);
+  transform: translateY(-1px);
+}
+
+.htb-profile-btn__mark {
+  font-size: 0.95rem;
+  line-height: 1;
+}
+
+.hub-tagline {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  opacity: 0.65;
 }
 
 .back-link {

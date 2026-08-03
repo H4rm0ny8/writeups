@@ -869,10 +869,13 @@ function renderHub(writeups, blogs) {
           <span id="status-text">SESSION: operator@kali ~ #</span>
         </div>
 
-        <p class="hub-note">
-          <a href="https://h4rm0ny8.github.io/profile/" target="_blank" rel="noopener noreferrer" style="color: var(--green);">> Profile</a>
-          <span style="opacity:0.5"> | Hacking is an art. </span>
-        </p>
+        <div class="hub-actions">
+          <a href="https://app.hackthebox.com/public/users/2965498" class="htb-profile-btn" target="_blank" rel="noopener noreferrer">
+            <span class="htb-profile-btn__mark" aria-hidden="true">⬡</span>
+            <span>HTB Profile</span>
+          </a>
+          <p class="hub-tagline">Hacking is an art.</p>
+        </div>
       </div>
     </header>
     ${topTabsHtml}
